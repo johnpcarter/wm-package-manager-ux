@@ -1,0 +1,57 @@
+<mat-card>
+  <div style="float: right; margin-top: -30px; margin-right: -30px"><fa-icon class="icon" [icon]="faTimes" size="1x" (click)="onNoClick()"></fa-icon></div>
+  <mat-card-title><h3>Add Package to registry '{{registry.name}}'</h3></mat-card-title>
+  <form [formGroup]="form">
+  <mat-card-content style="display: flex; flex-direction: column">
+      <mat-form-field>
+        <mat-label matLabel>Package name</mat-label>
+        <input matInput type="text" placeholder="No spaces or special characters" formControlName="name" required>
+      </mat-form-field>
+    <h3>Description</h3>
+      <mat-form-field>
+        <mat-label>description</mat-label>
+        <textarea matInput placeholder="Optional description for your package" formControlName="description"></textarea>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Category</mat-label>
+        <mat-select formControlName="category" required>
+          <mat-option value="private">Utility</mat-option>
+          <mat-option value="public">Mapping</mat-option>
+          <mat-option value="public">Rules</mat-option>
+          <mat-option value="public">Web app</mat-option>
+          <mat-option value="public">Connector</mat-option>
+          <mat-option value="public">Adapter</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Home page</mat-label>
+        <input matInput type="text" placeholder="URL" formControlName="homePage">
+      </mat-form-field>
+    <h3>Security</h3>
+    <mat-form-field *ngIf="registry.type == 'private' else notapplicable">
+      <mat-label>Permissions</mat-label>
+      <mat-select formControlName="private" required>
+        <mat-option value=false>Everybody</mat-option>
+        <mat-option value=true>Specific users only ({{user()}})</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <ng-template #notapplicable>
+      <p style="color: gray; font-style: italic">not applicable, registry is public</p>
+    </ng-template>
+    <h3 style="margin-top: 30px">Git repository</h3>
+      <mat-form-field>
+        <mat-label>Source page</mat-label>
+        <input matInput type="text" placeholder="URL of git repository for package" formControlName="source">
+      </mat-form-field>
+      <mat-checkbox formControlName="requiresAuthentication" (click)="toggleRequireAuth()">
+        <span style="color: lightgray">Source requires authentication</span>
+      </mat-checkbox>
+      <button mat-raised-button (click)="submit()" color="accent" [disabled]="!form.valid" style="margin-top: 50px"><fa-icon [icon]="faPlus"></fa-icon> Add</button>
+    <p *ngIf="failed" style="font-size: small; color: red">Failed to add package, sorry!</p>
+    </mat-card-content>
+  <mat-card-actions>
+  </mat-card-actions>
+  </form>
+</mat-card>
+
+

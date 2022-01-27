@@ -1,0 +1,398 @@
+/* You can add global styles to this file, and also import other style files */
+
+@import "~@angular/material/prebuilt-themes/indigo-pink.css";
+
+body {
+	margin: 0px;
+	padding-top: 0px;
+	font-family: "Roboto", "Helvetical", sans-serif;
+	overflow: hidden;
+}
+
+h1 {
+	font-size: 24px !important;
+	font-weight: 500;
+	color : #0C0C0C;
+}
+h2 {
+  color: gray;
+  font-family: "Roboto", "Helvetica";
+  font-weight: 400;
+  font-size: 16px;
+}
+a {
+  color: #0C0C0C;
+	text-decoration: none !important;
+}
+a:visited {
+	color: initial;
+}
+
+.placeholder {
+  color: gray;
+  font-size: 13px;
+}
+
+.toolbar {
+  background-color: #1776BF;
+  height: 64px;
+  display: inline-flex;
+  width:100%;
+}
+
+.toolbar-item {
+  width: 100px;
+  margin: 0px;
+  padding-top: 20px;
+  padding-left: 10px;
+  padding-right: 10px;
+  vertical-align: middle;
+  text-align: center;
+}
+.toolbar-item:hover {
+  background-color: #00000033;
+}
+.toolbar-item-selected {
+    background-color: #00000044;
+    border-top: 4px solid white;
+}
+
+div.mat-expansion-panel-body {
+  padding-right: 0px;
+  padding-left: 0px;
+}
+
+::ng-deep .mat-tab-body-wrapper {
+  flex: 1 1 100%;
+}
+
+.mat-tab-body-wrapper {
+  flex: 1 1 100%;
+}
+
+.mat-tab-group.mat-tab-fill-height .mat-tab-body-wrapper {
+    flex: 1 1 100%;
+ }
+
+.mat-list-text {
+  font-size: 14px;
+}
+
+mat-card {
+	min-height: 250px;
+	padding-bottom: 75px;
+	box-shadow: none !important;
+	background-color: rgba(0,0,0,0.02);
+	border-radius: 3px;
+  	margin: 10px !important;
+}
+.mat-card-title {
+	font-size: 1em;
+	color: gray;
+}
+.mat-figure {
+	align-items: flex-start !important;
+}
+.mat-table {
+	box-shadow: none !important;
+	background-color: transparent;
+	overflow: -moz-scrollbars-none;
+}
+.mat-table::-webkit-scrollbar {
+	width: 0 !important
+}
+.mat-paginator {
+	background-color: transparent;
+}
+.mat-content > mat-panel-title, .mat-content > mat-panel-description {
+  flex: 0 0 auto;
+}
+.mat-grid-tile-header {
+	background-color: #eeeeee !important;
+	color: gray !important;
+}
+.mat-slider-thumb-label {
+  transform: rotate(45deg) !important;
+  border-radius: 50% 50% 0 !important;
+}
+.mat-cell {
+	margin-right: 15px;
+}
+.mat-expansion-panel:not([class*=mat-elevation-z]) {
+	box-shadow: none !important;
+}
+
+.mat-slider-thumb {
+  transform: scale(0) !important;
+}
+
+.mat-slider-thumb-label-text {
+  opacity: 1 !important;
+}
+
+.mat-row.selected {
+       background-color: rgba(0,0,0,0.2);
+}
+.mat-menu-panel {
+	border-top-left-radius: 0px !important;
+	border-top-right-radius: 0px !important;
+}
+.mat-menu-content {
+  min-width: 140px;
+	background-color: rgb(23, 115, 187) !important;
+}
+.mat-tab-body-wrapper {
+	height: 100%;
+}
+.radio-group {
+  display: flex;
+  flex-direction: column;
+  margin: 15px 0;
+}
+
+.radio-button {
+  margin: 5px;
+}
+.login-field {
+  padding: 5px;
+  height: 20px;
+  border: 1px solid gray;
+  border-radius: 0px;
+  outline: none;
+}
+.page-header {
+  padding-top: 20px;
+  padding-left: 30px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #eeeeee;
+  display: block;
+}
+.page-description {
+  color: #3c3c3c;
+  font-size: 18px;
+  font-weight: lighter;
+}
+
+.page-title-navigation {
+  width: 100%;
+  display: inline-flex;
+}
+.page-title-nav-bar {
+  margin-bottom: 20px;
+  margin-left: 40px;
+}
+.page-title-navigation-item {
+  font-size: 18px;
+  text-align: center;
+  vertical-align: middle;
+  line-height: 45px;
+  padding: 5px;
+  padding-right: 30px;
+  border-bottom: 2px solid #eeeeee;
+  color: #3b4f65 !important;
+}
+
+.page-title-navigation-item:hover {
+  color: orange;
+  border-bottom: 1px solid #0c5593;
+}
+
+.page-title-navigation-item-selected {
+  font-weight: bold;
+  border-bottom: 2px solid #0c5593;
+}
+
+.page-wrapper {
+	background-color: rgba(0, 0, 0, 0.005);
+	display: flex;
+	flex-direction: column;
+  overflow-y: auto;
+  position: absolute;
+  width: 100%;
+  padding-top: 20px;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+.page-content-title-wrapper {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+.page-content-title {
+	flex-grow: 0;
+}
+.page-content-wrapper {
+	flex-grow: 1;
+	overflow-x: hidden;
+  padding: 20px;
+}
+
+.page-scrollable-content {
+	position: relative;
+}
+.page-scrollable-content:after {
+  content: "";
+  display: block;
+  position: absolute;
+  right: -2rem;
+  width: 2rem;
+  height: 1px;
+}
+.table-rounded-border {
+  width: 300px;
+  margin: auto;
+  border: 2px solid gray;
+  border-radius: 5px;
+}
+
+.right-aligned-header > .mat-content {
+    justify-content: space-between;
+}
+
+.small-button {
+	font-size: 11px;
+	line-height:12px;
+	color: white;
+	background-color: rgba(0,0,0,0.2);
+	border-radius: 10px;
+	padding-left: 5px;
+	padding-right: 5px;
+	padding-top: 2px;
+	padding-bottom: 2px;
+	margin: 10px;
+}
+.small-button:hover {
+	background-color: orange;
+}
+.label {
+	color: gray;
+	font-size: 12px;
+	line-height: 25px;
+}
+.group-panel {
+	margin-top: 40px;
+	padding: 20px;
+	border: 0.5px solid #aaaaaa;
+	border-radius: 5px;
+	display: block;
+}
+.group-title {
+	margin-top: -30px;
+	margin-bottom: 30px;
+	margin-left: 10px;
+	padding-left: 20px;
+	padding-right: 20px;
+	background-color: white;
+	font-size: 16px;
+	font-weight: bold;
+	display: flex;
+	align-items: flex-start;
+}
+
+.hilight-item {
+  background-color: white;
+}
+.hilight-item:hover {
+  background-color: #d5e2f6;
+}
+
+.red-on-hover {
+    color: #eeeeee;
+}
+.red-on-hover:hover {
+    color: red;
+}
+
+.green-on-hover {
+  color: #eeeeee;
+}
+.green-on-hover:hover {
+  color: green;
+}
+.show-on-hover {
+  color: white
+}
+.show-on-hover:hover {
+  color: green;
+}
+.spinner-label {
+   position: absolute;
+   left: 43%;
+   top: 50%;
+   height:160px;
+   width:400px;
+   margin:0px auto;
+   padding-top: 80px;
+   color: gray;
+   font-size: 22px;
+}
+
+.spinner {
+   z-index: 100;
+   position: absolute;
+   left: 50%;
+   top: 50%;
+   height:120px;
+   width:120px;
+   margin:0px auto;
+   -webkit-animation: rotation .6s infinite linear;
+   -moz-animation: rotation .6s infinite linear;
+   -o-animation: rotation .6s infinite linear;
+   animation: rotation .6s infinite linear;
+   border-left:6px solid rgba(0,174,239,.15);
+   border-right:6px solid rgba(0,174,239,.15);
+   border-bottom:6px solid rgba(0,174,239,.15);
+   border-top:6px solid rgba(0,174,239,.8);
+   border-radius:100%;
+}
+
+.small-button {
+	background-color: blue;
+	color: white;
+	font-size: 09px;
+	border-radius: 4px;
+	padding: 5px;
+}
+@-webkit-keyframes rotation {
+   from {-webkit-transform: rotate(0deg);}
+   to {-webkit-transform: rotate(359deg);}
+}
+@-moz-keyframes rotation {
+   from {-moz-transform: rotate(0deg);}
+   to {-moz-transform: rotate(359deg);}
+}
+@-o-keyframes rotation {
+   from {-o-transform: rotate(0deg);}
+   to {-o-transform: rotate(359deg);}
+}
+@keyframes rotation {
+   from {transform: rotate(0deg);}
+   to {transform: rotate(359deg);}
+}
+
+.search {
+  width: 100%;
+  position: relative;
+  display: flex;
+}
+
+.searchTerm {
+  width: 80%;
+  border: 3px solid #00B4CC;
+  padding: 5px;
+  height: 20px;
+  border-radius: 5px;
+  outline: none;
+  color: #9DBFAF;
+}
+
+.searchTerm:focus {
+  color: #00B4CC;
+}
+form.input {
+  width: 50% !important;
+  margin: 2px 0 20px 20px;
+}
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

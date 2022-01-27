@@ -1,0 +1,39 @@
+<div>
+  <span class="page-description">Select your registry</span>
+  <div class="table-rounded-border">
+    <mat-list>
+      <mat-list-item *ngFor="let r of registries" class="hilight-item" style="border-bottom: #0c5593 1px solid">
+        <div style="width: 30px">
+          <fa-icon *ngIf="r.default else selectDefault" [icon]="faCheckCircle" style="color: #d5e2f6"></fa-icon>
+          <ng-template #selectDefault>
+            <fa-icon [icon]="faCheckCircle" class="show-on-hover" (click)="setDefaultForRegistry(r)"></fa-icon>
+          </ng-template>
+        </div>
+        <fa-icon *ngIf="isPrivate(r)" [icon]="faBuilding"></fa-icon>
+        <fa-icon *ngIf="!isPrivate(r)" [icon]="faGlobeAfrica"></fa-icon>
+        <span style="margin-left: 20px" (click)="showPackagesInRegistry(r.name)"> {{r.name}}</span>
+        <div style="flex-grow: 1;">
+          <div style="display: inline-flex; float: right;">
+            <button *ngIf="isAdministrator() && r.name != 'default'" mat-button class="red-on-hover" (click)="removeRegistry(r)" style="min-width: 0px">
+              <fa-icon [icon]="faTrashAlt" ></fa-icon>
+            </button>
+            <div style="width: 30px">
+              <button *ngIf="isAdministrator()" mat-button class="green-on-hover" (click)="addPackage(r)" style="min-width: 0px">
+                <fa-icon [icon]="faPlusSquare" ></fa-icon>
+              </button>
+            </div>
+          </div>
+        </div>
+      </mat-list-item>
+      <mat-list-item *ngIf="isAdministrator()" class="hilight-item" style="border-bottom: #0c5593 1px solid">
+        <div style="width: 30px"></div>
+        <div style="width: 30px">
+          <fa-icon [icon]="faPlusSquare"></fa-icon>
+        </div>
+        <span *ngIf="isAdministrator()" mat-button  (click)="addRegistry()">
+           Add registry
+        </span>
+      </mat-list-item>
+    </mat-list>
+  </div>
+</div>

@@ -1,0 +1,49 @@
+<div>
+  <p style="color: gray; padding-bottom: 20px; font-style: italic">{{registryDescription()}}</p>
+  <form class="wrap">
+    <div class="search">
+      <h3 style="padding-top: 5px; padding-right: 10px">filter packages: </h3>
+      <input class="searchTerm" type="text" name="searchTerm" placeholder="Filter by package name"
+             [(ngModel)]="searchTerm" (input)="search($event.target.value)" />
+    </div>
+  </form>
+  <table mat-table #package [dataSource]="data" style="width: 90%">
+
+    <ng-container matColumnDef="auth">
+      <th mat-header-cell *matHeaderCellDef></th>
+      <td mat-cell *matCellDef="let p" style="width: 40px">
+        <fa-icon *ngIf="!p.sourceIsPrivate" [icon]="faKey" style="color: #eeeeee"></fa-icon>
+        <fa-icon *ngIf="p.sourceIsPrivate" [icon]="faKey"></fa-icon>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef>Package</th>
+      <td mat-cell *matCellDef="let p"> <a href="" (click)="showPackageDetails(p)">{{p.name}} </a></td>
+    </ng-container>
+
+    <ng-container matColumnDef="category">
+      <th mat-header-cell *matHeaderCellDef>Category</th>
+      <td mat-cell *matCellDef="let p" style="width: 80px"> {{p.category}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="description">
+      <th mat-header-cell *matHeaderCellDef>Description</th>
+      <td mat-cell *matCellDef="let p"> {{truncate(p.description)}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="registered">
+      <th mat-header-cell *matHeaderCellDef>Registered</th>
+      <td mat-cell *matCellDef="let p" style="width: 80px"> {{p.registeredDate}} </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+  <div style="font-size: small; font-style: italic; color: gray; width: 50%; margin-top: 50px; margin-left: auto; margin-right: auto">
+    TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, THE REGISTRY PROVIDER
+    SHALL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL OR
+    PUNITIVE DAMAGES, OR ANY LOSS OF PROFITS OR REVENUES, WHETHER INCURRED
+    DIRECTLY OR INDIRECTLY, OR ANY LOSS OF DATA, THROUGH THE USE OF THESE SOFTWARES.
+  </div>
+</div>

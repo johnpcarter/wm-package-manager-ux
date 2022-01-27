@@ -1,0 +1,27 @@
+<div>
+  <div class="toolbar" style="height: 64px; background-color: #1776BF; justify-content: space-between">
+    <a routerLink="/home"><img src="assets/_images/wm-package-manager.svg" height="64px"/></a>
+    <fa-icon [matMenuTriggerFor]="menu" [icon]="faCog" size="lg" style="color: white; padding-top: 20px; padding-right: 20px"></fa-icon>
+    <mat-menu #menu="matMenu">
+      <button *ngIf="!isOnRegistryPage()" mat-menu-item (click)="showRegistries()" style="color: white"><fa-icon [icon]="faListAlt"></fa-icon> {{currentRegistry().name}} <fa-icon *ngIf="isDefaultRegistry()" [icon]="faCheck" style="margin-left: 0px"></fa-icon></button>
+      <mat-divider *ngIf="!isOnRegistryPage()"></mat-divider>
+      <button *ngIf="isConnected()" mat-menu-item>
+        <span style="color: white" (click)="disconnect()"><fa-icon [icon]="faUserSlash"></fa-icon> Disconnect</span>
+      </button>
+      <button *ngIf="!isConnected()" mat-menu-item>
+        <span style="color: white" (click)="showConnectDialog()"><fa-icon [icon]="faUser"></fa-icon> Connect</span>
+      </button>
+      <mat-divider></mat-divider>
+      <button mat-menu-item [disabled]="!isConnected()">
+        <span [ngStyle]="colorForSettingsMenu()" (click)="showSettingsPanel()"><fa-icon [icon]="faTools"></fa-icon> Settings</span>
+      </button>
+      <mat-divider></mat-divider>
+      <button mat-menu-item>
+        <a href="/WxPackageManager/api-docs" style="color: white"><fa-icon [icon]="faLifeRing"></fa-icon> API docs</a>
+      </button>
+    </mat-menu>
+  </div>
+  <div class="page-wrapper">
+    <router-outlet #outlet="outlet"></router-outlet>
+  </div>
+</div>
