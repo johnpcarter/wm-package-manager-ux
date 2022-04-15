@@ -15,20 +15,36 @@
       <mat-form-field>
         <mat-label>Category</mat-label>
         <mat-select formControlName="category" required>
-          <mat-option value="private">Utility</mat-option>
-          <mat-option value="public">Mapping</mat-option>
-          <mat-option value="public">Rules</mat-option>
-          <mat-option value="public">Web app</mat-option>
-          <mat-option value="public">Connector</mat-option>
-          <mat-option value="public">Adapter</mat-option>
+          <mat-option value="utility">Utility</mat-option>
+          <mat-option value="mapping">Mapping</mat-option>
+          <mat-option value="rules">Rules</mat-option>
+          <mat-option value="webapp">Web app</mat-option>
+          <mat-option value="connector">Connector</mat-option>
+          <mat-option value="adapter">Adapter</mat-option>
+          <mat-option value="example">Example</mat-option>
+          <mat-option value="api">REST API</mat-option>
+          <mat-option value="soap">Web Services</mat-option>
+          <mat-option value="iot">IoT Connector</mat-option>
         </mat-select>
       </mat-form-field>
       <mat-form-field>
         <mat-label>Home page</mat-label>
         <input matInput type="text" placeholder="URL" formControlName="homePage">
       </mat-form-field>
-    <h3>Security</h3>
-    <mat-form-field *ngIf="registry.type == 'private' else notapplicable">
+    <h3 style="margin-top: 30px">Git repository</h3>
+      <mat-form-field>
+        <mat-label>Git code URL</mat-label>
+        <input matInput type="text" placeholder="URL of git repository for package" formControlName="source">
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Package folder</mat-label>
+        <input matInput type="text" placeholder="folder to root of package if shared repository" formControlName="sourcePath">
+      </mat-form-field>
+      <mat-checkbox formControlName="requiresAuthentication" (click)="toggleRequireAuth()">
+        <span style="color: lightgray">Source requires authentication</span>
+      </mat-checkbox>
+    <h3 style="margin-top: 30px">Security</h3>
+    <mat-form-field *ngIf="registry.type == 'private' && requiresAuthenticationCtrl.value == true; else notapplicable">
       <mat-label>Permissions</mat-label>
       <mat-select formControlName="private" required>
         <mat-option value=false>Everybody</mat-option>
@@ -36,16 +52,10 @@
       </mat-select>
     </mat-form-field>
     <ng-template #notapplicable>
-      <p style="color: gray; font-style: italic">not applicable, registry is public</p>
+      <p *ngIf="registry.type != 'private'" style="color: gray; font-style: italic; height: 60px;">not applicable, registry is public</p>
+      <p *ngIf="registry.type == 'private' && !requiresAuthenticationCtrl.value" style="color: gray; font-style: italic; height: 60px">Git repository is public, doesn't make any sense to secure it here</p>
+
     </ng-template>
-    <h3 style="margin-top: 30px">Git repository</h3>
-      <mat-form-field>
-        <mat-label>Source page</mat-label>
-        <input matInput type="text" placeholder="URL of git repository for package" formControlName="source">
-      </mat-form-field>
-      <mat-checkbox formControlName="requiresAuthentication" (click)="toggleRequireAuth()">
-        <span style="color: lightgray">Source requires authentication</span>
-      </mat-checkbox>
       <button mat-raised-button (click)="submit()" color="accent" [disabled]="!form.valid" style="margin-top: 50px"><fa-icon [icon]="faPlus"></fa-icon> Add</button>
     <p *ngIf="failed" style="font-size: small; color: red">Failed to add package, sorry!</p>
     </mat-card-content>

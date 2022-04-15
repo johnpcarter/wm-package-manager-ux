@@ -22,8 +22,10 @@
           <span *ngIf="connecting" class="spinner-border spinner-border-sm mr-1"></span>
           Login
         </button>
-        <div *ngIf="failed" style="color: red">Login failed</div>
-        <a routerLink="../register" class="btn btn-link" style="float: right; margin-top: 30px; color: #1776BF">Register</a>
+        <div style="width: 100%">
+          <a routerLink="../register" class="btn btn-link" style="float: right; margin-top: 30px; color: #1776BF; float: right">Register</a>
+          <p *ngIf="failed" style="color: red; font-size: smaller">Login failed</p>
+        </div>
       </div>
     </form>
   </div>

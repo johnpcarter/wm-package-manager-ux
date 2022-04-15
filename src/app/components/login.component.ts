@@ -1,10 +1,13 @@
 import { Component, OnInit } from '@angular/core'
 import { ActivatedRoute, Router } from '@angular/router'
-import { FormBuilder, FormControl, FormGroup, Validators}  from '@angular/forms'
+import { FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms'
+import { MatDialogRef } from '@angular/material/dialog'
+
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
+
+import { NotificationsService } from '../services/notifications-service'
 import { SettingsService } from '../services/settings.service'
-import {MatDialogRef} from '@angular/material/dialog';
-import {GLOBALS} from '../globals';
+import { GLOBALS } from '../globals'
 
 @Component({
   selector: 'app-login-page',
@@ -27,7 +30,8 @@ export class LoginComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private dialogRef: MatDialogRef<any>,
-    private settingsService: SettingsService
+    private settingsService: SettingsService,
+    private notificationsService: NotificationsService
   ) { }
 
   ngOnInit(): void {
@@ -38,6 +42,10 @@ export class LoginComponent implements OnInit {
     this.form = this.formBuilder.group({
       username: this.userCtrl,
       password: this.passwordCtrl
+    })
+
+    this.form.valueChanges.subscribe((c) => {
+      this.failed = false
     })
   }
 
@@ -51,15 +59,16 @@ export class LoginComponent implements OnInit {
     this.connecting = true
     this.submitted = true
 
-    this.settingsService.connect(this.userCtrl.value, this.passwordCtrl.value).subscribe((success) => {
+    this.settingsService.connect(this.userCtrl.value, this.passwordCtrl.value).subscribe((userType) => {
 
       this.connecting = false
 
-      if (success) {
-        GLOBALS.user = this.userCtrl.value
+      if (userType) {
+        GLOBALS.setUser(this.userCtrl.value, this.notificationsService, userType)
         this.dialogRef.close()
       } else {
-        GLOBALS.user = null
+        GLOBALS.clearUser()
+        // this.passwordCtrl.setValue('', {emitEvent: false})
         this.failed = true
       }
     })

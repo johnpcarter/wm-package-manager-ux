@@ -1,19 +1,21 @@
 import { Component, OnInit } from '@angular/core'
-import { Router } from '@angular/router'
+import { ActivatedRoute, Router } from '@angular/router'
 
-import { faCog, faUser, faUserSlash, faTools, faListAlt, faLifeRing, faCheck } from '@fortawesome/free-solid-svg-icons'
+import { faCog, faUser, faUserSlash, faTools, faListAlt, faLifeRing, faCheck, faBrain } from '@fortawesome/free-solid-svg-icons'
 
 import { MatSnackBar } from '@angular/material/snack-bar'
 import { MatDialog } from '@angular/material/dialog'
 
-import { SettingsService } from './services/settings.service'
+import { Registry } from './models/Registry'
 
-import { LoginComponent } from './components/login.component'
+import { SettingsService } from './services/settings.service'
+import { RegistriesService } from './services/registries.service'
+import { NotificationsService } from './services/notifications-service'
+import { Subscription } from 'rxjs'
 
 import { GLOBALS } from './globals'
-import { Registry } from './models/Registry'
-import { RegistriesService } from './services/registries.service'
 
+import { LoginComponent } from './components/login.component'
 
 @Component({
   selector: 'app-root',
@@ -30,13 +32,20 @@ export class AppComponent implements OnInit {
   public faListAlt = faListAlt
   public faCheck = faCheck
   public faLifeRing = faLifeRing
+  public faBrain = faBrain
+
+  // tslint:disable-next-line:variable-name
+  private _sub: Subscription = null
 
   // tslint:disable-next-line:variable-name max-line-length
-  constructor(private _router: Router, private _snackBar: MatSnackBar, private _dialog: MatDialog, private _settings: SettingsService, private _registriesService: RegistriesService) {
+  constructor(private _inboundRouter: ActivatedRoute, private _router: Router, private _snackBar: MatSnackBar, private _dialog: MatDialog,
+  // tslint:disable-next-line:variable-name max-line-length
+              private _notificationsService: NotificationsService, private _settingsService: SettingsService, private _registriesService: RegistriesService) {
 
-    _settings.currentUser().subscribe((user) => {
-      GLOBALS.user = user
-      GLOBALS.userType = user === 'Administrator' ? 'administrator' : 'other'
+    _settingsService.currentUser().subscribe((user) => {
+      if (user) {
+        GLOBALS.setUser(user, _notificationsService)
+      }
     })
 
     _registriesService.getRegistry().subscribe((r) => {
@@ -45,6 +54,15 @@ export class AppComponent implements OnInit {
   }
 
   public ngOnInit(): void {
+  }
+
+  public pageTitle(): string {
+
+    if (!this.currentRegistry().default && !this.isOnRegistryPage()) {
+      return this.currentRegistry().name
+    } else {
+      return ''
+    }
   }
 
   public isConnected(): boolean {
@@ -61,12 +79,13 @@ export class AppComponent implements OnInit {
 
   public disconnect(): void {
 
-    this._settings.disconnect().subscribe((success) => {
+    this._settingsService.disconnect().subscribe((success) => {
       if (success) {
-        GLOBALS.user = null
+        GLOBALS.clearUser()
         this._snackBar.open('You have been disconnected successfully', 'Ok', {
           duration: 2000,
         })
+        this._router.navigate(['/registries'])
       }
     })
   }
@@ -104,11 +123,11 @@ export class AppComponent implements OnInit {
   }
 
   public currentRegistry(): Registry {
-    if (GLOBALS.registry) {
-      return GLOBALS.registry
-    } else {
-      return new Registry()
+    if (!GLOBALS.registry) {
+      GLOBALS.registry = new Registry()
     }
+
+    return GLOBALS.registry
   }
 
   public isDefaultRegistry(): boolean {

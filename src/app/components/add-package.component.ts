@@ -1,5 +1,5 @@
 import {Component, Inject, OnInit} from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
+import {Form, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog'
 
 import { faTimes, faPlus } from '@fortawesome/free-solid-svg-icons'
@@ -28,6 +28,7 @@ export class AddPackageComponent implements OnInit {
   public categoryCtrl: FormControl
   public homePageCtrl: FormControl
   public sourceCtrl: FormControl
+  public sourcePathCtrl: FormControl
   public requiresAuthenticationCtrl: FormControl
   public privateCtrl: FormControl
 
@@ -48,6 +49,7 @@ export class AddPackageComponent implements OnInit {
     this.categoryCtrl = new FormControl('', Validators.required)
     this.sourceCtrl = new FormControl('', Validators.required)
     this.homePageCtrl = new FormControl()
+    this.sourcePathCtrl = new FormControl()
     this.requiresAuthenticationCtrl = new FormControl()
     this.privateCtrl = new FormControl()
 
@@ -57,6 +59,7 @@ export class AddPackageComponent implements OnInit {
       category: this.categoryCtrl,
       homePage: this.homePageCtrl,
       source: this.sourceCtrl,
+      sourcePath: this.sourcePathCtrl,
       requiresAuthentication: this.requiresAuthenticationCtrl,
       private: this.privateCtrl
     })
@@ -72,18 +75,13 @@ export class AddPackageComponent implements OnInit {
   public submit(): void {
 
     const p = new Package()
-    p.name = this.nameCtrl.value
+    p.packageName = this.nameCtrl.value
     p.description = this.descriptionCtrl.value
     p.category = this.categoryCtrl.value
-    p.homepage = this.homePageCtrl.value
+    p.homePage = this.homePageCtrl.value
     p.sourceUrl = this.sourceCtrl.value
+    p.sourcePath = this.sourcePathCtrl.value
     p.sourceIsPrivate = this.requiresAuthenticationCtrl.value
-
-    if (this.privateCtrl.value) {
-      p.users = [GLOBALS.user]
-    } else {
-      p.users = ['everybody']
-    }
 
     this._packagesService.createPackage(p, this.registry.name).subscribe((success) => {
       if (success) {

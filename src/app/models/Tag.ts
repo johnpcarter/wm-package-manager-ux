@@ -1,7 +1,7 @@
 export class Tag {
   public message: string
-  public committer: Committer
-  public verification: Verification
+  public committer: Committer = new Committer()
+  public verification: Verification = new Verification()
 }
 
 export class Committer {
@@ -11,8 +11,8 @@ export class Committer {
 }
 
 export class Verification {
-  public verified: boolean
-  public reason: string
-  public signature: string
-  public payload: string
+  public verified: boolean = false
+  public reason: string = null
+  public signature: string = null
+  public payload: string = null
 }

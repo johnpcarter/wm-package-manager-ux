@@ -1,5 +1,6 @@
 import { ActivatedRoute, Router } from '@angular/router'
 import { Component, OnInit, ViewChild } from '@angular/core'
+
 import { MatDialog } from '@angular/material/dialog'
 import { MatTable } from '@angular/material/table'
 
@@ -22,8 +23,9 @@ import {AddPackageComponent} from './add-package.component'
 })
 export class PackagesComponent implements OnInit {
   public faKey = faKey
+  public faPlusSquare = faPlusSquare
 
-  public displayedColumns: string[] = ['auth', 'name', 'category', 'description', 'registered']
+  public displayedColumns: string[] = ['auth', 'name', 'category', 'description', 'registered', 'downloads']
 
   public registry: Registry | undefined
   public searchTerm: string | undefined
@@ -42,20 +44,10 @@ export class PackagesComponent implements OnInit {
   // tslint:disable-next-line:variable-name max-line-length
   constructor(private _router: Router, private _activatedRoute: ActivatedRoute, private _dialog: MatDialog, private _packagesServices: PackagesServices, private _registriesServices: RegistriesService) {
 
-    this._activatedRoute.paramMap.subscribe(params => {
-
-      _registriesServices.getRegistry(params.get('id')).subscribe((r) => {
-
-        GLOBALS.registry = r
-
-        this._registriesServices.getRegistry(GLOBALS.registry.name).subscribe((r) => {
-          this.registry = r
-          GLOBALS.registry = r
-
-          this.load()
-        })
+    this._activatedRoute.queryParams
+      .subscribe(params => {
+        this.setRegistry(params['registry'], params['package'])
       })
-    })
   }
 
   public ngOnInit(): void {
@@ -69,10 +61,12 @@ export class PackagesComponent implements OnInit {
       return ''
     }
   }
-  search(value: string): void {
+
+  public search(value: string): void {
 
     // @ts-ignore
-    this.data = this._allPackages.filter((val) => val.name.toLowerCase().includes(value.toLowerCase()))
+    // tslint:disable-next-line:max-line-length
+    this.data = this._allPackages.filter((val) => val.packageName.toLowerCase().includes(value.toLowerCase()) || val.description.toLowerCase().includes(value.toLowerCase()))
 
     // if we have =50 rows, let's do a fresh search with given filter
 
@@ -107,10 +101,13 @@ export class PackagesComponent implements OnInit {
     return false
   }
 
-  public truncate(description: string): string {
+  public truncate(description: string , length?: number): string {
 
-    if (description && description.length > 80) {
-      return description.substring(0, 80) + '...'
+    if (!length) {
+      length = 120
+    }
+    if (description && description.length > length) {
+      return description.substring(0, length) + '...'
     } else {
       return description
     }
@@ -120,14 +117,58 @@ export class PackagesComponent implements OnInit {
     return GLOBALS.isAdministrator()
   }
 
-  private load(): void {
-    this._packagesServices.packages(null, GLOBALS.registry.name).subscribe((p) => {
-      console.log('here we are ' + p.length)
-      this._allPackages = p
-      this.data = p
+  public addPackage(): void {
+
+    if (!this.isAdministrator()) {
+      return
+    }
+
+    const dialogRef = this._dialog.open(AddPackageComponent, {
+      width: '80%',
+      height: '1000px',
+      data: {
+        registry: GLOBALS.registry
+      },
+    })
+
+    dialogRef.afterClosed().subscribe(result => {
+      this.load()
+    })
+  }
+
+  private setRegistry(registry: string, packageName?: string): void {
+
+    this._registriesServices.getRegistry(registry).subscribe((r) => {
+
+      this.registry = r
+      GLOBALS.registry = r
+      this.load(packageName)
+    })
+  }
+
+  private load(packageName?: string): void {
+    this._packagesServices.packages(null, GLOBALS.registry.name).subscribe((packages) => {
+      this._allPackages = packages
+      this.data = packages
 
       if (this.packagesTable) {
         this.packagesTable.renderRows()
+      }
+
+      if (packageName != null) {
+        let found: Package = null
+
+        // tslint:disable-next-line:prefer-for-of
+        for (let i = 0; i < packages.length; i++) {
+          if (packages[i].packageName === packageName) {
+            found = packages[i]
+            break
+          }
+        }
+
+        if (found != null) {
+          this.showPackageDetails(found)
+        }
       }
     })
   }

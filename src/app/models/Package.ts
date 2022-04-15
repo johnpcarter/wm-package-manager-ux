@@ -1,25 +1,26 @@
 
 export class Package {
-  public name: string | undefined
+  public packageName: string | undefined
+  public registryName: string | undefined
   public description: string | undefined
+  public homePage: string | undefined
   public category: string | undefined
+  public assetType: string = 'wm-package'
   public owner: string | undefined
   public ownedByMe: boolean  = false
   public searchTags: string[] | undefined
   public registeredDate: string | undefined
-  public availableTags: string[] | undefined
   public trustedTags: TagSummary[] | undefined
-  public homepage: string | undefined
-  public lastUpdated: string | undefined
-  public watchers: string | undefined
-  public stargazers: string | undefined
   public sourceUrl: string | undefined
+  public sourcePath: string | undefined
   public sourceIsPrivate: boolean = false
+  public sourceHasTokenForEverybody: boolean = false
   public sourceUser: string | undefined
   public totalDownloads: string = '0'
   public recentDownloads: string = '0'
   public private: boolean = false
-  public users: string[] = []
+  public alertEmail: string
+  public isVisible: boolean
 }
 
 export class TagSummary {
@@ -27,4 +28,20 @@ export class TagSummary {
   public when: string | undefined
   public by: string | undefined
   public signature: string | undefined
+}
+
+export class PackageStat {
+  constructor(public label: string, public value: number) {
+
+  }
+
+  public scaledValue(scale: number, max: number): number {
+    if (this.value > 0) {
+      const r: number = (this.value / max) * scale
+
+      return r
+    } else {
+      return 0
+    }
+  }
 }

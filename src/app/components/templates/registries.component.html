@@ -17,11 +17,6 @@
             <button *ngIf="isAdministrator() && r.name != 'default'" mat-button class="red-on-hover" (click)="removeRegistry(r)" style="min-width: 0px">
               <fa-icon [icon]="faTrashAlt" ></fa-icon>
             </button>
-            <div style="width: 30px">
-              <button *ngIf="isAdministrator()" mat-button class="green-on-hover" (click)="addPackage(r)" style="min-width: 0px">
-                <fa-icon [icon]="faPlusSquare" ></fa-icon>
-              </button>
-            </div>
           </div>
         </div>
       </mat-list-item>

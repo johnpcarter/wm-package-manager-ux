@@ -1,11 +1,11 @@
-import {Component, OnInit} from '@angular/core';
-import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
-import {MatDialogRef} from '@angular/material/dialog';
+import { Component, OnInit} from '@angular/core'
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
+import { MatDialogRef } from '@angular/material/dialog'
 
-import {faBook, faTimes} from '@fortawesome/free-solid-svg-icons';
+import { faBook, faTimes } from '@fortawesome/free-solid-svg-icons'
 
-import {RegistriesService} from '../services/registries.service';
-import {Registry, RegistryType} from '../models/Registry';
+import { RegistriesService } from '../services/registries.service'
+import { Registry, RegistryType } from '../models/Registry'
 
 @Component({
   selector: 'app-add-registry',

@@ -3,7 +3,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog'
 import { MatSnackBar } from '@angular/material/snack-bar'
 
 import { faThumbsUp, faThumbsDown, faTimes, faClock, faUser, faEnvelope, faStamp, faSignature, faCheckCircle, faQuestionCircle,
-                faArrowCircleDown } from '@fortawesome/free-solid-svg-icons'
+                faArrowCircleDown, faExclamationTriangle } from '@fortawesome/free-solid-svg-icons'
 import { faGitAlt } from '@fortawesome/free-brands-svg-icons'
 
 import { Tag } from '../models/Tag'
@@ -32,6 +32,7 @@ export class TagInfoComponent implements OnInit {
   public faQuestionCircle = faQuestionCircle
   public faThumbsDown = faThumbsDown
   public faArrowCircleDown = faArrowCircleDown
+  public faExclamationTriangle = faExclamationTriangle
 
   public package: Package
   public tagName: string
@@ -44,12 +45,14 @@ export class TagInfoComponent implements OnInit {
 
   // tslint:disable-next-line:variable-name max-line-length
   constructor(dialogRef: MatDialogRef<any>, @Inject(MAT_DIALOG_DATA) public data: any, private _snackBar: MatSnackBar, private _packagesServices: PackagesServices) {
+
     this._dialogRef = dialogRef
     this.package = data.package
     this.tagName = data.tag
     this.trusted = data.when
+    this.tagInfo = new Tag()
 
-    this._packagesServices.getTag(this.package.name, this.tagName, GLOBALS.registry.name).subscribe((t) => {
+    this._packagesServices.getTag(this.package.packageName, this.tagName, GLOBALS.registry.name).subscribe((t) => {
       this.tagInfo = t
     })
   }
@@ -58,11 +61,19 @@ export class TagInfoComponent implements OnInit {
   }
 
   public isSigned(): boolean {
-    return this.tagInfo.verification.reason !== 'unsigned'
+    if (this.tagInfo.verification) {
+      return this.tagInfo.verification.signature != null
+    } else {
+      return false
+    }
   }
 
   public isVerified(): boolean {
-    return this.tagInfo.verification.verified
+    if (this.tagInfo.verification) {
+      return this.tagInfo.verification.verified
+    } else {
+      return false
+    }
   }
 
   public onNoClick(ref?: any): void {
@@ -72,7 +83,7 @@ export class TagInfoComponent implements OnInit {
   public trust(): void {
 
     // tslint:disable-next-line:max-line-length
-    this._packagesServices.trust(this.package.name, this.tagName, this.tagInfo.verification.signature, GLOBALS.registry.name).subscribe((ok) => {
+    this._packagesServices.trust(this.package.packageName, this.tagName, this.tagInfo.verification != null ? this.tagInfo.verification.signature : null, GLOBALS.registry.name).subscribe((ok) => {
 
       if (ok) {
         this.onNoClick({added: this.tagName})
@@ -90,7 +101,7 @@ export class TagInfoComponent implements OnInit {
 
   public removeTrust(): void {
 
-    this._packagesServices.untrust(this.package.name, this.tagName, GLOBALS.registry.name).subscribe((ok) => {
+    this._packagesServices.untrust(this.package.packageName, this.tagName, GLOBALS.registry.name).subscribe((ok) => {
 
       if (ok) {
         this.onNoClick({removed: this.tagName})
@@ -113,6 +124,6 @@ export class TagInfoComponent implements OnInit {
   public downloadPackage(): void {
 
     // tslint:disable-next-line:max-line-length
-    window.open(environment.BASE_API + 'package/' + this.package.name + '/download/' + this.tagName + '?registry=' + encodeURIComponent(GLOBALS.registry.name) + '&ignoreVerification=true')
+    window.open(environment.BASE_API + 'package/' + this.package.packageName + '/' + this.tagName + '/download/' + this.tagName + '?registry=' + encodeURIComponent(GLOBALS.registry.name) + '&ignoreVerification=true')
   }
 }

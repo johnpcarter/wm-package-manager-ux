@@ -18,6 +18,9 @@ import { MatSnackBarModule } from '@angular/material/snack-bar'
 import { MatMenuModule } from '@angular/material/menu'
 import { MatSelectModule } from '@angular/material/select'
 import { MatInputModule } from '@angular/material/input'
+import { MatExpansionModule } from '@angular/material/expansion'
+import { MatSlideToggleModule } from '@angular/material/slide-toggle'
+import { MatRadioModule } from '@angular/material/radio'
 import { MAT_CHECKBOX_DEFAULT_OPTIONS, MatCheckboxDefaultOptions, MatCheckboxModule } from '@angular/material/checkbox'
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS, MatFormFieldModule } from '@angular/material/form-field'
 
@@ -37,13 +40,16 @@ import { AddRegistryComponent } from './components/add-registry.component'
 import { RemoveConfirmationComponent } from './components/remove-confirmation.component'
 import { AddPackageComponent } from './components/add-package.component'
 import { AddUserComponent } from './components/add-user.component'
-import {MatExpansionModule} from '@angular/material/expansion';
+import { ListRegistriesComponent } from './components/list-registries.component'
+import { NotificationsService } from './services/notifications-service'
+import { ListPackagesRegistriesComponent } from './components/list-package-registries.component'
+import { ManageUsersComponent } from './components/manage-users.component'
 
 const routes: Routes = [
   { path: '', component: PackagesComponent },
   { path: 'settings', component: SettingsComponent },
   { path: 'registries', component: RegistriesComponent },
-  { path: ':id', component: PackagesComponent },
+  { path: ':registry', component: PackagesComponent },
   { path: '**', component: PackagesComponent }
 ]
 
@@ -59,7 +65,10 @@ const routes: Routes = [
     AddRegistryComponent,
     AddPackageComponent,
     AddUserComponent,
+    ManageUsersComponent,
     RemoveConfirmationComponent,
+    ListRegistriesComponent,
+    ListPackagesRegistriesComponent,
     PackageFilterPipe
   ],
   imports: [
@@ -83,7 +92,9 @@ const routes: Routes = [
     ReactiveFormsModule,
     MatSelectModule,
     MatCheckboxModule,
-    MatExpansionModule
+    MatExpansionModule,
+    MatSlideToggleModule,
+    MatRadioModule
   ],
   exports: [
     RouterModule,
@@ -95,6 +106,7 @@ const routes: Routes = [
     RegistriesService,
     PackagesServices,
     SettingsService,
+    NotificationsService,
     {provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: {appearance: 'fill'}},
     {provide: MAT_CHECKBOX_DEFAULT_OPTIONS, useValue: { clickAction: 'noop' } as MatCheckboxDefaultOptions}
   ],

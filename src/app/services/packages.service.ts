@@ -6,8 +6,9 @@ import { catchError, map } from 'rxjs/operators'
 import { environment } from '../../environments/environment'
 import { GLOBALS } from '../globals'
 
-import { Package } from '../models/Package'
+import { Package, PackageStat } from '../models/Package'
 import { Tag } from '../models/Tag'
+import { GitInfo } from '../models/GitInfo'
 
 @Injectable()
 export class PackagesServices {
@@ -53,7 +54,7 @@ export class PackagesServices {
 
   public package(packageName: string, registry?: string): Observable<Package> {
 
-    let url: string = environment.BASE_API + PackagesServices.PACKAGE + '/' + encodeURIComponent(packageName) + '/details'
+    let url: string = environment.BASE_API + PackagesServices.PACKAGE + '/' + encodeURIComponent(packageName)
 
     if (registry) {
       url += '?registry=' + encodeURIComponent(registry)
@@ -73,6 +74,66 @@ export class PackagesServices {
       }))
   }
 
+  public gitInfo(packageName: string, registry?: string): Observable<GitInfo> {
+
+    let url: string = environment.BASE_API + PackagesServices.PACKAGE + '/' + encodeURIComponent(packageName) + '/git'
+
+    if (registry) {
+      url += '?registry=' + encodeURIComponent(registry)
+    }
+
+    const headers = GLOBALS.headers()
+
+    return this._http.get(url, { headers })
+      .pipe(catchError(error => {
+        return of({})
+      }))
+      .pipe(map( (responseData: any) => {
+          return responseData
+        },
+        error => {
+          return []
+        }))
+  }
+
+  public history(packageName: any, registry: string, category?: string): Observable<PackageStat[]> {
+
+    let url: string = environment.BASE_API + PackagesServices.PACKAGE + '/' + encodeURIComponent(packageName) + '/history'
+
+    if (registry) {
+      url += '?registry=' + encodeURIComponent(registry)
+    }
+
+    const headers = GLOBALS.headers()
+
+    return this._http.get(url, { headers })
+      .pipe(catchError(error => {
+        return of({values: []})
+      }))
+      .pipe(map( (responseData: any) => {
+        return responseData.values
+      }))
+  }
+
+  public users(packageName: any, registry: string, category?: string): Observable<string[]> {
+
+    let url: string = environment.BASE_API + PackagesServices.PACKAGE + '/' + encodeURIComponent(packageName) + '/users'
+
+    if (registry) {
+      url += '?registry=' + encodeURIComponent(registry)
+    }
+
+    const headers = GLOBALS.headers()
+
+    return this._http.get(url, { headers })
+      .pipe(catchError(error => {
+        return of({user: []})
+      }))
+      .pipe(map( (responseData: any) => {
+        return responseData.users
+      }))
+  }
+
   public createPackage(pckg: Package, registry?: string): Observable<boolean> {
 
     let url: string = environment.BASE_API + PackagesServices.PACKAGE
@@ -84,6 +145,44 @@ export class PackagesServices {
     }
 
     return this._http.post(url, body, { headers })
+      .pipe(catchError(error => {
+        return of({success: false})
+      }))
+      .pipe(map( (responseData: any) => {
+        return responseData.success
+      }))
+  }
+
+  public setVisibility(packageName: string, isVisible: boolean, registry?: string): Observable<boolean> {
+
+    let url: string = environment.BASE_API + PackagesServices.PACKAGE + '/' + encodeURIComponent(packageName) + '/visibility/' + isVisible
+
+    if (registry) {
+      url += '?registry=' + encodeURIComponent(registry)
+    }
+
+    const headers = GLOBALS.headers()
+
+    return this._http.put(url, '', { headers })
+      .pipe(catchError(error => {
+        return of({success: false})
+      }))
+      .pipe(map( (responseData: any) => {
+        return responseData.success
+      }))
+  }
+
+  public migratePackage(packageName: string, toRegistry: string, registry?: string): Observable<boolean> {
+
+    let url: string = environment.BASE_API + PackagesServices.PACKAGE + '/' + encodeURIComponent(packageName) + '/move/' + toRegistry
+
+    if (registry) {
+      url += '?registry=' + encodeURIComponent(registry)
+    }
+
+    const headers = GLOBALS.headers()
+
+    return this._http.put(url, '', { headers })
       .pipe(catchError(error => {
         return of({success: false})
       }))
@@ -169,6 +268,26 @@ export class PackagesServices {
     const headers = GLOBALS.headers()
 
     return this._http.delete(url, { headers })
+      .pipe(catchError(error => {
+        return of({success: false})
+      }))
+      .pipe(map( (responseData: any) => {
+        return responseData.success
+      }))
+  }
+
+  public syncUser(packageName: string, user: string, registry?: string): Observable<boolean> {
+
+    let url: string = environment.BASE_API + PackagesServices.PACKAGE + '/' + encodeURIComponent(packageName)
+      + '/user/' + user
+
+    if (registry) {
+      url += '?registry=' + encodeURIComponent(registry)
+    }
+
+    const headers = GLOBALS.headers()
+
+    return this._http.post(url, '', { headers })
       .pipe(catchError(error => {
         return of({success: false})
       }))

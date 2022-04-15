@@ -26,7 +26,7 @@ export class RegistriesComponent implements OnInit {
   public faPlusSquare = faPlusSquare
   public faCircle = faCircle
 
-  // tslint:disable-next-line:variable-name
+  // tslint:disable-next-line:variable-name max-line-length
   constructor(private _router: Router, private _registriesService: RegistriesService, private _dialog: MatDialog, private _snackbar: MatSnackBar) {
 
     this.load()
@@ -35,8 +35,10 @@ export class RegistriesComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  public showPackagesInRegistry(id: string): void {
-    this._router.navigate(['', id])
+  public showPackagesInRegistry(registry: string): void {
+    this._router.navigate([''], {
+      queryParams: { registry: registry },
+      queryParamsHandling: 'merge' })
   }
 
   public isPrivate(r: Registry): boolean {
@@ -45,20 +47,6 @@ export class RegistriesComponent implements OnInit {
 
   public isAdministrator(): boolean {
     return GLOBALS.isAdministrator()
-  }
-
-  public addRegistry(): void {
-
-    if (this.isAdministrator()) {
-      const dialogRef = this._dialog.open(AddRegistryComponent, {
-        width: '400px',
-        height: '600px'
-      })
-
-      dialogRef.afterClosed().subscribe(result => {
-        this.load()
-      })
-    }
   }
 
   public setDefaultForRegistry(r: Registry): void {
@@ -77,23 +65,18 @@ export class RegistriesComponent implements OnInit {
     })
   }
 
-  public addPackage(r: Registry): void {
+  public addRegistry(): void {
 
-    if (!this.isAdministrator()) {
-      return
+    if (this.isAdministrator()) {
+      const dialogRef = this._dialog.open(AddRegistryComponent, {
+        width: '400px',
+        height: '600px'
+      })
+
+      dialogRef.afterClosed().subscribe(result => {
+        this.load()
+      })
     }
-
-    const dialogRef = this._dialog.open(AddPackageComponent, {
-      width: '80%',
-      height: '900px',
-      data: {
-        registry: r
-      },
-    })
-
-    dialogRef.afterClosed().subscribe(result => {
-
-    })
   }
 
   public removeRegistry(r: Registry): void {

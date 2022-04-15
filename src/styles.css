@@ -73,7 +73,6 @@ div.mat-expansion-panel-body {
 .mat-tab-group.mat-tab-fill-height .mat-tab-body-wrapper {
     flex: 1 1 100%;
  }
-
 .mat-list-text {
   font-size: 14px;
 }
@@ -238,6 +237,17 @@ mat-card {
   width: 2rem;
   height: 1px;
 }
+.panel {
+  background-color: #eefdfd;
+  color: #0c5593;
+  min-width: 150px;
+  min-height: 150px;
+  border: lightgray solid 1px;
+  padding: 10px;
+  margin: 20px;
+  display: flex;
+  flex-direction: column;
+}
 .table-rounded-border {
   width: 300px;
   margin: auto;
@@ -302,7 +312,12 @@ mat-card {
 .red-on-hover:hover {
     color: red;
 }
-
+.submit-on-hover {
+  color: #100e0e;
+}
+.submit-on-hover:hover {
+  color: red;
+}
 .green-on-hover {
   color: #eeeeee;
 }

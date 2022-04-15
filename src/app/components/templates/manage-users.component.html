@@ -1,0 +1,16 @@
+<div style="display: flex; flex-direction: column; justify-content: space-between; width: 100%; height: 100%">
+  <div>
+    <div style="float: right"><fa-icon class="icon" [icon]="faTimes" size="1x" (click)="onNoClick()"></fa-icon></div>
+  <h2>Users</h2>
+   <mat-card-content>
+       <mat-action-list>
+         <mat-list-item *ngFor="let user of users">
+           <p [ngStyle]="styleForUserLabel(user)" tyle="">{{truncate(user)}}</p>
+           <button *ngIf="user !== 'everybody'" mat-button (click)="removeUser(user)">
+             <fa-icon [icon]="faTrashAlt"></fa-icon>
+           </button>
+         </mat-list-item>
+       </mat-action-list>
+   </mat-card-content>
+</div>
+</div>

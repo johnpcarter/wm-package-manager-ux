@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core'
-import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http'
+import { HttpClient } from '@angular/common/http'
 import { Observable, of } from 'rxjs'
 import { map, catchError } from 'rxjs/operators'
 
@@ -16,7 +16,7 @@ export class SettingsService {
 
   }
 
-  public connect(user: string, passswrd: string): Observable<boolean> {
+  public connect(user: string, passswrd: string): Observable<string> {
 
     const url: string = environment.LOGIN_CONNECT
 
@@ -25,15 +25,14 @@ export class SettingsService {
 
     return this._http.post(url, data, { headers })
       .pipe(catchError(error => {
-        return of(false)
+        return of(null)
       }))
       .pipe(map( (responseData: any) => {
 
-        if (responseData &&  responseData.metadata) {
-          GLOBALS.userType = responseData.metadata.userType
-          return true
+        if (responseData && responseData.metadata) {
+          return responseData.metadata.userType
         } else {
-          return false
+          return null
         }
       }))
   }
@@ -75,12 +74,12 @@ export class SettingsService {
       }))
   }
 
-  public setDeveloperCredentials(src: string, id: string, token: string): Observable<boolean> {
+  public setDeveloperCredentials(src: string, id: string, tken: string): Observable<boolean> {
 
     const url: string = environment.BASE_API + 'credentials'
 
     const headers = GLOBALS.headers()
-    const data = { source: src, user: id, token: token}
+    const data = { source: src, user: id, token: tken}
 
     return this._http.post(url, data, { headers })
       .pipe(catchError(error => {
