@@ -138,6 +138,8 @@ export class PackagesComponent implements OnInit {
 
   private setRegistry(registry: string, packageName?: string): void {
 
+    console.log(' ======== got ' + registry + ', ' + packageName)
+
     this._registriesServices.getRegistry(registry).subscribe((r) => {
 
       this.registry = r
