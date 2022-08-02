@@ -1,66 +1,110 @@
 <div style="display: flex; flex-direction: column; justify-content: space-between; width: 100%; height: 100%">
   <div style="width: 100%">
     <div style="float: right"><fa-icon class="icon" [icon]="faTimes" size="1x" (click)="onNoClick()"></fa-icon></div>
-    <h2>Tag {{tagName}} for {{package.packageName}}</h2>
+    <h2>{{tagName}} for {{package.packageName}}</h2>
   </div>
-    <div style="display: flex; flex-direction: row; justify-content: flex-start; padding: 20px">
-      <fa-icon matListIcon class="icon" [icon]="faGitAlt" size="2x" style="width: 60px; height: 60px;"></fa-icon>
-      <div style="width: 100%">
-        <p>
-          <span *ngIf="tagInfo" style="color: gray"> {{tagInfo.message}}</span>
-        </p>
-        <div style="display: inline-flex; width: 100%; justify-content: flex-start">
-          <div style="display: flex; flex-direction: column; min-width: 200px">
-            <p style="color: lightgray; font-size: small"><fa-icon [icon]="faUser"></fa-icon> By</p>
-            <p style="font-weight: bold">{{tagInfo.committer.name}}</p>
-          </div>
-          <div style="display: flex; flex-direction: column; min-width: 250px; align-items: flex-start">
-            <p style="color: lightgray; font-size: small"><fa-icon [icon]="faEnvelope"></fa-icon> email</p>
-            <p style="text-align: center; font-weight: bold">{{tagInfo.committer.email}}</p>
-          </div>
-          <div style="display: flex; flex-direction: column; min-width: 200px; align-items: flex-start">
-            <p style="color: lightgray; font-size: small"><fa-icon [icon]="faClock"></fa-icon> when</p>
-            <p style="text-align: center; font-weight: bold">{{tagInfo.committer.date}}</p>
+  <mat-tab-group>
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <fa-icon matListIcon class="icon" [icon]="faBox" size="1x" style="margin-right: 20px"></fa-icon>
+        Package manifest
+      </ng-template>
+      <div style="min-height: 460px">
+        <div style="display: flex; flex-direction: row; justify-content: flex-start; padding: 20px">
+          <fa-icon matListIcon class="icon" [icon]="faBox" size="2x" style="width: 60px; height: 60px;"></fa-icon>
+          <div style="width: 100%">
+            <p style="min-height: 50px">
+              <span *ngIf="tagInfo" style="color: gray;"> {{tagInfo.manifest.description || "No description"}}</span>
+            </p>
+            <div style="display: inline-flex; width: 100%; justify-content: flex-start">
+              <div style="display: flex; flex-direction: column; min-width: 200px">
+                <p style="color: lightgray; font-size: small"> version</p>
+                <p style="font-weight: bold">{{tagInfo.manifest.version}}</p>
+              </div>
+              <div style="display: flex; flex-direction: column; min-width: 250px; align-items: flex-start">
+                <p style="color: lightgray; font-size: small"> build</p>
+                <p style="text-align: center; font-weight: bold">{{tagInfo.manifest.build}}</p>
+              </div>
+              <div style="display: flex; flex-direction: column; min-width: 200px; align-items: flex-start">
+                <p style="color: lightgray; font-size: small"> webMethods version</p>
+                <p style="text-align: center; font-weight: bold">{{tagInfo.manifest.targetWmVersion || tagInfo.manifest.sourceWmVersion}}</p>
+              </div>
+            </div>
+            <div style="display: flex; flex-direction: column; min-width: 200px; align-items: flex-start">
+              <p style="color: lightgray; font-size: small"> Dependencies</p>
+              <p *ngFor="let d of tagInfo.manifest.requires" style="text-align: center; font-weight: bold">{{d.package}} / {{d.version}}</p>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-    <div *ngIf="isSigned(); else not_signed" style="display: flex; flex-direction: row; justify-content: flex-start; padding: 20px">
-      <fa-icon matListIcon class="icon" [icon]="faStamp" size="2x" style="width: 60px; height: 60px;"></fa-icon>
-      <div style="width: 100%">
-        <div style="display: inline-flex; width: 100%; justify-content: flex-start">
-          <div *ngIf="isSigned()" style="display: flex; flex-direction: column; min-width: 200px">
-            <p style="color: lightgray; font-size: small"><fa-icon [icon]="faUser"></fa-icon> signed</p>
-            <p style="font-weight: bold">{{isSigned() ? 'Yes' : 'No'}}</p>
-          </div>
-          <div *ngIf="isSigned()" style="display: flex; flex-direction: column; min-width: 250px; align-items: flex-start">
-            <p style="color: lightgray; font-size: small"><fa-icon [icon]="faCheckCircle"></fa-icon> verified</p>
-            <p style="text-align: center; font-weight: bold">{{isVerified() ? 'Valid' : 'failed' }}</p>
-          </div>
-          <div *ngIf="isSigned()" style="display: flex; flex-direction: column; min-width: 250px; align-items: flex-start">
-            <p style="color: lightgray; font-size: small"><fa-icon [icon]="faQuestionCircle"></fa-icon> reason</p>
-            <p style="text-align: center; font-weight: bold">{{tagInfo.verification.reason}}</p>
+    </mat-tab>
+    <mat-tab *ngIf="haveGitInfo">
+      <ng-template mat-tab-label>
+        <fa-icon matListIcon class="icon" [icon]="faGitAlt" size="1x" style="margin-right: 20px"></fa-icon>
+        Git tag
+      </ng-template>
+      <div style="min-height: 460px">
+        <div style="display: flex; flex-direction: row; justify-content: flex-start; padding: 20px">
+          <fa-icon matListIcon class="icon" [icon]="faGitAlt" size="2x" style="width: 60px; height: 60px;"></fa-icon>
+          <div style="width: 100%">
+            <p>
+              <span *ngIf="tagInfo" style="color: gray"> {{tagInfo.message}}</span>
+            </p>
+            <div style="display: inline-flex; width: 100%; justify-content: flex-start">
+              <div style="display: flex; flex-direction: column; min-width: 200px">
+                <p style="color: lightgray; font-size: small"><fa-icon [icon]="faUser"></fa-icon> By</p>
+                <p style="font-weight: bold">{{tagInfo.committer.name}}</p>
+              </div>
+              <div style="display: flex; flex-direction: column; min-width: 250px; align-items: flex-start">
+                <p style="color: lightgray; font-size: small"><fa-icon [icon]="faEnvelope"></fa-icon> email</p>
+                <p style="text-align: center; font-weight: bold">{{tagInfo.committer.email}}</p>
+              </div>
+              <div style="display: flex; flex-direction: column; min-width: 200px; align-items: flex-start">
+                <p style="color: lightgray; font-size: small"><fa-icon [icon]="faClock"></fa-icon> when</p>
+                <p style="text-align: center; font-weight: bold">{{tagInfo.committer.date}}</p>
+              </div>
+            </div>
           </div>
         </div>
-        <div>
-          <p style="color: lightgray; font-size: small"><fa-icon [icon]="faSignature"></fa-icon> code signature</p>
-          <textarea style="width: 100%; border: none; background-color: lightgoldenrodyellow" disabled="true">{{tagInfo.verification.signature == null ? 'none' : tagInfo.verification.signature}}</textarea>
+        <div *ngIf="isSigned(); else not_signed" style="display: flex; flex-direction: row; justify-content: flex-start; padding: 20px">
+          <fa-icon matListIcon class="icon" [icon]="faStamp" size="2x" style="width: 60px; height: 60px;"></fa-icon>
+          <div style="width: 100%">
+            <div style="display: inline-flex; width: 100%; justify-content: flex-start">
+              <div *ngIf="isSigned()" style="display: flex; flex-direction: column; min-width: 200px">
+                <p style="color: lightgray; font-size: small"><fa-icon [icon]="faUser"></fa-icon> signed</p>
+                <p style="font-weight: bold">{{isSigned() ? 'Yes' : 'No'}}</p>
+              </div>
+              <div *ngIf="isSigned()" style="display: flex; flex-direction: column; min-width: 250px; align-items: flex-start">
+                <p style="color: lightgray; font-size: small"><fa-icon [icon]="faCheckCircle"></fa-icon> verified</p>
+                <p style="text-align: center; font-weight: bold">{{isVerified() ? 'Valid' : 'failed' }}</p>
+              </div>
+              <div *ngIf="isSigned()" style="display: flex; flex-direction: column; min-width: 250px; align-items: flex-start">
+                <p style="color: lightgray; font-size: small"><fa-icon [icon]="faQuestionCircle"></fa-icon> reason</p>
+                <p style="text-align: center; font-weight: bold">{{tagInfo.verification.reason}}</p>
+              </div>
+            </div>
+            <div>
+              <p style="color: lightgray; font-size: small"><fa-icon [icon]="faSignature"></fa-icon> code signature</p>
+              <textarea style="width: 100%; height: 100px; border: none; background-color: lightgoldenrodyellow" disabled="true">{{tagInfo.verification.signature == null ? 'none' : tagInfo.verification.signature}}</textarea>
+            </div>
+          </div>
         </div>
+        <ng-template #not_signed>
+          <div style="display: flex; flex-direction: row; justify-content: flex-start; padding: 20px">
+            <fa-icon matListIcon class="icon" [icon]="faExclamationTriangle" size="2x" style="width: 60px; height: 60px;"></fa-icon>
+            <p style="padding-right: 30px; font-style: italic; color: red">This tag has not been digitally signed, hence you should not trust it as the code could be updated after!</p>
+          </div>
+        </ng-template>
       </div>
-    </div>
-    <ng-template #not_signed>
-      <div style="display: flex; flex-direction: row; justify-content: flex-start; padding: 20px">
-        <fa-icon matListIcon class="icon" [icon]="faExclamationTriangle" size="2x" style="width: 60px; height: 60px;"></fa-icon>
-        <p style="padding-right: 30px; font-style: italic; color: red">This tag has not been digitally signed, hence you should not trust it as the code could be updated after!</p>
-      </div>
-    </ng-template>
-    <mat-card-actions style="flex-grow: 0">
-      <button mat-raised-button color="primary" style="margin-top: 5px" (click)="downloadPackage()"><fa-icon [icon]="faArrowCircleDown"></fa-icon> Download</button>
+    </mat-tab>
+  </mat-tab-group>
+  <mat-card-actions style="flex-grow: 0">
+    <button mat-raised-button color="primary" style="margin-top: 5px" (click)="downloadPackage()"><fa-icon [icon]="faArrowCircleDown"></fa-icon> Download</button>
 
-      <button *ngIf="isAdministrator() && trusted" mat-raised-button color="accent" style=" margin-top: 5px; float: right" (click)="removeTrust()"> <fa-icon matListIcon class="icon" [icon]="faThumbsDown" size="1x"></fa-icon> {{isSigned() ? "Remove trust" : "Remove" }} </button>
-      <button *ngIf="isAdministrator() && !trusted" mat-raised-button color="primary" style=" margin-top: 5px; float: right" (click)="trust()"> <fa-icon matListIcon class="icon" [icon]="faThumbsUp" size="1x"></fa-icon> {{isSigned() ? "Trust" : "Accept" }} </button>
-      <div style="width: 50%; font-size: x-small; line-height: 12px; font-style: italic; margin-top: 5px">Developers can choose to sign their code when creating a tag with `$ git tag -s -m "this is code signed tag"'.
-        We will use this to check that the tagged version has not been replaced when downloading.
-      </div>
-    </mat-card-actions>
+    <button *ngIf="isAdministrator() && trusted" mat-raised-button color="accent" style=" margin-top: 5px; float: right" (click)="removeTrust()"> <fa-icon matListIcon class="icon" [icon]="faThumbsDown" size="1x"></fa-icon> {{isSigned() ? "Remove trust" : "Remove" }} </button>
+    <button *ngIf="isAdministrator() && !trusted" mat-raised-button color="primary" style=" margin-top: 5px; float: right" (click)="trust()"> <fa-icon matListIcon class="icon" [icon]="faThumbsUp" size="1x"></fa-icon> {{isSigned() ? "Trust" : "Accept" }} </button>
+    <!-- <div style="width: 50%; font-size: x-small; line-height: 12px; font-style: italic; margin-top: 5px">Developers can choose to sign their code when creating a tag with `$ git tag -s -m "this is code signed tag"'.
+      We will use this to check that the tagged version has not been replaced when downloading.
+    </div> -->
+  </mat-card-actions>
 </div>

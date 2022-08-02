@@ -1,7 +1,10 @@
+import { Manifest } from './Manifest'
+
 export class Tag {
   public message: string
   public committer: Committer = new Committer()
   public verification: Verification = new Verification()
+  public manifest: Manifest = new Manifest()
 }
 
 export class Committer {

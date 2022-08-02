@@ -3,7 +3,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog'
 import { MatSnackBar } from '@angular/material/snack-bar'
 
 import { faThumbsUp, faThumbsDown, faTimes, faClock, faUser, faEnvelope, faStamp, faSignature, faCheckCircle, faQuestionCircle,
-                faArrowCircleDown, faExclamationTriangle } from '@fortawesome/free-solid-svg-icons'
+                faArrowCircleDown, faExclamationTriangle, faBox } from '@fortawesome/free-solid-svg-icons'
 import { faGitAlt } from '@fortawesome/free-brands-svg-icons'
 
 import { Tag } from '../models/Tag'
@@ -21,6 +21,7 @@ import { environment } from '../../environments/environment'
 export class TagInfoComponent implements OnInit {
 
   public faThumbsUp = faThumbsUp
+  public faBox = faBox
   public faTimes = faTimes
   public faClock = faClock
   public faUser = faUser
@@ -39,6 +40,7 @@ export class TagInfoComponent implements OnInit {
   public tagInfo: Tag
 
   public trusted: string = null
+  public haveGitInfo: boolean = false
 
   // tslint:disable-next-line:variable-name
   private _dialogRef: MatDialogRef<any>
@@ -52,9 +54,17 @@ export class TagInfoComponent implements OnInit {
     this.trusted = data.when
     this.tagInfo = new Tag()
 
-    this._packagesServices.getTag(this.package.packageName, this.tagName, GLOBALS.registry.name).subscribe((t) => {
-      this.tagInfo = t
-    })
+    if (this.tagName) {
+      this._packagesServices.getTag(this.package.packageName, this.tagName, GLOBALS.registry.name).subscribe((t) => {
+
+        this.tagInfo = t
+        this.haveGitInfo = true
+      })
+    } else {
+      _packagesServices.getPackageManifest(this.package.packageName, this.tagName, GLOBALS.registry.name).subscribe((m) => {
+        this.tagInfo.manifest = m
+      })
+    }
   }
 
   ngOnInit(): void {
@@ -124,6 +134,10 @@ export class TagInfoComponent implements OnInit {
   public downloadPackage(): void {
 
     // tslint:disable-next-line:max-line-length
-    window.open(environment.BASE_API + 'package/' + this.package.packageName + '/' + this.tagName + '/download/' + this.tagName + '?registry=' + encodeURIComponent(GLOBALS.registry.name) + '&ignoreVerification=true')
+    if (this.tagName) {
+      window.open(environment.BASE_API + 'package/' + this.package.packageName + '/' + this.tagName + '/download/' + this.tagName + '?registry=' + encodeURIComponent(GLOBALS.registry.name) + '&ignoreVerification=true')
+    } else {
+      window.open(environment.BASE_API + 'package/' + this.package.packageName + '/main/download/' + '?registry=' + encodeURIComponent(GLOBALS.registry.name) + '&ignoreVerification=true&ignoreSignatureMatch=true')
+    }
   }
 }

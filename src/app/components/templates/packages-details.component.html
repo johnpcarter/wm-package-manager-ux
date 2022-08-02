@@ -25,7 +25,7 @@
       </div>
 
         <div style="display: flex; flex-direction: row; justify-content: flex-start;">
-          <fa-icon matListIcon class="icon" [icon]="faUniversalAccess" size="2x" style="width: 60px; height: 60px; padding-right: 30px"></fa-icon>
+          <fa-icon matListIcon class="icon" [icon]="faInfoCircle" size="2x" style="width: 60px; height: 60px; padding-left: 30px"></fa-icon>
           <div style="display: inline-flex; justify-content: space-between; align-items: flex-start">
             <div>
               <p>
@@ -81,10 +81,13 @@
           <fa-icon matListIcon class="icon" [icon]="faTags" size="2x" style="width: 60px; height: 60px; padding-left: 10px;"></fa-icon>
           <div style="width: 100%">
             <p>
-              <mat-chip-list>
+              <mat-chip-list *ngIf="haveAvailableTags(); else notags">
                 <mat-chip *ngFor="let tag of this.package.trustedTags" (click)="showTagInfo(tag.tag, tag.when, tag.by, tag.signature)" [color]="colorForTag(tag)" selected>{{tag.tag}} <fa-icon matChipRemove matIcon class="icon" [icon]="faCheckCircle" size="sm" style="margin-right: -5px; margin-bottom: 5px"></fa-icon></mat-chip>
                   <mat-chip *ngFor="let tag of availableTags" (click)="showTagInfo(tag)">{{tag}}</mat-chip>
               </mat-chip-list>
+              <ng-template #notags>
+                <mat-chip-list><mat-chip (click)="showTagInfo(null)">latest</mat-chip></mat-chip-list>
+              </ng-template>
             </p>
           </div>
         </div>
@@ -127,7 +130,6 @@
       </div>
     </div>
   <mat-card-actions style="flex-grow: 0">
-    <button mat-raised-button color="primary" style="margin-top: 5px" (click)="downloadPackage()"><fa-icon [icon]="faArrowCircleDown"></fa-icon> Download latest</button>
     <div style="float: right">
       <button *ngIf="isAdministrator()" mat-raised-button color="accent" style="margin-top: 5px; margin-right: 20px" (click)="unregisterPackage()"> <fa-icon matListIcon class="icon" [icon]="faEraser" size="1x"></fa-icon> Remove</button>
       <button *ngIf="isAdministrator()" mat-raised-button color="primary" style="float: right; margin-top: 5px" (click)="migratePackage()"> <fa-icon matListIcon class="icon" [icon]="faRocket" size="1x"></fa-icon> Migrate</button>

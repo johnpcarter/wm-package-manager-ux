@@ -4,7 +4,7 @@ import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog
 import { ThemePalette } from '@angular/material/core'
 import { MatSnackBar } from '@angular/material/snack-bar'
 
-import { faTimes, faUniversalAccess, faTags, faObjectGroup, faCheckCircle, faEraser, faKey, faBinoculars, faStar, faLongArrowAltDown,
+import { faTimes, faUniversalAccess, faTags, faObjectGroup, faInfoCircle, faCheckCircle, faEraser, faKey, faBinoculars, faStar, faLongArrowAltDown,
   faTools, faClock, faUsers, faLockOpen, faPlusCircle, faMinusCircle, faRocket, faBell, faBellSlash, faArrowCircleDown, faFolder,
   faGlobeAfrica, faEye, faEyeSlash, faEllipsisV, faUnlock } from '@fortawesome/free-solid-svg-icons'
 import { faGitAlt, faGithub } from '@fortawesome/free-brands-svg-icons'
@@ -43,6 +43,7 @@ export class PackageDetailsComponent implements OnInit {
   public faBinoculars = faBinoculars
   public faStar = faStar
   public faLongArrowAltDown = faLongArrowAltDown
+  public faInfoCircle = faInfoCircle
   public faClock = faClock
   public faUsers = faUsers
   public faLockOpen = faLockOpen
@@ -160,11 +161,15 @@ export class PackageDetailsComponent implements OnInit {
     return this._didLoad && GLOBALS.isAdministrator()
   }
 
+  public haveAvailableTags(): boolean {
+    return this.package.trustedTags.length > 0 || this.availableTags.length > 0
+  }
+
   public showTagInfo(t: string, w?: string, bye?: string, s?: string): void {
 
     const dialogRef = this._dialog.open(TagInfoComponent, {
       width: '60%',
-      height: '550px',
+      height: '650px',
       data: {
         package: this.package,
         tag: t,
@@ -245,12 +250,6 @@ export class PackageDetailsComponent implements OnInit {
       // do nothing
 
     }
-  }
-
-  public downloadPackage(): void {
-
-    // tslint:disable-next-line:max-line-length
-    window.open(environment.BASE_API + 'package/' + this.package.packageName + '/main/download/' + '?registry=' + encodeURIComponent(GLOBALS.registry.name) + '&ignoreVerification=true&ignoreSignatureMatch=true')
   }
 
   public first20Users(): string[] {

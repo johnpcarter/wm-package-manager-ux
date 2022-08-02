@@ -9,6 +9,7 @@ import { GLOBALS } from '../globals'
 import { Package, PackageStat } from '../models/Package'
 import { Tag } from '../models/Tag'
 import { GitInfo } from '../models/GitInfo'
+import {Manifest} from '../models/Manifest';
 
 @Injectable()
 export class PackagesServices {
@@ -214,6 +215,29 @@ export class PackagesServices {
 
     let url: string = environment.BASE_API + PackagesServices.PACKAGE + '/' + encodeURIComponent(packageName)
       + '/tag/' + encodeURIComponent(tag)
+
+    if (registry) {
+      url += '?registry=' + encodeURIComponent(registry)
+    }
+
+    const headers = GLOBALS.headers()
+
+    return this._http.get(url, { headers })
+      .pipe(catchError(error => {
+        return of({})
+      }))
+      .pipe(map( (responseData: any) => {
+        return responseData
+      }))
+  }
+
+  public getPackageManifest(packageName: string, tag?: string, registry?: string): Observable<Manifest> {
+
+    let url: string = environment.BASE_API + PackagesServices.PACKAGE + '/' + encodeURIComponent(packageName) + '/manifest'
+
+    if (tag) {
+      url += '/' + + encodeURIComponent(tag)
+    }
 
     if (registry) {
       url += '?registry=' + encodeURIComponent(registry)
