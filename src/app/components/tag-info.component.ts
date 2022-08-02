@@ -135,9 +135,11 @@ export class TagInfoComponent implements OnInit {
 
     // tslint:disable-next-line:max-line-length
     if (this.tagName) {
-      window.open(environment.BASE_API + 'package/' + this.package.packageName + '/' + this.tagName + '/download/' + this.tagName + '?registry=' + encodeURIComponent(GLOBALS.registry.name) + '&ignoreVerification=true')
+      window.open(environment.BASE_API + 'package/' + this.package.packageName + '/' + this.tagName
+        + '/download?registry=' + encodeURIComponent(GLOBALS.registry.name) + '&ignoreVerification=true')
     } else {
-      window.open(environment.BASE_API + 'package/' + this.package.packageName + '/main/download/' + '?registry=' + encodeURIComponent(GLOBALS.registry.name) + '&ignoreVerification=true&ignoreSignatureMatch=true')
+      window.open(environment.BASE_API + 'package/' + this.package.packageName + '/main/download' +
+        '?registry=' + encodeURIComponent(GLOBALS.registry.name) + '&ignoreVerification=true&ignoreSignatureMatch=true')
     }
   }
 }
