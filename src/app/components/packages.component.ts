@@ -1,21 +1,22 @@
-import { ActivatedRoute, Router } from '@angular/router'
-import { Component, OnInit, ViewChild } from '@angular/core'
+import {ActivatedRoute, Router} from '@angular/router'
+import {Component, OnInit, ViewChild} from '@angular/core'
 
-import { MatDialog } from '@angular/material/dialog'
-import { MatTable } from '@angular/material/table'
+import {MatDialog} from '@angular/material/dialog'
+import {MatTable} from '@angular/material/table'
 
-import { faKey, faPlusSquare } from '@fortawesome/free-solid-svg-icons'
+import {faKey, faPlusSquare} from '@fortawesome/free-solid-svg-icons'
 
-import { Registry } from '../models/Registry'
-import { Package } from '../models/Package'
+import {Registry, RegistryType} from '../models/Registry'
+import {Package} from '../models/Package'
 
-import { PackagesServices } from '../services/packages.service'
-import { RegistriesService } from '../services/registries.service'
+import {PackagesServices} from '../services/packages.service'
+import {RegistriesService} from '../services/registries.service'
 
-import { PackageDetailsComponent } from './package-details.component'
+import {PackageDetailsComponent} from './package-details.component'
 
-import { GLOBALS } from '../globals'
+import {GLOBALS} from '../globals'
 import {AddPackageComponent} from './add-package.component'
+import {LoginComponent} from './login.component'
 
 @Component({
   selector: 'app-packages',
@@ -46,7 +47,8 @@ export class PackagesComponent implements OnInit {
 
     this._activatedRoute.queryParams
       .subscribe(params => {
-        this.setRegistry(params['registry'], params['package'])
+        // @ts-ignore
+        this.setRegistry(params.registry, params.package)
       })
   }
 
@@ -142,9 +144,46 @@ export class PackagesComponent implements OnInit {
 
     this._registriesServices.getRegistry(registry).subscribe((r) => {
 
-      this.registry = r
-      GLOBALS.registry = r
-      this.load(packageName)
+      if (r != null) {
+        this.registry = r
+        GLOBALS.registry = r
+
+        if (this.registry.type === RegistryType.private && !GLOBALS.user) {
+          // this._router.navigate(['/registries'])
+          this.showConnectDialog(registry, packageName)
+        } else {
+          this.load(packageName)
+        }
+      } else if (registry != null) {
+        // no such registry or we don't have permission, redirect to registries page
+
+        this.showConnectDialog(registry, packageName)
+      } else {
+        // no registry given so redirect to registries page
+
+        this._router.navigate(['/registries'])
+      }
+    })
+  }
+
+  private showConnectDialog(registry: string, packageName?: string): void {
+
+    const dialogRef = this._dialog.open(LoginComponent, {
+      width: '500px',
+      height: '460px',
+    })
+
+    dialogRef.afterClosed().subscribe(result => {
+
+      const x = GLOBALS.registry
+
+      if (!GLOBALS.registry || GLOBALS.registry.name === 'undefined') {
+        this.setRegistry(registry, packageName)
+      } else if (GLOBALS.user) {
+        this.load(packageName)
+      } else {
+        this._router.navigate(['/registries'])
+      }
     })
   }
 

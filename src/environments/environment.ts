@@ -4,9 +4,12 @@
 
 export const environment = {
   production: false,
+  EMPOWER_AVAILABLE: 'http://localhost:5555/rad/wx.packages.manager:sag/ping',
+  EMPOWER_CONNECT: 'http://localhost:5555/rad/wx.packages.manager:sag/authenticate',
+  EMPOWER_DISCONNECT: 'http://localhost:5555/rad/wx.packages.manager:sag/disconnect',
   LOGIN_CONNECT: 'http://localhost:5555/invoke/wm.server/login',
   LOGIN_DISCONNECT: 'http://localhost:5555/invoke/wm.server/logout',
-  LOGIN_SESSION: 'http://localhost:5555/invoke/jc.tools.pub.session/getSessionID',
+  LOGIN_SESSION: 'http://localhost:5555/rad/wx.packages:manager/session',
   BASE_API: 'http://localhost:5555/rad/wx.packages:manager/'
 }
 

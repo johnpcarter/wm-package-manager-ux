@@ -45,6 +45,7 @@ import { NotificationsService } from './services/notifications-service'
 import { ListPackagesRegistriesComponent } from './components/list-package-registries.component'
 import { ManageUsersComponent } from './components/manage-users.component'
 import {MatTabsModule} from '@angular/material/tabs';
+import {MatButtonToggleModule} from '@angular/material/button-toggle';
 
 const routes: Routes = [
   { path: '', component: PackagesComponent },
@@ -72,32 +73,33 @@ const routes: Routes = [
     ListPackagesRegistriesComponent,
     PackageFilterPipe
   ],
-    imports: [
-        RouterModule.forRoot(routes),
-        BrowserModule,
-        AppRoutingModule,
-        BrowserAnimationsModule,
-        FormsModule,
-        HttpClientModule,
-        FontAwesomeModule,
-        MatDialogModule,
-        MatListModule,
-        MatTableModule,
-        MatCardModule,
-        MatChipsModule,
-        MatButtonModule,
-        MatFormFieldModule,
-        MatInputModule,
-        MatSelectModule,
-        MatMenuModule,
-        ReactiveFormsModule,
-        MatSelectModule,
-        MatCheckboxModule,
-        MatExpansionModule,
-        MatSlideToggleModule,
-        MatRadioModule,
-        MatTabsModule
-    ],
+  imports: [
+    RouterModule.forRoot(routes),
+    BrowserModule,
+    AppRoutingModule,
+    BrowserAnimationsModule,
+    FormsModule,
+    HttpClientModule,
+    FontAwesomeModule,
+    MatDialogModule,
+    MatListModule,
+    MatTableModule,
+    MatCardModule,
+    MatChipsModule,
+    MatButtonModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatMenuModule,
+    ReactiveFormsModule,
+    MatSelectModule,
+    MatCheckboxModule,
+    MatExpansionModule,
+    MatSlideToggleModule,
+    MatRadioModule,
+    MatTabsModule,
+    MatButtonToggleModule
+  ],
   exports: [
     RouterModule,
     MatListModule,

@@ -62,6 +62,7 @@ export class TagInfoComponent implements OnInit {
       })
     } else {
       _packagesServices.getPackageManifest(this.package.packageName, this.tagName, GLOBALS.registry.name).subscribe((m) => {
+        this.tagName = 'main'
         this.tagInfo.manifest = m
       })
     }

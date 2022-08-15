@@ -79,50 +79,53 @@ export class PackageDetailsComponent implements OnInit {
   constructor(dialogRef: MatDialogRef<any>, @Inject(MAT_DIALOG_DATA) public data: any, private _dialog: MatDialog,
               // tslint:disable-next-line:variable-name max-line-length
               private _snackbar: MatSnackBar, private _packagesServices: PackagesServices, private _notificationsService: NotificationsService) {
-    this._dialogRef = dialogRef
-    this.package = data.package
 
-    this._packagesServices.package(this.package.packageName, GLOBALS.registry.name).subscribe((p) => {
+      this._dialogRef = dialogRef
+      this.package = data.package
 
-      if (p) {
-        this.package = p
-        this.alertMe = this.package.alertEmail != null
-        this._didLoad = true
+      this._packagesServices.package(this.package.packageName, GLOBALS.registry.name).subscribe((p) => {
 
-        this._packagesServices.gitInfo(this.package.packageName, GLOBALS.registry.name).subscribe((gitInfo) => {
-          this.gitInfo = gitInfo
+        if (p) {
+          this.package = p
+          this.alertMe = this.package.alertEmail != null
+          this._didLoad = true
 
-          if (this.gitInfo.availableTags) {
-            this.gitInfo.availableTags.forEach((t) => {
-              if (!this.isTrustedTag(t)) {
-                this.availableTags.push(t)
-              }
-            })
+          this._packagesServices.gitInfo(this.package.packageName, GLOBALS.registry.name).subscribe((gitInfo) => {
+            this.gitInfo = gitInfo
+
+            if (this.gitInfo.availableTags) {
+              this.gitInfo.availableTags.forEach((t) => {
+                if (!this.isTrustedTag(t)) {
+                  this.availableTags.push(t)
+                }
+              })
+            }
+          })
+        }
+      })
+
+      this._packagesServices.history(this.package.packageName, GLOBALS.registry.name).subscribe((h) => {
+
+        h.forEach((v) => {
+          if (v.value > this.maxDownloadValue) {
+            this.maxDownloadValue = v.value
+          }
+
+          this.downloadsStats.push(new PackageStat(v.label, v.value))
+        })
+      })
+
+      if (GLOBALS.isAdministrator()) {
+        this._packagesServices.users(this.package.packageName, GLOBALS.registry.name).subscribe((u) => {
+
+          if (u) {
+            this.users = u
+          } else {
+            this.users.push('everybody')
+            this.saveUsers()
           }
         })
       }
-    })
-
-    this._packagesServices.history(this.package.packageName, GLOBALS.registry.name).subscribe((h) => {
-
-      h.forEach((v) => {
-        if (v.value > this.maxDownloadValue) {
-          this.maxDownloadValue = v.value
-        }
-
-        this.downloadsStats.push(new PackageStat(v.label, v.value))
-      })
-    })
-
-    this._packagesServices.users(this.package.packageName, GLOBALS.registry.name).subscribe((u) => {
-
-      if (u) {
-        this.users = u
-      } else {
-        this.users.push('everybody')
-        this.saveUsers()
-      }
-    })
   }
 
   ngOnInit(): void {
@@ -162,7 +165,7 @@ export class PackageDetailsComponent implements OnInit {
   }
 
   public haveAvailableTags(): boolean {
-    return this.package.trustedTags.length > 0 || this.availableTags.length > 0
+    return this.package.trustedTags && (this.package.trustedTags.length > 0 || this.availableTags.length > 0)
   }
 
   public showTagInfo(t: string, w?: string, bye?: string, s?: string): void {
@@ -539,7 +542,7 @@ export class PackageDetailsComponent implements OnInit {
     let found: boolean = false
 
     // tslint:disable-next-line:prefer-for-of
-    for(let i = 0; i < this.package.trustedTags.length; i++) {
+    for (let i = 0; i < this.package.trustedTags.length; i++) {
       if (this.package.trustedTags[i].tag === tag) {
         found = true
         break

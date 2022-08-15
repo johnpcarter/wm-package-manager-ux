@@ -94,11 +94,15 @@ export class AppComponent implements OnInit {
 
     const dialogRef = this._dialog.open(LoginComponent, {
       width: '500px',
-      height: '400px',
+      height: '460px',
     })
 
     dialogRef.afterClosed().subscribe(result => {
-      this._router.navigate(['/registries'])
+     /* if (this.isOnRegistryPage()) {
+        this._router.navigate(['/registries'], {queryParams: {refresh: new Date().getTime()}})
+      } else {*/
+        this._router.navigate(['/packages'])
+     // }
     })
   }
 

@@ -9,7 +9,7 @@ import { GLOBALS } from '../globals'
 import { Package, PackageStat } from '../models/Package'
 import { Tag } from '../models/Tag'
 import { GitInfo } from '../models/GitInfo'
-import {Manifest} from '../models/Manifest';
+import { Manifest } from '../models/Manifest'
 
 @Injectable()
 export class PackagesServices {

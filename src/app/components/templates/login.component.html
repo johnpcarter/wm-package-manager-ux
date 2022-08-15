@@ -1,8 +1,14 @@
 <div class="card">
-  <div style="float: right"><fa-icon class="icon" [icon]="faTimes" size="2x" (click)="onNoClick()"></fa-icon></div>
-  <h2 class="card-header">Login</h2>
+  <div style="float: right"><fa-icon class="icon" [icon]="faTimes" size="1x" (click)="onNoClick()"></fa-icon></div>
   <div class="card-body">
     <form [formGroup]="form">
+      <div style="padding-top: 40px; display: flex; flex-direction: row; align-content: center; justify-content: space-between">
+        <h2 style="margin-left: 20px; margin-top: 10px">Login</h2>
+        <mat-button-toggle-group *ngIf="isEmpowerConnectionAvailable" style="font-size: small" formControlName="connectionType" name="login" aria-label="login type">
+          <mat-button-toggle value="local" style="width: 100px;font-size: small">local</mat-button-toggle>
+          <mat-button-toggle value="empower" style="width: 100px;font-size: small">Empower</mat-button-toggle>
+        </mat-button-toggle-group>
+      </div>
       <div class="form-group" style="display: flex; flex-direction: column; padding: 20px">
         <label style="color: gray; font-size: 14px">Username</label>
         <input class="login-field" style="width: 100%" type="text" formControlName="username" [ngClass]="{ 'is-invalid': submitted && userCtrl.errors }" />
@@ -23,7 +29,7 @@
           Login
         </button>
         <div style="width: 100%">
-          <a routerLink="../register" class="btn btn-link" style="float: right; margin-top: 30px; color: #1776BF; float: right">Register</a>
+          <a *ngIf="connectionTypeCtrl.value == 'empower'" href="https://empower.softwareag.com/register/" target="register" class="btn btn-link" style="float: right; margin-top: 30px; color: #1776BF; float: right">Register</a>
           <p *ngIf="failed" style="color: red; font-size: smaller">Login failed</p>
         </div>
       </div>

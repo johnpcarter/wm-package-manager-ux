@@ -21,6 +21,7 @@ export class Package {
   public private: boolean = false
   public alertEmail: string
   public isVisible: boolean
+  public users: string[] = []
 }
 
 export class TagSummary {

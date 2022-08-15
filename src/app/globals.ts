@@ -7,10 +7,12 @@ export class GLOBALS {
 
   public static registry: Registry = new Registry()
   public static user: string = null
+
   public static settings: Settings = new Settings()
 
   private static userType: string = null
 
+  private static TOKEN_KEY = 'wx-package-mgr-access-token'
 
   public static setUser(user: string, notificationsService: NotificationsService, userType?: string): void {
 
@@ -32,6 +34,21 @@ export class GLOBALS {
     this.user = null
     this.userType = null
     this.settings = null
+    GLOBALS.clearAccessToken()
+  }
+
+  public static cacheAccessToken(token: string): void {
+
+    sessionStorage.setItem(GLOBALS.TOKEN_KEY, token)
+  }
+
+  public static getAccessToken(): string {
+
+    return sessionStorage.getItem(GLOBALS.TOKEN_KEY)
+  }
+
+  public static clearAccessToken(): void {
+    sessionStorage.removeItem(GLOBALS.TOKEN_KEY)
   }
 
   public static isAdministrator(): boolean {
@@ -41,7 +58,7 @@ export class GLOBALS {
 
   public static headers(): HttpHeaders {
 
-    const headers: HttpHeaders = new HttpHeaders()
+    let headers: HttpHeaders = new HttpHeaders()
       .append('Content-Type', 'application/json')
       .append('Accept', 'application/json')
       .append('Cache-Control', 'no-cache')
@@ -49,6 +66,10 @@ export class GLOBALS {
       .append('Pragma', 'no-cache')
       .append('Expires', '0')
       .append('Accept', 'application/json')
+
+    if (GLOBALS.getAccessToken()) {
+      headers = headers.append('accessToken', GLOBALS.getAccessToken())
+    }
 
     return headers
   }

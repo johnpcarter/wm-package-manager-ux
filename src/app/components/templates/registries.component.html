@@ -2,7 +2,7 @@
   <span class="page-description">Select your registry</span>
   <div class="table-rounded-border">
     <mat-list>
-      <mat-list-item *ngFor="let r of registries" class="hilight-item" style="border-bottom: #0c5593 1px solid">
+      <mat-list-item *ngFor="let r of registries()" class="hilight-item" style="border-bottom: #0c5593 1px solid">
         <div style="width: 30px">
           <fa-icon *ngIf="r.default else selectDefault" [icon]="faCheckCircle" style="color: #d5e2f6"></fa-icon>
           <ng-template #selectDefault>

@@ -83,6 +83,10 @@ export class AddPackageComponent implements OnInit {
     p.sourcePath = this.sourcePathCtrl.value
     p.sourceIsPrivate = this.requiresAuthenticationCtrl.value
 
+    if (this.privateCtrl.value) {
+      p.users = [this.user()]
+    }
+
     this._packagesService.createPackage(p, this.registry.name).subscribe((success) => {
       if (success) {
         this._dialogRef.close()

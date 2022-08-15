@@ -1,16 +1,16 @@
-import { Component, OnInit } from '@angular/core'
-import { Router } from '@angular/router'
-import { MatDialog } from '@angular/material/dialog'
-import { MatSnackBar } from '@angular/material/snack-bar'
+import {Component, OnInit } from '@angular/core'
+import {Router} from '@angular/router'
+import {MatDialog} from '@angular/material/dialog'
+import {MatSnackBar} from '@angular/material/snack-bar'
 
-import { faBuilding, faGlobeAfrica, faTrashAlt, faCheckCircle, faPlusSquare, faCircle } from '@fortawesome/free-solid-svg-icons'
+import {faBuilding, faGlobeAfrica, faTrashAlt, faCheckCircle, faPlusSquare, faCircle} from '@fortawesome/free-solid-svg-icons'
 
-import { RegistriesService } from '../services/registries.service'
-import { Registry, RegistryType } from '../models/Registry'
-import { GLOBALS } from '../globals'
-import { RemoveConfirmationComponent } from './remove-confirmation.component'
-import { AddRegistryComponent } from './add-registry.component'
-import { AddPackageComponent } from './add-package.component'
+import {RegistriesService} from '../services/registries.service'
+import {Registry, RegistryType} from '../models/Registry'
+import {GLOBALS} from '../globals'
+import {RemoveConfirmationComponent} from './remove-confirmation.component'
+import {AddRegistryComponent} from './add-registry.component'
+import {AddPackageComponent} from './add-package.component'
 
 @Component({
   selector: 'app-registries',
@@ -18,7 +18,6 @@ import { AddPackageComponent } from './add-package.component'
 })
 export class RegistriesComponent implements OnInit {
 
-  public registries: Registry[] = []
   public faGlobeAfrica = faGlobeAfrica
   public faBuilding = faBuilding
   public faTrashAlt = faTrashAlt
@@ -26,18 +25,34 @@ export class RegistriesComponent implements OnInit {
   public faPlusSquare = faPlusSquare
   public faCircle = faCircle
 
+  // tslint:disable-next-line:variable-name
+  private _registries: Registry[] = []
+  // tslint:disable-next-line:variable-name
+  private _isConnected: boolean
+
   // tslint:disable-next-line:variable-name max-line-length
   constructor(private _router: Router, private _registriesService: RegistriesService, private _dialog: MatDialog, private _snackbar: MatSnackBar) {
-
-    this.load()
   }
 
   ngOnInit(): void {
+
+    this._isConnected = this.isConnected()
+    this.load()
   }
 
-  public showPackagesInRegistry(registry: string): void {
+  public registries(): Registry[] {
+
+    if (this._isConnected !== this.isConnected()) {
+      this._isConnected = this.isConnected()
+      this.load()
+    }
+
+    return this._registries
+  }
+
+  public showPackagesInRegistry(registryId: string): void {
     this._router.navigate([''], {
-      queryParams: { registry: registry },
+      queryParams: { registry: registryId },
       queryParamsHandling: 'merge' })
   }
 
@@ -111,9 +126,15 @@ export class RegistriesComponent implements OnInit {
     }
   }
 
+  public isConnected(): boolean {
+    return GLOBALS.user != null
+  }
+
   private load(): void {
+    this._registries = []
+
     this._registriesService.registries().subscribe((r) => {
-      this.registries = r
+      this._registries = r
     })
   }
 }

@@ -20,7 +20,9 @@ export class LoginComponent implements OnInit {
   public form: FormGroup
   public userCtrl: FormControl
   public passwordCtrl: FormControl
+  public connectionTypeCtrl: FormControl
 
+  public isEmpowerConnectionAvailable: boolean = false
   public connecting: boolean = false
   public submitted: boolean = false
   public failed: boolean = false
@@ -32,14 +34,22 @@ export class LoginComponent implements OnInit {
     private dialogRef: MatDialogRef<any>,
     private settingsService: SettingsService,
     private notificationsService: NotificationsService
-  ) { }
+  ) {
+
+    settingsService.isEmpowerAvailable().subscribe((available) => {
+      this.isEmpowerConnectionAvailable = available
+      this.connectionTypeCtrl.setValue('empower', {emitEvent: false})
+    })
+  }
 
   ngOnInit(): void {
 
     this.userCtrl = new FormControl('', Validators.required)
     this.passwordCtrl = new FormControl('', Validators.required)
+    this.connectionTypeCtrl = new FormControl('local')
 
     this.form = this.formBuilder.group({
+      connectionType: this.connectionTypeCtrl,
       username: this.userCtrl,
       password: this.passwordCtrl
     })
@@ -59,19 +69,35 @@ export class LoginComponent implements OnInit {
     this.connecting = true
     this.submitted = true
 
-    this.settingsService.connect(this.userCtrl.value, this.passwordCtrl.value).subscribe((userType) => {
+    if (this.connectionTypeCtrl.value === 'empower') {
+      this.settingsService.connectViaEmpower(this.userCtrl.value, this.passwordCtrl.value).subscribe((success) => {
 
-      this.connecting = false
+        this.connecting = false
 
-      if (userType) {
-        GLOBALS.setUser(this.userCtrl.value, this.notificationsService, userType)
-        this.dialogRef.close()
-      } else {
-        GLOBALS.clearUser()
-        // this.passwordCtrl.setValue('', {emitEvent: false})
-        this.failed = true
-      }
-    })
+        if (success) {
+          GLOBALS.setUser(this.userCtrl.value, this.notificationsService, 'empower')
+          this.dialogRef.close()
+        } else {
+          GLOBALS.clearUser()
+          // this.passwordCtrl.setValue('', {emitEvent: false})
+          this.failed = true
+        }
+      })
+    } else {
+      this.settingsService.connect(this.userCtrl.value, this.passwordCtrl.value).subscribe((userType) => {
+
+        this.connecting = false
+
+        if (userType) {
+          GLOBALS.setUser(this.userCtrl.value, this.notificationsService, userType)
+          this.dialogRef.close()
+        } else {
+          GLOBALS.clearUser()
+          // this.passwordCtrl.setValue('', {emitEvent: false})
+          this.failed = true
+        }
+      })
+    }
   }
 
   public onNoClick(): void {

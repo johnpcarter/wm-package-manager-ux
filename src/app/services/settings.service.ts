@@ -37,13 +37,72 @@ export class SettingsService {
       }))
   }
 
+  public isEmpowerAvailable(): Observable<boolean> {
+
+    const url: string = environment.EMPOWER_AVAILABLE
+
+    const headers = GLOBALS.headers()
+
+    return this._http.get(url, { headers })
+      .pipe(catchError(error => {
+        return of({bounce: false})
+      }))
+      .pipe(map( (responseData: any) => {
+        return responseData.bounce
+      }))
+  }
+
+  public connectViaEmpower(username: string, passswrd: string): Observable<boolean> {
+
+    const url: string = environment.EMPOWER_CONNECT
+
+    const headers = GLOBALS.headers()
+    const data = {user: username, password: passswrd}
+
+    return this._http.post(url, data, { headers })
+      .pipe(catchError(error => {
+        return of(null)
+      }))
+      .pipe(map( (responseData: any) => {
+
+        if (responseData) {
+          GLOBALS.cacheAccessToken(responseData.accessToken)
+          return true
+        } else {
+          return false
+        }
+      }))
+  }
+
   public disconnect(): Observable<boolean> {
+
+    if (GLOBALS.getAccessToken()) {
+      return this.disconnectViaEmpower()
+    } else {
+      return this.disconnectLocal()
+    }
+  }
+
+  private disconnectLocal(): Observable<boolean> {
 
     const url: string = environment.LOGIN_DISCONNECT
 
     const headers = GLOBALS.headers()
 
     return this._http.post(url, '', { headers }).pipe(catchError(error => {
+      return of(false)
+    })).pipe(map( (responseData: any) => {
+      return responseData || true
+    }))
+  }
+
+  private disconnectViaEmpower(): Observable<boolean> {
+
+    const url: string = environment.EMPOWER_DISCONNECT
+
+    const headers = GLOBALS.headers()
+
+    return this._http.get(url, { headers }).pipe(catchError(error => {
       return of(false)
     })).pipe(map( (responseData: any) => {
       return responseData || true
