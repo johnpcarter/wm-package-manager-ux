@@ -99,8 +99,11 @@
     </mat-tab>
   </mat-tab-group>
   <mat-card-actions style="flex-grow: 0">
-    <button mat-raised-button color="primary" style="margin-top: 5px" (click)="downloadPackage()"><fa-icon [icon]="faArrowCircleDown"></fa-icon> Download</button>
-
+    <button *ngIf="!package.private || !hasAccessToken" mat-raised-button color="primary" style="margin-top: 5px" (click)="downloadPackage()"><fa-icon [icon]="faArrowCircleDown"></fa-icon> Download</button>
+    <mat-hint *ngIf="package.private && hasAccessToken">use the wpm command to download this package to your machine e.g.
+      <pre>$ wpm install -r {{registryName}} -u {{userName}} -p ****** -t {{tagName}} {{package.packageName}}
+      </pre>
+    </mat-hint>
     <button *ngIf="isAdministrator() && trusted" mat-raised-button color="accent" style=" margin-top: 5px; float: right" (click)="removeTrust()"> <fa-icon matListIcon class="icon" [icon]="faThumbsDown" size="1x"></fa-icon> {{isSigned() ? "Remove trust" : "Remove" }} </button>
     <button *ngIf="isAdministrator() && !trusted" mat-raised-button color="primary" style=" margin-top: 5px; float: right" (click)="trust()"> <fa-icon matListIcon class="icon" [icon]="faThumbsUp" size="1x"></fa-icon> {{isSigned() ? "Trust" : "Accept" }} </button>
     <!-- <div style="width: 50%; font-size: x-small; line-height: 12px; font-style: italic; margin-top: 5px">Developers can choose to sign their code when creating a tag with `$ git tag -s -m "this is code signed tag"'.

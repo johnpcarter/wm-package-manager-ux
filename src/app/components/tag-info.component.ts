@@ -41,6 +41,9 @@ export class TagInfoComponent implements OnInit {
 
   public trusted: string = null
   public haveGitInfo: boolean = false
+  public hasAccessToken: boolean = false
+  public registryName: string
+  public userName: string
 
   // tslint:disable-next-line:variable-name
   private _dialogRef: MatDialogRef<any>
@@ -69,6 +72,10 @@ export class TagInfoComponent implements OnInit {
   }
 
   ngOnInit(): void {
+
+    this.userName = GLOBALS.user
+    this.registryName = GLOBALS.registry.name
+    this.hasAccessToken = GLOBALS.getAccessToken() != null
   }
 
   public isSigned(): boolean {
@@ -137,7 +144,7 @@ export class TagInfoComponent implements OnInit {
     // tslint:disable-next-line:max-line-length
     if (this.tagName) {
       window.open(environment.BASE_API + 'package/' + this.package.packageName + '/' + this.tagName
-        + '/download?registry=' + encodeURIComponent(GLOBALS.registry.name) + '&ignoreVerification=true')
+        + '/download?registry=' + encodeURIComponent(GLOBALS.registry.name) + '&ignoreVerification=true&ignoreSignatureMatch=true')
     } else {
       window.open(environment.BASE_API + 'package/' + this.package.packageName + '/main/download' +
         '?registry=' + encodeURIComponent(GLOBALS.registry.name) + '&ignoreVerification=true&ignoreSignatureMatch=true')
