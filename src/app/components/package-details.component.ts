@@ -165,7 +165,7 @@ export class PackageDetailsComponent implements OnInit {
   }
 
   public haveAvailableTags(): boolean {
-    return this.package.trustedTags && (this.package.trustedTags.length > 0 || this.availableTags.length > 0)
+    return this.availableTags.length > 0
   }
 
   public showTagInfo(t: string, w?: string, bye?: string, s?: string): void {
@@ -542,10 +542,12 @@ export class PackageDetailsComponent implements OnInit {
     let found: boolean = false
 
     // tslint:disable-next-line:prefer-for-of
-    for (let i = 0; i < this.package.trustedTags.length; i++) {
-      if (this.package.trustedTags[i].tag === tag) {
-        found = true
-        break
+    if (this.package && this.package.trustedTags) {
+      for (let i = 0; i < this.package.trustedTags.length; i++) {
+        if (this.package.trustedTags[i].tag === tag) {
+          found = true
+          break
+        }
       }
     }
 
