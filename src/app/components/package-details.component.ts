@@ -192,6 +192,11 @@ export class PackageDetailsComponent implements OnInit {
         const trustedTag = new TagSummary()
         trustedTag.tag = t
         trustedTag.by = GLOBALS.user
+
+        if (!this.package.trustedTags) {
+          this.package.trustedTags = []
+        }
+        
         this.package.trustedTags.push(trustedTag)
 
         let found = -1
