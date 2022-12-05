@@ -9,7 +9,7 @@ fi
 
 # remove old version from package
 
-TGT_PATH=/Applications/SoftwareAG/10.11/IntegrationServer/instances/default/packages/WxPackageManager/pub
+TGT_PATH=/Applications/SoftwareAG/10.15/IntegrationServer/instances/default/packages/WxPackageManager/pub
 rm -Rf ${TGT_PATH}/*.*.js
 rm -Rf ${TGT_PATH}/*.*.css
 rm -Rf ${TGT_PATH}/font-*
