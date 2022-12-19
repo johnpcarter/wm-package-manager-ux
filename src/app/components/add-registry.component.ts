@@ -1,5 +1,5 @@
 import { Component, OnInit} from '@angular/core'
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
+import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms'
 import { MatDialogRef } from '@angular/material/dialog'
 
 import { faBook, faTimes } from '@fortawesome/free-solid-svg-icons'
@@ -16,12 +16,12 @@ export class AddRegistryComponent implements OnInit {
   public faBook = faBook
   public faTimes = faTimes
 
-  public form: FormGroup
-  public nameCtrl: FormControl
-  public descriptionCtrl: FormControl
-  public typeCtrl: FormControl
-  public trustLevelCtrl: FormControl
-  public isDefaultCtrl: FormControl
+  public form: UntypedFormGroup
+  public nameCtrl: UntypedFormControl
+  public descriptionCtrl: UntypedFormControl
+  public typeCtrl: UntypedFormControl
+  public trustLevelCtrl: UntypedFormControl
+  public isDefaultCtrl: UntypedFormControl
 
   public failed: boolean = false
 
@@ -29,14 +29,14 @@ export class AddRegistryComponent implements OnInit {
   private _dialogRef: MatDialogRef<any>
 
   // tslint:disable-next-line:variable-name max-line-length
-  constructor(private formBuilder: FormBuilder, dialogRef: MatDialogRef<any>, private _registriesService: RegistriesService) {
+  constructor(private formBuilder: UntypedFormBuilder, dialogRef: MatDialogRef<any>, private _registriesService: RegistriesService) {
     this._dialogRef = dialogRef
 
-    this.nameCtrl = new FormControl('', Validators.required)
-    this.descriptionCtrl = new FormControl('', Validators.required)
-    this.typeCtrl = new FormControl('', Validators.required)
-    this.trustLevelCtrl = new FormControl('', Validators.required)
-    this.isDefaultCtrl = new FormControl()
+    this.nameCtrl = new UntypedFormControl('', Validators.required)
+    this.descriptionCtrl = new UntypedFormControl('', Validators.required)
+    this.typeCtrl = new UntypedFormControl('', Validators.required)
+    this.trustLevelCtrl = new UntypedFormControl('', Validators.required)
+    this.isDefaultCtrl = new UntypedFormControl()
 
     this.form = this.formBuilder.group({
       name: this.nameCtrl,

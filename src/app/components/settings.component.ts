@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core'
 import { Router } from '@angular/router'
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms'
+import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms'
 
 import { MatDialog } from '@angular/material/dialog'
 import { MatTable } from '@angular/material/table'
@@ -33,11 +33,11 @@ export class SettingsComponent implements OnInit {
 
   public currentUser: string = ''
   public credentials: Credentials[] = []
-  public form: FormGroup
-  public gitUrlCtrl: FormControl
-  public gitUserCtrl: FormControl
-  public gitTokenCtrl: FormControl
-  public emailAddressCtrl: FormControl
+  public form: UntypedFormGroup
+  public gitUrlCtrl: UntypedFormControl
+  public gitUserCtrl: UntypedFormControl
+  public gitTokenCtrl: UntypedFormControl
+  public emailAddressCtrl: UntypedFormControl
 
   public notifications: NewPackageNotification[] = []
 
@@ -47,16 +47,16 @@ export class SettingsComponent implements OnInit {
   public table: MatTable<Credentials>
 
   // tslint:disable-next-line:variable-name max-line-length
-  public constructor(private _router: Router, private _formBuilder: FormBuilder, private _dialog: MatDialog, private _snackBar: MatSnackBar,
+  public constructor(private _router: Router, private _formBuilder: UntypedFormBuilder, private _dialog: MatDialog, private _snackBar: MatSnackBar,
   // tslint:disable-next-line:variable-name
                      private _notificationService: NotificationsService,
                      // tslint:disable-next-line:variable-name
                      private _settings: SettingsService) {
 
-    this.gitUrlCtrl = new FormControl()
-    this.gitUserCtrl = new FormControl()
-    this.gitTokenCtrl = new FormControl()
-    this.emailAddressCtrl = new FormControl()
+    this.gitUrlCtrl = new UntypedFormControl()
+    this.gitUserCtrl = new UntypedFormControl()
+    this.gitTokenCtrl = new UntypedFormControl()
+    this.emailAddressCtrl = new UntypedFormControl()
 
     this.form = this._formBuilder.group({
       gitUrlCtrl: this.gitUrlCtrl,

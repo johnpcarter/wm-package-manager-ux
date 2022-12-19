@@ -1,6 +1,6 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core'
 import { ActivatedRoute, Router } from '@angular/router'
-import { FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms'
+import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms'
 
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
 
@@ -19,10 +19,10 @@ export class LoginComponent implements OnInit {
 
   public faTimes = faTimes
 
-  public form: FormGroup
-  public userCtrl: FormControl
-  public passwordCtrl: FormControl
-  public isEmpowerLoginCtrl: FormControl
+  public form: UntypedFormGroup
+  public userCtrl: UntypedFormControl
+  public passwordCtrl: UntypedFormControl
+  public isEmpowerLoginCtrl: UntypedFormControl
   public loginType: string = 'Empower'
 
   public isEmpowerConnectionAvailable: boolean = false
@@ -31,7 +31,7 @@ export class LoginComponent implements OnInit {
   public failed: boolean = false
 
   constructor(
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     private route: ActivatedRoute,
     private router: Router,
     private settingsService: SettingsService,
@@ -46,9 +46,9 @@ export class LoginComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.userCtrl = new FormControl('', Validators.required)
-    this.passwordCtrl = new FormControl('', Validators.required)
-    this.isEmpowerLoginCtrl = new FormControl(false)
+    this.userCtrl = new UntypedFormControl('', Validators.required)
+    this.passwordCtrl = new UntypedFormControl('', Validators.required)
+    this.isEmpowerLoginCtrl = new UntypedFormControl(false)
 
     this.form = this.formBuilder.group({
       isEmpowerLoginCtrl: this.isEmpowerLoginCtrl,

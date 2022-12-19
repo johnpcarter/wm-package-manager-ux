@@ -1,5 +1,5 @@
 import {Component, Inject, OnInit} from '@angular/core';
-import {Form, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+import {Form, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog'
 
 import { faTimes, faPlus } from '@fortawesome/free-solid-svg-icons'
@@ -22,15 +22,15 @@ export class AddPackageComponent implements OnInit {
 
   public registry: Registry
 
-  public form: FormGroup
-  public nameCtrl: FormControl
-  public descriptionCtrl: FormControl
-  public categoryCtrl: FormControl
-  public homePageCtrl: FormControl
-  public sourceCtrl: FormControl
-  public sourcePathCtrl: FormControl
-  public requiresAuthenticationCtrl: FormControl
-  public privateCtrl: FormControl
+  public form: UntypedFormGroup
+  public nameCtrl: UntypedFormControl
+  public descriptionCtrl: UntypedFormControl
+  public categoryCtrl: UntypedFormControl
+  public homePageCtrl: UntypedFormControl
+  public sourceCtrl: UntypedFormControl
+  public sourcePathCtrl: UntypedFormControl
+  public requiresAuthenticationCtrl: UntypedFormControl
+  public privateCtrl: UntypedFormControl
 
   public failed: boolean = false
 
@@ -38,20 +38,20 @@ export class AddPackageComponent implements OnInit {
   private _dialogRef: MatDialogRef<any>
 
   // tslint:disable-next-line:variable-name max-line-length
-  constructor(private formBuilder: FormBuilder, @Inject(MAT_DIALOG_DATA) public data, dialogRef: MatDialogRef<any>, private _packagesService: PackagesServices) {
+  constructor(private formBuilder: UntypedFormBuilder, @Inject(MAT_DIALOG_DATA) public data, dialogRef: MatDialogRef<any>, private _packagesService: PackagesServices) {
 
     this._dialogRef = dialogRef
 
     this.registry = data.registry
 
-    this.nameCtrl = new FormControl('', Validators.required)
-    this.descriptionCtrl = new FormControl('', Validators.required)
-    this.categoryCtrl = new FormControl('', Validators.required)
-    this.sourceCtrl = new FormControl('', Validators.required)
-    this.homePageCtrl = new FormControl()
-    this.sourcePathCtrl = new FormControl()
-    this.requiresAuthenticationCtrl = new FormControl()
-    this.privateCtrl = new FormControl()
+    this.nameCtrl = new UntypedFormControl('', Validators.required)
+    this.descriptionCtrl = new UntypedFormControl('', Validators.required)
+    this.categoryCtrl = new UntypedFormControl('', Validators.required)
+    this.sourceCtrl = new UntypedFormControl('', Validators.required)
+    this.homePageCtrl = new UntypedFormControl()
+    this.sourcePathCtrl = new UntypedFormControl()
+    this.requiresAuthenticationCtrl = new UntypedFormControl()
+    this.privateCtrl = new UntypedFormControl()
 
     this.form = this.formBuilder.group({
       name: this.nameCtrl,
