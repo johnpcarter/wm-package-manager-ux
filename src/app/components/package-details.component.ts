@@ -9,6 +9,8 @@ import { faTimes, faUniversalAccess, faTags, faObjectGroup, faInfoCircle, faChec
   faGlobeAfrica, faEye, faEyeSlash, faEllipsisV, faUnlock } from '@fortawesome/free-solid-svg-icons'
 import { faGitAlt, faGithub } from '@fortawesome/free-brands-svg-icons'
 
+import { MarkdownService } from 'ngx-markdown'
+
 import { Package, PackageStat, TagSummary } from '../models/Package'
 import { GitInfo } from '../models/GitInfo'
 
@@ -24,6 +26,7 @@ import { ManageUsersComponent } from './manage-users.component'
 
 import { GLOBALS } from '../globals'
 import { environment } from '../../environments/environment'
+import {FormGroup} from '@angular/forms';
 
 @Component({
   selector: 'app-package-details',
@@ -67,6 +70,24 @@ export class PackageDetailsComponent implements OnInit {
   public availableTags: string[] = []
   public alertMe: boolean
 
+  // put the text completely on the left to avoid extra white spaces
+  public markdownText: string =
+    `### Markdown example
+---
+This is an **example** where we bind a variable to the \`markdown\` component that is also bind to a textarea.
+#### example.component.ts
+\`\`\`javascript
+function hello() {
+  alert('Hello World');
+}
+\`\`\`
+#### example.component.css
+\`\`\`css
+.bold {
+  font-weight: bold;
+}
+\`\`\``
+
   public downloadsStats: PackageStat[] = []
   public maxDownloadValue: number = 0
 
@@ -76,7 +97,7 @@ export class PackageDetailsComponent implements OnInit {
   private _didLoad: boolean = false
 
   // tslint:disable-next-line:variable-name max-line-length
-  constructor(dialogRef: MatDialogRef<any>, @Inject(MAT_DIALOG_DATA) public data: any, private _dialog: MatDialog,
+  constructor(dialogRef: MatDialogRef<any>, @Inject(MAT_DIALOG_DATA) public data: any, private _dialog: MatDialog, private markdownService: MarkdownService,
               // tslint:disable-next-line:variable-name max-line-length
               private _snackbar: MatSnackBar, private _packagesServices: PackagesServices, private _notificationsService: NotificationsService) {
 
@@ -129,6 +150,14 @@ export class PackageDetailsComponent implements OnInit {
   }
 
   ngOnInit(): void {
+  }
+
+  public onLoad(data: any): void {
+    console.log(data)
+  }
+
+  public onError(data: any): void {
+    console.log(data)
   }
 
   public onNoClick(): void {
@@ -196,7 +225,7 @@ export class PackageDetailsComponent implements OnInit {
         if (!this.package.trustedTags) {
           this.package.trustedTags = []
         }
-        
+
         this.package.trustedTags.push(trustedTag)
 
         let found = -1
@@ -420,9 +449,9 @@ export class PackageDetailsComponent implements OnInit {
 
   public colorForIsVisibleButton(): any {
     if (this.package.isVisible) {
-      return {color: 'pink'}
+      return {color: 'black'}
     } else {
-      return {color: 'gray'}
+      return {color: 'lightgray'}
     }
   }
 
@@ -436,9 +465,9 @@ export class PackageDetailsComponent implements OnInit {
 
   public colorForNoticationsButton(): any {
     if (this.alertMe) {
-      return {color: 'green'}
+      return {color: 'black'}
     } else {
-      return {color: 'gray'}
+      return {color: 'lightgray'}
     }
   }
 

@@ -21,7 +21,7 @@ export class SettingsService {
     const url: string = environment.LOGIN_CONNECT
 
     const headers = GLOBALS.headers()
-    const data = {username: user, password: passswrd}
+    const data = {user: user, password: passswrd}
 
     return this._http.post(url, data, { headers })
       .pipe(catchError(error => {
@@ -29,8 +29,8 @@ export class SettingsService {
       }))
       .pipe(map( (responseData: any) => {
 
-        if (responseData && responseData.metadata) {
-          return responseData.metadata.userType
+        if (responseData && responseData.userType) {
+          return responseData.userType
         } else {
           return null
         }

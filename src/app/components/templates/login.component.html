@@ -1,38 +1,57 @@
-<div class="card">
-  <div style="float: right"><fa-icon class="icon" [icon]="faTimes" size="1x" (click)="onNoClick()"></fa-icon></div>
-  <div class="card-body">
-    <form [formGroup]="form">
-      <div style="padding-top: 40px; display: flex; flex-direction: row; align-content: center; justify-content: space-between">
-        <h2 style="margin-left: 20px; margin-top: 10px">Login</h2>
-        <mat-button-toggle-group *ngIf="isEmpowerConnectionAvailable" style="font-size: small" formControlName="connectionType" name="login" aria-label="login type">
-          <mat-button-toggle value="local" style="width: 100px;font-size: small">local</mat-button-toggle>
-          <mat-button-toggle value="empower" style="width: 100px;font-size: small">Empower</mat-button-toggle>
-        </mat-button-toggle-group>
-      </div>
-      <div class="form-group" style="display: flex; flex-direction: column; padding: 20px">
-        <label style="color: gray; font-size: 14px">Username</label>
-        <input class="login-field" style="width: 100%" type="text" formControlName="username" [ngClass]="{ 'is-invalid': submitted && userCtrl.errors }" />
-        <div *ngIf="submitted && userCtrl.errors" class="invalid-feedback">
-          <div *ngIf="userCtrl.errors.required">Username is required</div>
+<section id="form_modal" role="dialog" tabindex="1" ria-modal="true">
+  <form [formGroup]="form" name="login">
+  <div class="dlt-modal-window__container" style="opacity: 100%">
+    <div class="dlt-modal-window__header">
+      <button data-modal-close class="dlt-button dlt-button-icon dlt-modal-window__close dlt-icon-sm" (click)="onNoClick()">
+        <i class="dlt-icon-close dlt-icon"></i>
+      </button>
+    </div>
+    <div class="dlt-modal-window__content">
+       <img src="assets/_images/sag-primary-logo-dark-rgb.png" style="width: 200px">
+        <h1>webMethods Package Manager</h1>
+        <h2>Login using your {{isEmpowerLoginCtrl.value == true ? 'Empower' : 'local'}} credentials</h2>
+        <h3 *ngIf="isEmpowerLoginCtrl.value == true">Don't have an account? <a class="dlt-links" style=" font-size: small" href="https://empower.softwareag.com/register/" target="register">Sign up here</a></h3>
+
+        <div class="form-group" style="display: flex; flex-direction: column; padding: 20px">
+          <label style="color: gray; font-size: 14px">Username</label>
+          <input class="login-field" style="width: 100%" type="text" formControlName="username" [ngClass]="{ 'is-invalid': submitted && userCtrl.errors }" />
+          <div *ngIf="submitted && userCtrl.errors" class="invalid-feedback">
+            <div *ngIf="userCtrl.errors.required">Username is required</div>
+          </div>
         </div>
-      </div>
-      <div class="form-group" style="display: flex; flex-direction: column; padding: 20px">
-        <label style="color: gray; font-size: 14px">Password</label>
-        <input class="login-field" style="width: 100%" type="password" formControlName="password" [ngClass]="{ 'is-invalid': submitted && passwordCtrl.errors }" />
-        <div *ngIf="submitted && passwordCtrl.errors" class="invalid-feedback">
-          <div *ngIf="passwordCtrl.errors.required">Password is required</div>
+        <div class="form-group" style="display: flex; flex-direction: column; padding: 20px; height: 90px">
+          <label style="color: gray; font-size: 14px">Password</label>
+          <input class="login-field" style="width: 100%" type="password" formControlName="password" [ngClass]="{ 'is-invalid': submitted && passwordCtrl.errors }" />
+          <div *ngIf="submitted && passwordCtrl.errors" class="invalid-feedback">
+            <div *ngIf="passwordCtrl.errors.required">Password is required</div>
+          </div>
         </div>
-      </div>
-      <div class="form-group"  style="display: flex; flex-direction: column; padding: 20px">
-        <button [disabled]="isLoginDisabled()" class="btn btn-primary" (click)="connect()" style="width: 104%; background-color: #1776BF; height: 40px; color: white; font-size: 14px; border: none" [ngStyle]="styleForLoginButton()">
-          <span *ngIf="connecting" class="spinner-border spinner-border-sm mr-1"></span>
-          Login
-        </button>
-        <div style="width: 100%">
-          <a *ngIf="connectionTypeCtrl.value == 'empower'" href="https://empower.softwareag.com/register/" target="register" class="btn btn-link" style="float: right; margin-top: 30px; color: #1776BF; float: right">Register</a>
-          <p *ngIf="failed" style="color: red; font-size: smaller">Login failed</p>
+        <div class="form-group" style="display: flex; flex-direction: column; padding: 20px">
+          <div style="width: 100%">
+            <p *ngIf="failed" style="color: red; font-size: smaller">Login failed</p>
+          </div>
         </div>
+    </div>
+    <div class="dlt-modal-window__footer">
+      <div style="float: left; display: flex; flex-direction: row; align-content: center; justify-content: end">
+        <fieldset *ngIf="isEmpowerConnectionAvailable" class="dlt-fieldset sm-switch">
+          <legend class="dlt-switch-label" style="margin-left: -20px">Login type</legend>
+          <div class="dlt-switch-item">
+            <input value="empower" class="dlt-switch-input" id="empower-button" type="checkbox" formControlName="isEmpowerLoginCtrl" name="login" aria-label="login type">
+            <label class="dlt-switch-text" for="empower-button">
+              <span class="dlt-switch-appearance dlt-on-off"></span>
+              <span class="on">Empower</span>
+              <span class="off">local</span>
+            </label>
+          </div>
+        </fieldset>
       </div>
-    </form>
+      <button class="dlt-button dlt-button-primary" data-modal-prime-focus [disabled]="isLoginDisabled()" (click)="connect()">
+        Connect
+      </button>
+    </div>
   </div>
-</div>
+
+  <div class="dlt-modal-window__backdrop" data-modal-close></div>
+  </form>
+</section>

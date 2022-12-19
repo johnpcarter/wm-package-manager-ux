@@ -24,6 +24,9 @@ import { LoginComponent } from './components/login.component'
 export class AppComponent implements OnInit {
 
   public title: string = 'webMethods package Manager'
+  public subTitle: string = 'Disconnected'
+
+  public isConnectionPanelOpen: boolean = false
 
   public faCog = faCog
   public faUser = faUser
@@ -61,7 +64,7 @@ export class AppComponent implements OnInit {
     if (!this.currentRegistry().default && !this.isOnRegistryPage()) {
       return this.currentRegistry().name
     } else {
-      return ''
+      return 'registries'
     }
   }
 
@@ -81,6 +84,7 @@ export class AppComponent implements OnInit {
 
     this._settingsService.disconnect().subscribe((success) => {
       if (success) {
+        this.subTitle = 'Disconnected'
         GLOBALS.clearUser()
         this._snackBar.open('You have been disconnected successfully', 'Ok', {
           duration: 2000,
@@ -92,33 +96,22 @@ export class AppComponent implements OnInit {
 
   public showConnectDialog(): void {
 
-    const dialogRef = this._dialog.open(LoginComponent, {
-      width: '500px',
-      height: '460px',
-    })
+    this.isConnectionPanelOpen = true
+  }
 
-    dialogRef.afterClosed().subscribe(result => {
-     /* if (this.isOnRegistryPage()) {
-        this._router.navigate(['/registries'], {queryParams: {refresh: new Date().getTime()}})
-      } else {*/
-        this._router.navigate(['/packages'])
-     // }
-    })
+  public onConnectionDialogClose(result): void {
+    this.isConnectionPanelOpen = false
+
+    if (result) {
+      this.subTitle = GLOBALS.user
+      this._router.navigate(['/packages'])
+    }
   }
 
   public showSettingsPanel(): void {
 
     if (this.isConnected()) {
       this._router.navigate(['/settings'])
-    }
-  }
-
-  colorForSettingsMenu(): any {
-
-    if (this.isConnected()) {
-      return {color: 'white'}
-    } else {
-      return {color: 'lightgray'}
     }
   }
 

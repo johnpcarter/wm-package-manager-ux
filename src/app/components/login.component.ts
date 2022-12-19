@@ -1,7 +1,6 @@
-import { Component, OnInit } from '@angular/core'
+import { Component, EventEmitter, OnInit, Output } from '@angular/core'
 import { ActivatedRoute, Router } from '@angular/router'
 import { FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms'
-import { MatDialogRef } from '@angular/material/dialog'
 
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
 
@@ -15,12 +14,16 @@ import { GLOBALS } from '../globals'
 })
 export class LoginComponent implements OnInit {
 
+  @Output()
+  public loginModalClose: EventEmitter<boolean> = new EventEmitter()
+
   public faTimes = faTimes
 
   public form: FormGroup
   public userCtrl: FormControl
   public passwordCtrl: FormControl
-  public connectionTypeCtrl: FormControl
+  public isEmpowerLoginCtrl: FormControl
+  public loginType: string = 'Empower'
 
   public isEmpowerConnectionAvailable: boolean = false
   public connecting: boolean = false
@@ -31,14 +34,13 @@ export class LoginComponent implements OnInit {
     private formBuilder: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
-    private dialogRef: MatDialogRef<any>,
     private settingsService: SettingsService,
     private notificationsService: NotificationsService
   ) {
 
     settingsService.isEmpowerAvailable().subscribe((available) => {
       this.isEmpowerConnectionAvailable = available
-      this.connectionTypeCtrl.setValue('empower', {emitEvent: false})
+      this.isEmpowerLoginCtrl.setValue(true, {emitEvent: false})
     })
   }
 
@@ -46,10 +48,10 @@ export class LoginComponent implements OnInit {
 
     this.userCtrl = new FormControl('', Validators.required)
     this.passwordCtrl = new FormControl('', Validators.required)
-    this.connectionTypeCtrl = new FormControl('local')
+    this.isEmpowerLoginCtrl = new FormControl(false)
 
     this.form = this.formBuilder.group({
-      connectionType: this.connectionTypeCtrl,
+      isEmpowerLoginCtrl: this.isEmpowerLoginCtrl,
       username: this.userCtrl,
       password: this.passwordCtrl
     })
@@ -69,14 +71,14 @@ export class LoginComponent implements OnInit {
     this.connecting = true
     this.submitted = true
 
-    if (this.connectionTypeCtrl.value === 'empower') {
+    if (this.isEmpowerLoginCtrl.value) {
       this.settingsService.connectViaEmpower(this.userCtrl.value, this.passwordCtrl.value).subscribe((success) => {
 
         this.connecting = false
 
         if (success) {
           GLOBALS.setUser(this.userCtrl.value, this.notificationsService, 'empower')
-          this.dialogRef.close()
+          this.loginModalClose.emit(true)
         } else {
           GLOBALS.clearUser()
           // this.passwordCtrl.setValue('', {emitEvent: false})
@@ -90,7 +92,7 @@ export class LoginComponent implements OnInit {
 
         if (userType) {
           GLOBALS.setUser(this.userCtrl.value, this.notificationsService, userType)
-          this.dialogRef.close()
+          this.loginModalClose.emit(true)
         } else {
           GLOBALS.clearUser()
           // this.passwordCtrl.setValue('', {emitEvent: false})
@@ -101,7 +103,7 @@ export class LoginComponent implements OnInit {
   }
 
   public onNoClick(): void {
-    this.dialogRef.close()
+    this.loginModalClose.emit(false)
   }
 
   public isLoginDisabled(): boolean {

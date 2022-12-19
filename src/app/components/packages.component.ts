@@ -86,6 +86,10 @@ export class PackagesComponent implements OnInit {
 
   }
 
+  public clear(): void {
+    this.searchTerm = ''
+  }
+
   public showPackageDetails(p: Package): boolean  {
 
     const dialogRef = this._dialog.open(PackageDetailsComponent, {

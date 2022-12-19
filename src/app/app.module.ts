@@ -8,6 +8,8 @@ import { RouterModule, Routes } from '@angular/router'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { HttpClientModule} from '@angular/common/http'
 
+import { MarkdownModule, MarkedOptions, MarkedRenderer } from 'ngx-markdown'
+
 import { MatDialogModule } from '@angular/material/dialog'
 import { MatListModule } from '@angular/material/list'
 import { MatTableModule } from '@angular/material/table'
@@ -71,7 +73,7 @@ const routes: Routes = [
     RemoveConfirmationComponent,
     ListRegistriesComponent,
     ListPackagesRegistriesComponent,
-    PackageFilterPipe
+    PackageFilterPipe,
   ],
   imports: [
     RouterModule.forRoot(routes),
@@ -80,6 +82,7 @@ const routes: Routes = [
     BrowserAnimationsModule,
     FormsModule,
     HttpClientModule,
+    MarkdownModule,
     FontAwesomeModule,
     MatDialogModule,
     MatListModule,

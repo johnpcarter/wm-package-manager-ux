@@ -1,17 +1,52 @@
-<div style="display: flex; flex-direction: column; justify-content: space-between; width: 100%; height: 100%">
-  <div>
-    <div style="float: right"><fa-icon class="icon" [icon]="faTimes" size="1x" (click)="onNoClick()"></fa-icon></div>
-    <div style="float: right; display: flex; flex-direction: row; justify-content: flex-start; margin-right: 50px">
-      <span style="font-size: small; color: lightgray; margin-right: 10px">tags</span>
-      <span style="background-color: orange; min-width: 30px; border-radius: 4px; color: white; text-align: center; padding-left: 5px; padding-right: 5px">{{package.category}}</span>
-      <span *ngFor="let s of this.package.searchTags" style="background-color: green; min-width: 30px; border-radius: 4px; color: white; text-align: center; padding-left: 5px; padding-right: 5px">{{s}}</span>
+<div class="dlt-modal-window__header">
+  <button data-modal-close class="dlt-button dlt-button-icon dlt-modal-window__close dlt-icon-sm" (click)="onNoClick()">
+    <i class="dlt-icon-close dlt-icon"></i>
+  </button>
+  <h3 id="modal-header-form" class="dlt-modal-window__title">
+    {{package.packageName}}
+  </h3>
+  <p mat-subheader>
+    {{package.description}}
+  </p>
+</div>
+<div style="display: flex; flex-direction: row; justify-content: space-between; width: 100%; height: 100%">
+  <div style="width: 80%; padding: 20px">
+    <markdown [data]="markdownText" (load)="onLoad($event)" (error)="onError($event)"></markdown>
+  </div>
+  <div style="display: flex; flex-direction: column;justify-content: flex-start; padding: 10px">
+    <div>
+      <h4 style="color: gray;">Home Page</h4>
+      <fa-icon [icon]="faGlobeAfrica" style="padding-right: 20px"></fa-icon><a href="{{package.homePage}}"> xxxx{{package.homePage}}</a>
+      <div *ngIf="isConnected()" style="float: right; display: flex; flex-direction: column">
+        <div  style="display: inline-flex; padding: 10px">
+          <fa-icon matListIcon class="icon" [icon]="iconForNotifications()" [style]="colorForNoticationsButton()" style="margin-right: 15px"></fa-icon>
+          <div class="dlt-switch-item">
+            <input class="dlt-switch-input" id="notify-button" type="checkbox" [(ngModel)]="alertMe" (change)="toggleNotifications()" aria-label="notify me">
+            <label class="dlt-switch-text" for="notify-button">
+              <span class="dlt-switch-appearance dlt-on-off"></span>
+              <span class="on"></span>
+              <span class="off"></span>
+            </label>
+          </div>
+        </div>
+        <div *ngIf="isAdministrator()" style="display: inline-flex; padding: 10px">
+          <fa-icon matListIcon class="icon" [icon]="iconForIsVisibleButton()" [style]="colorForIsVisibleButton()" style="margin-right: 15px"></fa-icon>
+          <div class="dlt-switch-item">
+          <input  class="dlt-switch-input" id="visibility-button" type="checkbox" [(ngModel)]="package.isVisible" (change)="toggleVisibility()" aria-label="visibility">
+            <label class="dlt-switch-text" for="visibility-button">
+              <span class="dlt-switch-appearance dlt-on-off"></span>
+              <span class="on"></span>
+              <span class="off"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+      <hr style="width: 100%"/>
     </div>
-    <h2>{{package.packageName}}</h2>
-    <h4 *ngIf="package.homePage"><fa-icon [icon]="faGlobeAfrica"></fa-icon><a href="{{package.homePage}}"> {{package.homePage}}</a></h4>
-    <div style="display: flex; flex-direction: column">
-      <h3 mat-subheader>{{package.description}}</h3>
-      <h4 style="color: gray">Package Statistics</h4>
 
+    <!-- package stats -->
+    <div *ngIf="downloadsStats.length > 0" style="padding-top: 30px">
+      <h4 style="color: gray">Package Statistics</h4>
       <div style="min-height: 100px; display: inline-flex; justify-content: flex-start; align-items: flex-end; padding: 20px">
         <div *ngFor="let col of downloadsStats" style="display: flex; flex-direction: column; justify-content: flex-end; text-align: center;">
           <div style="display: inline-flex; justify-content: space-between; align-items: flex-end; border-bottom: 1px solid gray; margin-bottom: 10px; padding-right: 10px">
@@ -23,120 +58,108 @@
           <div style="margin-left: -10px; height: 40px; transform: rotate(60deg); font-size: x-small">{{col.label}}</div>
         </div>
       </div>
+      <hr/>
+    </div>
 
-        <div style="display: flex; flex-direction: row; justify-content: flex-start;">
-          <fa-icon matListIcon class="icon" [icon]="faInfoCircle" size="2x" style="width: 60px; height: 60px; padding-left: 30px"></fa-icon>
-          <div style="display: inline-flex; justify-content: space-between; align-items: flex-start">
-            <div>
-              <p>
-                {{authType()}}<span style="color: gray"> package registered by </span>{{package.owner}}
-              </p>
-              <div style="display: inline-flex; width: 100%; justify-content: flex-start">
-                <div style="display: flex; flex-direction: column; width: 150px">
-                  <p style="color: lightgray; font-size: small"><fa-icon [icon]="faClock"></fa-icon> Registered</p>
-                  <p style="font-weight: bold">{{package.registeredDate}}</p>
-                </div>
-                <div style="display: flex; flex-direction: column; width: 150px; align-items: flex-start">
-                  <p style="color: lightgray; font-size: small"><fa-icon [icon]="faLongArrowAltDown"></fa-icon> Total downloads</p>
-                  <p style="background-color: darkgray; color: white; min-width: 30px; border-radius: 4px; text-align: center; font-weight: bold">{{count(package.totalDownloads)}}</p>
-                </div>
-                <div style="display: flex; flex-direction: column; width: 150px; align-items: flex-start">
-                  <p style="color: lightgray; font-size: small"><fa-icon [icon]="faLongArrowAltDown"></fa-icon> Recent</p>
-                  <p style="background-color: black; color: white; min-width: 30px; border-radius: 4px; text-align: center; font-weight: bold">{{count(package.recentDownloads)}}</p>
-                </div>
-              </div>
+    <!-- INFO -->
+    <div style="padding-top: 30px">
+      <h4 style="color: gray">Info</h4>
+      <fa-icon matListIcon class="icon" [icon]="faInfoCircle" style="padding-right: 10px"></fa-icon>{{authType()}}<span style="color: gray"> package registered by </span>{{package.owner}}
+      <div style="display: inline-flex; justify-content: space-between; align-items: flex-start">
+        <div>
+          <div style="display: inline-flex; width: 100%; justify-content: flex-start">
+            <div style="display: flex; flex-direction: column; width: 150px">
+              <p style="color: lightgray; font-size: small"><fa-icon [icon]="faClock"></fa-icon> Registered</p>
+              <p style="font-weight: bold">{{package.registeredDate}}</p>
             </div>
-
-            <div style="display: flex; flex-direction: row; justify-content: flex-start;">
-              <fa-icon matListIcon class="icon" [icon]="faGitAlt" size="2x" style="width: 60px; height: 60px"></fa-icon>
-              <div style="width: 100%">
-              <p>
-                <fa-icon *ngIf="package.sourceIsPrivate" [icon]="faKey" style="color: lightgray"></fa-icon>
-                {{package.sourceUrl}} <a target="git" href="{{package.sourceUrl}}"><fa-icon [icon]="faGithub"></fa-icon></a>
-              </p>
-              <p *ngIf="package.sourcePath">
-                <fa-icon [icon]="faFolder" style="color: lightgray"></fa-icon> {{package.sourcePath}}
-              </p>
-              <div *ngIf="gitInfo" style="display: inline-flex; justify-content: flex-start">
-                <div style="display: flex; flex-direction: column; width: 150px">
-                  <p style="color: lightgray; font-size: small"><fa-icon [icon]="faClock"></fa-icon> Last updated</p>
-                  <p style="font-weight: bold">{{gitInfo.lastUpdated}}</p>
-                </div>
-                <div style="display: flex; flex-direction: column; width: 150px; align-items: flex-start">
-                  <p style="color: lightgray; font-size: small"><fa-icon [icon]="faBinoculars"></fa-icon> watchers</p>
-                  <p style="background-color: green; min-width: 30px; border-radius: 4px; color: white; text-align: center"> {{gitInfo.watchers}} </p>
-                </div>
-                <div style="display: flex; flex-direction: column; width: 150px; align-items: flex-start">
-                  <p style="color: lightgray; font-size: small"><fa-icon [icon]="faStar"></fa-icon> star gazers</p>
-                  <p style="background-color: pink; min-width: 30px; border-radius: 4px; color: white; text-align: center"> {{gitInfo.stargazers}} </p>
-                </div>
-              </div>
+            <div style="display: flex; flex-direction: column; width: 150px; align-items: flex-start">
+              <p style="color: lightgray; font-size: small"><fa-icon [icon]="faLongArrowAltDown"></fa-icon> Total downloads</p>
+              <p style="background-color: darkgray; color: white; min-width: 30px; border-radius: 4px; text-align: center; font-weight: bold">{{count(package.totalDownloads)}}</p>
             </div>
-          </div>
-        </div>
-        </div>
-
-        <div style="display: flex; flex-direction: row; justify-content: flex-start; padding: 20px">
-          <fa-icon matListIcon class="icon" [icon]="faTags" size="2x" style="width: 60px; height: 60px; padding-left: 10px;"></fa-icon>
-          <div style="width: 100%">
-            <p>
-              Available tags
-            </p>
-            <p>
-              <mat-chip-list *ngIf="haveAvailableTags(); else notags">
-                <mat-chip *ngFor="let tag of this.package.trustedTags" (click)="showTagInfo(tag.tag, tag.when, tag.by, tag.signature)" [color]="colorForTag(tag)" selected>{{tag.tag}} <fa-icon matChipRemove matIcon class="icon" [icon]="faCheckCircle" size="sm" style="margin-right: -5px; margin-bottom: 5px"></fa-icon></mat-chip>
-                  <mat-chip *ngFor="let tag of availableTags" (click)="showTagInfo(tag)">{{tag}}</mat-chip>
-              </mat-chip-list>
-              <ng-template #notags>
-                <mat-chip-list><mat-chip (click)="showTagInfo(null)">main</mat-chip></mat-chip-list>
-              </ng-template>
-            </p>
-          </div>
-        </div>
-
-        <div *ngIf="isAdministrator()" style="display: flex; flex-direction: row; justify-content: flex-start; padding: 20px">
-          <fa-icon matListIcon class="icon" [icon]="faUsers" size="2x" style="width: 60px; height: 60px; padding-left: 10px;"></fa-icon>
-          <div style="width: 100%">
-            <p>
-              Access
-            </p>
-            <div *ngIf="this.package.private; else alt" style="display: inline-flex; width: 80%; height: 50px; justify-content: flex-start">
-              <mat-chip-list>
-                <mat-chip *ngFor="let u of first20Users()" selectable="false" selected>{{u}}
-                  <fa-icon matChipRemove matIcon *ngIf="isAdministrator() && this.package.sourceIsPrivate" class="icon" [icon]="faKey" size="sm" style="margin-right: -5px; margin-bottom: 5px" (click)="syncDeployKey(u)"></fa-icon>
-                  <fa-icon matChipRemove matIcon *ngIf="isAdministrator() && u !== 'everybody'" class="icon" [icon]="faMinusCircle" size="sm" style="margin-right: -5px; margin-bottom: 5px" (click)="removeUser(u)"></fa-icon>
-                </mat-chip>
-                <p *ngIf="!users || users.length == 0" style="color: red; font-size: small; font-style: italic">Invisible package alert</p>
-                <mat-chip *ngIf="remainderUsers() > 0" color="accent" selected>+ {{remainderUsers()}} users <fa-icon matChipRemove matIcon *ngIf="isAdministrator()" class="icon" [icon]="faEllipsisV" size="sm" style="margin-right: -5px; margin-bottom: 5px" (click)="manageUsers()"></fa-icon></mat-chip>
-                <mat-chip *ngIf="isAdministrator()" selectable="false">Add user <fa-icon matChipRemove matIcon *ngIf="isAdministrator()" class="icon" [icon]="faPlusCircle" size="sm" style="margin-right: -5px; margin-bottom: 5px" (click)="addUser()"></fa-icon></mat-chip>
-              </mat-chip-list>
+            <div style="display: flex; flex-direction: column; width: 150px; align-items: flex-start">
+              <p style="color: lightgray; font-size: small"><fa-icon [icon]="faLongArrowAltDown"></fa-icon> Recent</p>
+              <p style="background-color: black; color: white; min-width: 30px; border-radius: 4px; text-align: center; font-weight: bold">{{count(package.recentDownloads)}}</p>
             </div>
-            <ng-template #alt>
-              <mat-chip *ngIf="isAccessible()">
-                everybody <fa-icon *ngIf="this.package.sourceIsPrivate && isAdministrator()" matChipRemove matIcon class="icon" [icon]="faKey" size="sm" style="margin-right: -5px; margin-bottom: 5px" (click)="syncDeployKey('everybody')"></fa-icon>
-              </mat-chip>
-              <mat-chip *ngIf="!isAccessible()" color="accent" selected>
-                everybody <fa-icon matChipRemove matIcon *ngIf="isAdministrator()" (click)="setUser('everybody')" class="icon" [icon]="faKey" size="sm" style="margin-right: -5px; margin-bottom: 5px"></fa-icon>
-              </mat-chip>
-            </ng-template>
+        </div>
+      </div>
+      </div>
+      <hr/>
+    </div>
+    <!-- GIT -->
+    <div style="padding-top: 30px">
+      <h4 style="color: gray">Repository</h4>
+      <fa-icon matListIcon class="icon" [icon]="faGitAlt" style="margin-right: 10px"></fa-icon><fa-icon *ngIf="package.sourceIsPrivate" [icon]="faKey" style="color: lightgray"></fa-icon>
+      {{package.sourceUrl}} <a target="git" href="{{package.sourceUrl}}"><fa-icon [icon]="faGithub"></fa-icon></a>
+      <div style="width: 100%">
+       <p *ngIf="package.sourcePath">
+          <fa-icon [icon]="faFolder" style="color: lightgray"></fa-icon> {{package.sourcePath}}
+        </p>
+        <div *ngIf="gitInfo" style="display: inline-flex; justify-content: flex-start">
+          <div style="display: flex; flex-direction: column; width: 150px">
+            <p style="color: lightgray; font-size: small"><fa-icon [icon]="faClock"></fa-icon> Last updated</p>
+            <p style="font-weight: bold">{{gitInfo.lastUpdated}}</p>
           </div>
-          <div *ngIf="isAdministrator()" style="padding: 10px; display: flex; flex-direction: column; justify-content: flex-start; align-items: center">
-            <fa-icon matListIcon class="icon" [icon]="iconForIsVisibleButton()" size="2x" [style]="colorForIsVisibleButton()"></fa-icon>
-            <mat-slide-toggle [(ngModel)]="package.isVisible" (change)="toggleVisibility()"></mat-slide-toggle>
-            <p style="font-size: smaller; color: lightgray; text-align: center">Visible</p>
+          <div style="display: flex; flex-direction: column; width: 150px; align-items: flex-start">
+            <p style="color: lightgray; font-size: small"><fa-icon [icon]="faBinoculars"></fa-icon> watchers</p>
+            <p style="background-color: green; min-width: 30px; border-radius: 4px; color: white; text-align: center"> {{gitInfo.watchers}} </p>
           </div>
-          <div  *ngIf="isConnected()" style="padding: 10px; display: flex; flex-direction: column; justify-content: flex-start; align-items: center">
-            <fa-icon matListIcon class="icon" [icon]="iconForNotifications()" size="2x" [style]="colorForNoticationsButton()"></fa-icon>
-            <mat-slide-toggle [(ngModel)]="alertMe" (change)="toggleNotifications()"></mat-slide-toggle>
-            <p style="font-size: smaller; color: lightgray; text-align: center">Notify me</p>
+          <div style="display: flex; flex-direction: column; width: 150px; align-items: flex-start">
+            <p style="color: lightgray; font-size: small"><fa-icon [icon]="faStar"></fa-icon> star gazers</p>
+            <p style="background-color: pink; min-width: 30px; border-radius: 4px; color: white; text-align: center"> {{gitInfo.stargazers}} </p>
           </div>
         </div>
       </div>
+      <hr/>
     </div>
-  <mat-card-actions style="flex-grow: 0">
-    <div style="float: right">
-      <button *ngIf="isAdministrator()" mat-raised-button color="accent" style="margin-top: 5px; margin-right: 20px" (click)="unregisterPackage()"> <fa-icon matListIcon class="icon" [icon]="faEraser" size="1x"></fa-icon> Remove</button>
-      <button *ngIf="isAdministrator()" mat-raised-button color="primary" style="float: right; margin-top: 5px" (click)="migratePackage()"> <fa-icon matListIcon class="icon" [icon]="faRocket" size="1x"></fa-icon> Migrate</button>
+
+    <!-- Versions -->
+    <div style="padding-top: 30px">
+      <h4 style="color: gray">Versions</h4>
+      <div style="width: 100%; display: flex; flex-direction: column">
+        <mat-chip-list *ngIf="haveAvailableTags(); else notags">
+          <mat-chip *ngFor="let tag of this.package.trustedTags" (click)="showTagInfo(tag.tag, tag.when, tag.by, tag.signature)" [color]="colorForTag(tag)" selected>{{tag.tag}} <fa-icon matChipRemove matIcon class="icon" [icon]="faCheckCircle" size="sm" style="margin-right: -5px; margin-bottom: 5px"></fa-icon></mat-chip>
+          <mat-chip *ngFor="let tag of availableTags" (click)="showTagInfo(tag)">{{tag}}</mat-chip>
+        </mat-chip-list>
+        <ng-template #notags>
+          <mat-chip-list><mat-chip (click)="showTagInfo(null)">main</mat-chip></mat-chip-list>
+        </ng-template>
+      </div>
+      <hr/>
     </div>
-  </mat-card-actions>
+
+    <!-- USERS -->
+
+    <div *ngIf="isAdministrator()" style="display: flex; flex-direction: row; justify-content: flex-start; padding-top: 30px">
+      <h4 style="color: gray">Access</h4>
+      <fa-icon matListIcon class="icon" [icon]="faUsers" style="padding-right: 10px;"></fa-icon>
+      <div style="width: 100%">
+        <div *ngIf="this.package.private; else alt" style="display: inline-flex; width: 80%; height: 50px; justify-content: flex-start">
+          <mat-chip-list>
+            <mat-chip *ngFor="let u of first20Users()" selectable="false" selected>{{u}}
+              <fa-icon matChipRemove matIcon *ngIf="isAdministrator() && this.package.sourceIsPrivate" class="icon" [icon]="faKey" size="sm" style="margin-right: -5px; margin-bottom: 5px" (click)="syncDeployKey(u)"></fa-icon>
+              <fa-icon matChipRemove matIcon *ngIf="isAdministrator() && u !== 'everybody'" class="icon" [icon]="faMinusCircle" size="sm" style="margin-right: -5px; margin-bottom: 5px" (click)="removeUser(u)"></fa-icon>
+            </mat-chip>
+              <p *ngIf="!users || users.length == 0" style="color: red; font-size: small; font-style: italic">Invisible package alert</p>
+              <mat-chip *ngIf="remainderUsers() > 0" color="accent" selected>+ {{remainderUsers()}} users <fa-icon matChipRemove matIcon *ngIf="isAdministrator()" class="icon" [icon]="faEllipsisV" size="sm" style="margin-right: -5px; margin-bottom: 5px" (click)="manageUsers()"></fa-icon></mat-chip>
+              <mat-chip *ngIf="isAdministrator()" selectable="false">Add user <fa-icon matChipRemove matIcon *ngIf="isAdministrator()" class="icon" [icon]="faPlusCircle" size="sm" style="margin-right: -5px; margin-bottom: 5px" (click)="addUser()"></fa-icon></mat-chip>
+            </mat-chip-list>
+          </div>
+          <ng-template #alt>
+             <mat-chip *ngIf="isAccessible()">
+               everybody <fa-icon *ngIf="this.package.sourceIsPrivate && isAdministrator()" matChipRemove matIcon class="icon" [icon]="faKey" size="sm" style="margin-right: -5px; margin-bottom: 5px" (click)="syncDeployKey('everybody')"></fa-icon>
+             </mat-chip>
+             <mat-chip *ngIf="!isAccessible()" color="accent" selected>
+               everybody <fa-icon matChipRemove matIcon *ngIf="isAdministrator()" (click)="setUser('everybody')" class="icon" [icon]="faKey" size="sm" style="margin-right: -5px; margin-bottom: 5px"></fa-icon>
+             </mat-chip>
+          </ng-template>
+        </div>
+      <hr/>
+    </div>
+
+    <!-- Buttons -->
+    <div *ngIf="isAdministrator()" style="display: inline-flex; align-content: flex-end;">
+      <button mat-raised-button color="accent" style="margin-right: 20px" (click)="unregisterPackage()"> <fa-icon matListIcon class="icon" [icon]="faEraser" size="1x"></fa-icon> Remove</button>
+      <button mat-raised-button color="primary" click)="migratePackage()"> <fa-icon matListIcon class="icon" [icon]="faRocket" size="1x"></fa-icon> Migrate</button>
+    </div>
+  </div>
 </div>
