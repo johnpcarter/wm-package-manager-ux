@@ -150,6 +150,5 @@
         }
       }
     }
-  },
-  "defaultProject": "wm-package-manager"
+  }
 }
