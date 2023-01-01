@@ -7,6 +7,7 @@ export class GLOBALS {
 
   public static registry: Registry = new Registry()
   public static user: string = null
+  public static onRegistriesPage: boolean = false
 
   public static settings: Settings = new Settings()
 

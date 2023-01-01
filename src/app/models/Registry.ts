@@ -12,5 +12,5 @@ export class Registry {
   public owner: string | undefined
   public searchTags: string[] | undefined
   public trustLevel: number | undefined
-  public default: boolean | undefined
+  public default: boolean = true
 }

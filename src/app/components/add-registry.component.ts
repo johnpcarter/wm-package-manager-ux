@@ -1,6 +1,5 @@
-import { Component, OnInit} from '@angular/core'
+import { Component, EventEmitter, OnInit, Output } from '@angular/core'
 import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms'
-import { MatDialogRef } from '@angular/material/dialog'
 
 import { faBook, faTimes } from '@fortawesome/free-solid-svg-icons'
 
@@ -25,12 +24,11 @@ export class AddRegistryComponent implements OnInit {
 
   public failed: boolean = false
 
-  // tslint:disable-next-line:variable-name
-  private _dialogRef: MatDialogRef<any>
+  @Output()
+  public onCompleted: EventEmitter<boolean> = new EventEmitter<boolean>()
 
   // tslint:disable-next-line:variable-name max-line-length
-  constructor(private formBuilder: UntypedFormBuilder, dialogRef: MatDialogRef<any>, private _registriesService: RegistriesService) {
-    this._dialogRef = dialogRef
+  constructor(private formBuilder: UntypedFormBuilder, private _registriesService: RegistriesService) {
 
     this.nameCtrl = new UntypedFormControl('', Validators.required)
     this.descriptionCtrl = new UntypedFormControl('', Validators.required)
@@ -50,10 +48,6 @@ export class AddRegistryComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  public onNoClick(): void {
-    this._dialogRef.close()
-  }
-
   public toggleIsDefault(): void {
     this.isDefaultCtrl.setValue(!this.isDefaultCtrl.value, {onlySelf: true})
   }
@@ -69,10 +63,14 @@ export class AddRegistryComponent implements OnInit {
 
     this._registriesService.createRegistry(r).subscribe((success) => {
       if (success) {
-        this._dialogRef.close()
+        this.onCompleted.emit(success)
       } else {
         this.failed = true
       }
     })
+  }
+
+  public close():void {
+    this.onCompleted.emit(false)
   }
 }

@@ -43,6 +43,7 @@ export class TagInfoComponent implements OnInit {
   public haveGitInfo: boolean = false
   public hasAccessToken: boolean = false
   public registryName: string
+  public isDefaultRegistry: boolean = false
   public userName: string
 
   // tslint:disable-next-line:variable-name
@@ -75,6 +76,8 @@ export class TagInfoComponent implements OnInit {
 
     this.userName = GLOBALS.user
     this.registryName = GLOBALS.registry.name
+    this.isDefaultRegistry = GLOBALS.registry.default
+
     this.hasAccessToken = GLOBALS.getAccessToken() != null
   }
 

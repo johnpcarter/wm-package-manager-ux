@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
-import { Observable, of } from 'rxjs'
+import {BehaviorSubject, Observable, of} from 'rxjs'
 import { catchError, map } from 'rxjs/operators'
 
 import { environment } from '../../environments/environment'
@@ -17,12 +17,43 @@ export class PackagesServices {
   private static PACKAGES = 'packages'
   private static PACKAGE = 'package'
 
+  private packagesSource = new BehaviorSubject([])
+  public packages: Observable<Package[]> = this.packagesSource.asObservable()
+
+  // tslint:disable-next-line:variable-name
+  private _allPackages: Package[] = []
+  // tslint:disable-next-line:variable-name
+  private _fetching: boolean = false
+  // tslint:disable-next-line:variable-name
+  private _allPackagesFilter: string = null
+
   // tslint:disable-next-line:variable-name
   constructor(private _http: HttpClient) {
-
   }
 
-  public packages(filter: any, registry: string, category?: string): Observable<Package[]> {
+  public searchPackages(value: string): void {
+
+    if (!this._fetching) {
+      // if we have more results than 50, mayhap we have applicable candidates in DB, so fetch from backing-store
+      if (this._allPackages.length === 50) {
+        this.fetchPackages(value, GLOBALS.registry.name).subscribe((p) => {
+          this.packagesSource.next(p)
+
+          console.log('all packages now filtered by ' + this._allPackagesFilter)
+        })
+      } else if (value) {
+        // filter in memory results
+        this.packagesSource.next(this._allPackages.filter((val) => val.packageName.toLowerCase().includes(value.toLowerCase())
+          || val.description.toLowerCase().includes(value.toLowerCase())))
+      } else {
+        this.packagesSource.next(this._allPackages)
+      }
+    }
+  }
+
+  public fetchPackages(filter: any, registry: string, category?: string): Observable<Package[]> {
+
+    this._fetching = true
 
     let url: string = environment.BASE_API + PackagesServices.PACKAGES
 
@@ -46,9 +77,19 @@ export class PackagesServices {
 
     return this._http.get(url, { headers })
       .pipe(catchError(error => {
-        return of({packages: []})
+        this._fetching = false
+        this._allPackagesFilter = filter
+
+        return of({packages: [null]})
       }))
       .pipe(map( (responseData: any) => {
+        this._allPackages = responseData.packages
+        this._allPackagesFilter = filter
+
+        if (registry != null) {
+          GLOBALS.registry.name = registry
+        }
+        this._fetching = false
         return responseData.packages
       }))
   }
@@ -150,6 +191,8 @@ export class PackagesServices {
         return of({success: false})
       }))
       .pipe(map( (responseData: any) => {
+        this._allPackages.push(pckg)
+        this.packagesSource.next(this._allPackages)
         return responseData.success
       }))
   }
@@ -228,6 +271,29 @@ export class PackagesServices {
       }))
       .pipe(map( (responseData: any) => {
         return responseData
+      }))
+  }
+
+  public getPackageReadme(packageName: string, tag?: string, registry?: string): Observable<string> {
+
+    let url: string = environment.BASE_API + PackagesServices.PACKAGE + '/' + encodeURIComponent(packageName) + '/readme'
+
+    if (tag) {
+      url += '/' + + encodeURIComponent(tag)
+    }
+
+    if (registry) {
+      url += '?registry=' + encodeURIComponent(registry)
+    }
+
+    const headers = GLOBALS.headers()
+
+    return this._http.get(url, { headers })
+      .pipe(catchError(error => {
+        return of({})
+      }))
+      .pipe(map( (responseData: any) => {
+        return responseData.readme
       }))
   }
 

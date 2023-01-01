@@ -6,25 +6,28 @@ import { AppComponent } from './app.component'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { RouterModule, Routes } from '@angular/router'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
-import { HttpClientModule} from '@angular/common/http'
+import {HttpClient, HttpClientModule} from '@angular/common/http'
 
-import { MarkdownModule, MarkedOptions, MarkedRenderer } from 'ngx-markdown'
+import { MarkdownModule } from 'ngx-markdown'
 
-import { MatDialogModule } from '@angular/material/dialog'
-import { MatListModule } from '@angular/material/list'
-import { MatTableModule } from '@angular/material/table'
-import { MatCardModule } from '@angular/material/card'
-import { MatChipsModule } from '@angular/material/chips'
-import { MatButtonModule } from '@angular/material/button'
 import { MatSnackBarModule } from '@angular/material/snack-bar'
-import { MatMenuModule } from '@angular/material/menu'
-import { MatSelectModule } from '@angular/material/select'
-import { MatInputModule } from '@angular/material/input'
+
+import { MatLegacyListModule as MatListModule } from '@angular/material/legacy-list'
+import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card'
+import { MatLegacyChipsModule as MatChipsModule } from '@angular/material/legacy-chips'
+import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button'
+import { MatLegacyMenuModule as MatMenuModule } from '@angular/material/legacy-menu'
+import { MatLegacySelectModule as MatSelectModule } from '@angular/material/legacy-select'
+import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy-input'
 import { MatExpansionModule } from '@angular/material/expansion'
-import { MatSlideToggleModule } from '@angular/material/slide-toggle'
-import { MatRadioModule } from '@angular/material/radio'
-import { MAT_CHECKBOX_DEFAULT_OPTIONS, MatCheckboxDefaultOptions, MatCheckboxModule } from '@angular/material/checkbox'
-import { MAT_FORM_FIELD_DEFAULT_OPTIONS, MatFormFieldModule } from '@angular/material/form-field'
+import { MatLegacySlideToggleModule as MatSlideToggleModule } from '@angular/material/legacy-slide-toggle'
+import { MatLegacyRadioModule as MatRadioModule } from '@angular/material/legacy-radio'
+import { MAT_LEGACY_CHECKBOX_DEFAULT_OPTIONS as MAT_CHECKBOX_DEFAULT_OPTIONS, MatLegacyCheckboxDefaultOptions as MatCheckboxDefaultOptions, MatLegacyCheckboxModule as MatCheckboxModule } from '@angular/material/legacy-checkbox'
+import { MAT_LEGACY_FORM_FIELD_DEFAULT_OPTIONS as MAT_FORM_FIELD_DEFAULT_OPTIONS, MatLegacyFormFieldModule as MatFormFieldModule } from '@angular/material/legacy-form-field'
+import { MatTableModule } from '@angular/material/table'
+import { MatTabsModule } from '@angular/material/tabs'
+import { MatButtonToggleModule } from '@angular/material/button-toggle'
+import { MatDialogModule } from '@angular/material/dialog'
 
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome'
 
@@ -46,11 +49,11 @@ import { ListRegistriesComponent } from './components/list-registries.component'
 import { NotificationsService } from './services/notifications-service'
 import { ListPackagesRegistriesComponent } from './components/list-package-registries.component'
 import { ManageUsersComponent } from './components/manage-users.component'
-import {MatTabsModule} from '@angular/material/tabs';
-import {MatButtonToggleModule} from '@angular/material/button-toggle';
+
 
 const routes: Routes = [
   { path: '', component: PackagesComponent },
+  { path: 'package/:packageName', component: PackageDetailsComponent },
   { path: 'settings', component: SettingsComponent },
   { path: 'registries', component: RegistriesComponent },
   { path: ':registry', component: PackagesComponent },
@@ -82,7 +85,7 @@ const routes: Routes = [
     BrowserAnimationsModule,
     FormsModule,
     HttpClientModule,
-    MarkdownModule,
+    MarkdownModule.forRoot({ loader: HttpClient }),
     FontAwesomeModule,
     MatDialogModule,
     MatListModule,

@@ -1,16 +1,12 @@
-import {Component, OnInit } from '@angular/core'
-import {Router} from '@angular/router'
-import {MatDialog} from '@angular/material/dialog'
-import {MatSnackBar} from '@angular/material/snack-bar'
+import { Component, OnInit } from '@angular/core'
+import { Router } from '@angular/router'
+import { MatSnackBar } from '@angular/material/snack-bar'
 
-import {faBuilding, faGlobeAfrica, faTrashAlt, faCheckCircle, faPlusSquare, faCircle} from '@fortawesome/free-solid-svg-icons'
+import { faBuilding, faGlobeAfrica, faTrashAlt, faCheckCircle, faPlusSquare, faCircle } from '@fortawesome/free-solid-svg-icons'
 
-import {RegistriesService} from '../services/registries.service'
-import {Registry, RegistryType} from '../models/Registry'
-import {GLOBALS} from '../globals'
-import {RemoveConfirmationComponent} from './remove-confirmation.component'
-import {AddRegistryComponent} from './add-registry.component'
-import {AddPackageComponent} from './add-package.component'
+import { RegistriesService } from '../services/registries.service'
+import { Registry, RegistryType } from '../models/Registry'
+import { GLOBALS } from '../globals'
 
 @Component({
   selector: 'app-registries',
@@ -25,13 +21,15 @@ export class RegistriesComponent implements OnInit {
   public faPlusSquare = faPlusSquare
   public faCircle = faCircle
 
+  public addRegistryClicked: boolean = false
+
   // tslint:disable-next-line:variable-name
   private _registries: Registry[] = []
   // tslint:disable-next-line:variable-name
   private _isConnected: boolean
 
   // tslint:disable-next-line:variable-name max-line-length
-  constructor(private _router: Router, private _registriesService: RegistriesService, private _dialog: MatDialog, private _snackbar: MatSnackBar) {
+  constructor(private _router: Router, private _registriesService: RegistriesService, private _snackbar: MatSnackBar) {
   }
 
   ngOnInit(): void {
@@ -50,9 +48,12 @@ export class RegistriesComponent implements OnInit {
     return this._registries
   }
 
-  public showPackagesInRegistry(registryId: string): void {
+  public showPackagesInRegistry(registry: Registry): void {
+
+    GLOBALS.onRegistriesPage = false
+    GLOBALS.registry = registry
     this._router.navigate([''], {
-      queryParams: { registry: registryId },
+      queryParams: { registry: registry.name },
       queryParamsHandling: 'merge' })
   }
 
@@ -82,32 +83,20 @@ export class RegistriesComponent implements OnInit {
 
   public addRegistry(): void {
 
-    if (this.isAdministrator()) {
-      const dialogRef = this._dialog.open(AddRegistryComponent, {
-        width: '400px',
-        height: '600px'
-      })
+    this.addRegistryClicked = true
+  }
 
-      dialogRef.afterClosed().subscribe(result => {
-        this.load()
-      })
-    }
+  public addRegistryCompleted(success: boolean): void {
+    this.addRegistryClicked = false
   }
 
   public removeRegistry(r: Registry): void {
 
     if (this.isAdministrator()) {
-      const dialogRef = this._dialog.open(RemoveConfirmationComponent, {
-        width: '50%',
-        height: '250px',
-        data: {
-          ref: r.name
-        }
-      })
 
-      dialogRef.afterClosed().subscribe(result => {
+      let confirm: boolean = false
 
-        if (result.confirm) {
+        if (confirm) {
           this._registriesService.deleteRegistry(r.name).subscribe((success) => {
             if (success) {
               this.load()
@@ -118,8 +107,6 @@ export class RegistriesComponent implements OnInit {
             }
           })
         }
-      })
-
     } else {
       // do nothing
 
@@ -136,5 +123,17 @@ export class RegistriesComponent implements OnInit {
     this._registriesService.registries().subscribe((r) => {
       this._registries = r
     })
+  }
+
+  public classForIsDefaultAvailable(r: Registry): string {
+    if (r.default) {
+      return 'disabled'
+    } else {
+      return null
+    }
+  }
+
+  public editRegistry(r: Registry): void {
+
   }
 }

@@ -1,6 +1,5 @@
-import {Component, Inject, OnInit} from '@angular/core';
-import {Form, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog'
+import { Component, EventEmitter, OnInit, Output } from '@angular/core'
+import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms'
 
 import { faTimes, faPlus } from '@fortawesome/free-solid-svg-icons'
 
@@ -12,7 +11,7 @@ import { PackagesServices } from '../services/packages.service'
 import { GLOBALS } from '../globals'
 
 @Component({
-  selector: 'app-add-registry',
+  selector: 'app-add-package',
   templateUrl: './templates/add-package.component.html'
 })
 export class AddPackageComponent implements OnInit {
@@ -34,15 +33,13 @@ export class AddPackageComponent implements OnInit {
 
   public failed: boolean = false
 
-  // tslint:disable-next-line:variable-name
-  private _dialogRef: MatDialogRef<any>
+  @Output()
+  public onCompleted: EventEmitter<boolean> = new EventEmitter<boolean>()
 
   // tslint:disable-next-line:variable-name max-line-length
-  constructor(private formBuilder: UntypedFormBuilder, @Inject(MAT_DIALOG_DATA) public data, dialogRef: MatDialogRef<any>, private _packagesService: PackagesServices) {
+  constructor(private formBuilder: UntypedFormBuilder, private _packagesService: PackagesServices) {
 
-    this._dialogRef = dialogRef
-
-    this.registry = data.registry
+    this.registry = GLOBALS.registry
 
     this.nameCtrl = new UntypedFormControl('', Validators.required)
     this.descriptionCtrl = new UntypedFormControl('', Validators.required)
@@ -68,8 +65,8 @@ export class AddPackageComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  public onNoClick(): void {
-    this._dialogRef.close()
+  public close(): void {
+    this.onCompleted.emit(false)
   }
 
   public submit(): void {
@@ -89,7 +86,7 @@ export class AddPackageComponent implements OnInit {
 
     this._packagesService.createPackage(p, this.registry.name).subscribe((success) => {
       if (success) {
-        this._dialogRef.close()
+        this.onCompleted.emit(success)
       } else {
         this.failed = true
       }

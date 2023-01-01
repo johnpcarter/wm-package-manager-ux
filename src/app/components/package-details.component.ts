@@ -1,12 +1,12 @@
-import {Component, Inject, OnInit} from '@angular/core'
-import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog'
+import {Component, OnInit} from '@angular/core'
 
-import { ThemePalette } from '@angular/material/core'
 import { MatSnackBar } from '@angular/material/snack-bar'
+import { MatDialog } from '@angular/material/dialog'
 
-import { faTimes, faUniversalAccess, faTags, faObjectGroup, faInfoCircle, faCheckCircle, faEraser, faKey, faBinoculars, faStar, faLongArrowAltDown,
-  faTools, faClock, faUsers, faLockOpen, faPlusCircle, faMinusCircle, faRocket, faBell, faBellSlash, faArrowCircleDown, faFolder,
-  faGlobeAfrica, faEye, faEyeSlash, faEllipsisV, faUnlock } from '@fortawesome/free-solid-svg-icons'
+import { faTimes, faUniversalAccess, faTags, faObjectGroup, faInfoCircle, faCheckCircle, faEraser, faKey, faBinoculars, faStar,
+  faLongArrowAltDown, faTools, faClock, faUsers, faLockOpen, faPlusCircle, faMinusCircle, faRocket, faBell, faBellSlash, faArrowCircleDown,
+  faFolder, faGlobeAfrica, faEye, faEyeSlash, faEllipsisV, faUnlock } from '@fortawesome/free-solid-svg-icons'
+
 import { faGitAlt, faGithub } from '@fortawesome/free-brands-svg-icons'
 
 import { MarkdownService } from 'ngx-markdown'
@@ -25,8 +25,7 @@ import { ListRegistriesComponent } from './list-registries.component'
 import { ManageUsersComponent } from './manage-users.component'
 
 import { GLOBALS } from '../globals'
-import { environment } from '../../environments/environment'
-import {FormGroup} from '@angular/forms';
+import {ActivatedRoute, Params, Router} from '@angular/router'
 
 @Component({
   selector: 'app-package-details',
@@ -64,92 +63,102 @@ export class PackageDetailsComponent implements OnInit {
   public faEllipsisV = faEllipsisV
   public faUnlock = faUnlock
 
+  public packageName: string
   public package: Package
   public users: string[] = []
   public gitInfo: GitInfo
   public availableTags: string[] = []
   public alertMe: boolean
 
+  public markdown: string = ''
+  public noReadmeAvailable: string =
+`### No README.md found in the package repository
+*Tell the developer to provide one!*
+`
+
   // put the text completely on the left to avoid extra white spaces
-  public markdownText: string =
-    `### Markdown example
----
-This is an **example** where we bind a variable to the \`markdown\` component that is also bind to a textarea.
-#### example.component.ts
-\`\`\`javascript
-function hello() {
-  alert('Hello World');
-}
-\`\`\`
-#### example.component.css
-\`\`\`css
-.bold {
-  font-weight: bold;
-}
-\`\`\``
+  public markdownText: string = 'loading.....'
 
   public downloadsStats: PackageStat[] = []
   public maxDownloadValue: number = 0
 
   // tslint:disable-next-line:variable-name
-  private _dialogRef: MatDialogRef<any>
-  // tslint:disable-next-line:variable-name
   private _didLoad: boolean = false
 
   // tslint:disable-next-line:variable-name max-line-length
-  constructor(dialogRef: MatDialogRef<any>, @Inject(MAT_DIALOG_DATA) public data: any, private _dialog: MatDialog, private markdownService: MarkdownService,
+  constructor(private _router: Router, private route: ActivatedRoute, private mdService: MarkdownService, private _snackbar: MatSnackBar,
               // tslint:disable-next-line:variable-name max-line-length
-              private _snackbar: MatSnackBar, private _packagesServices: PackagesServices, private _notificationsService: NotificationsService) {
+              private _packagesServices: PackagesServices, private _notificationsService: NotificationsService, private _dialog: MatDialog) {
 
-      this._dialogRef = dialogRef
-      this.package = data.package
+      this.route.params.subscribe((params: Params) => {
+        this.packageName = params['packageName']
 
-      this._packagesServices.package(this.package.packageName, GLOBALS.registry.name).subscribe((p) => {
+        this._packagesServices.package(this.packageName, GLOBALS.registry.name).subscribe((p) => {
 
-        if (p) {
-          this.package = p
-          this.alertMe = this.package.alertEmail != null
-          this._didLoad = true
+          if (p) {
+            this.package = p
+            this.alertMe = this.package.alertEmail != null
+            this._didLoad = true
 
-          this._packagesServices.gitInfo(this.package.packageName, GLOBALS.registry.name).subscribe((gitInfo) => {
-            this.gitInfo = gitInfo
+            this._packagesServices.getPackageReadme(this.package.packageName, null, GLOBALS.registry.name).subscribe((readme) => {
+              if (readme) {
+                this.markdown = this.mdService.parse(readme)
+              } else {
+                this.markdown = this.noReadmeAvailable
+              }
 
-            if (this.gitInfo.availableTags) {
-              this.gitInfo.availableTags.forEach((t) => {
-                if (!this.isTrustedTag(t)) {
-                  this.availableTags.push(t)
-                }
-              })
+
+            })
+
+            this._packagesServices.gitInfo(this.package.packageName, GLOBALS.registry.name).subscribe((gitInfo) => {
+              this.gitInfo = gitInfo
+
+              if (this.gitInfo.availableTags) {
+                this.gitInfo.availableTags.forEach((t) => {
+                  if (!this.isTrustedTag(t)) {
+                    this.availableTags.push(t)
+                  }
+                })
+              }
+            })
+          }
+        })
+
+        this._packagesServices.history(this.packageName, GLOBALS.registry.name).subscribe((h) => {
+
+          h.forEach((v) => {
+            if (v.value > this.maxDownloadValue) {
+              this.maxDownloadValue = v.value
+            }
+
+            this.downloadsStats.push(new PackageStat(v.label, v.value))
+          })
+        })
+
+        if (GLOBALS.isAdministrator()) {
+          this._packagesServices.users(this.packageName, GLOBALS.registry.name).subscribe((u) => {
+
+            if (u) {
+              this.users = u
+            } else {
+              this.users.push('everybody')
+              this.saveUsers()
             }
           })
         }
       })
-
-      this._packagesServices.history(this.package.packageName, GLOBALS.registry.name).subscribe((h) => {
-
-        h.forEach((v) => {
-          if (v.value > this.maxDownloadValue) {
-            this.maxDownloadValue = v.value
-          }
-
-          this.downloadsStats.push(new PackageStat(v.label, v.value))
-        })
-      })
-
-      if (GLOBALS.isAdministrator()) {
-        this._packagesServices.users(this.package.packageName, GLOBALS.registry.name).subscribe((u) => {
-
-          if (u) {
-            this.users = u
-          } else {
-            this.users.push('everybody')
-            this.saveUsers()
-          }
-        })
-      }
   }
 
   ngOnInit(): void {
+
+    this.markdown = this.mdService.parse(this.markdownText)
+  }
+
+  public goBack(): boolean {
+    this._router.navigate([''], {
+      queryParams: { registry: GLOBALS.registry.name },
+      queryParamsHandling: 'merge' })
+    return false
   }
 
   public onLoad(data: any): void {
@@ -158,10 +167,6 @@ function hello() {
 
   public onError(data: any): void {
     console.log(data)
-  }
-
-  public onNoClick(): void {
-    this._dialogRef.close()
   }
 
   public authType(): string {
@@ -180,11 +185,11 @@ function hello() {
     }
   }
 
-  public colorForTag(tag: TagSummary): ThemePalette {
+  public colorForTag(tag: TagSummary): any {
     if (tag && tag.signature) {
-      return 'primary'
+      return {'background-color': 'blue'}
     } else {
-      return 'accent'
+      return {'background-color': 'red'}
     }
   }
 
@@ -277,7 +282,7 @@ function hello() {
         if (result.confirm) {
           this._packagesServices.removePackage(this.package.packageName, GLOBALS.registry.name).subscribe((success) => {
             if (success) {
-              this._dialogRef.close()
+              this._router.navigate(['/packages'])
             }
           })
         }
@@ -423,7 +428,7 @@ function hello() {
         if (result.registry) {
           this._packagesServices.migratePackage(this.package.packageName, result.registry, GLOBALS.registry.name).subscribe((success) => {
             if (success) {
-              this.onNoClick()
+              this._router.navigate(['/packages'])
             } else {
               this._snackbar.open('update failed', 'Sorry', {
                 duration: 2000,
@@ -577,6 +582,7 @@ function hello() {
 
     // tslint:disable-next-line:prefer-for-of
     if (this.package && this.package.trustedTags) {
+      // tslint:disable-next-line:prefer-for-of
       for (let i = 0; i < this.package.trustedTags.length; i++) {
         if (this.package.trustedTags[i].tag === tag) {
           found = true
@@ -590,7 +596,8 @@ function hello() {
 
   private addNotification(): void {
     // tslint:disable-next-line:max-line-length
-    this._notificationsService.addPackageNotification(this.package.packageName, GLOBALS.user, GLOBALS.settings.email, GLOBALS.registry.name).subscribe((success) => {
+    this._notificationsService.addPackageNotification(this.package.packageName, GLOBALS.user, GLOBALS.settings.email, GLOBALS.registry.name)
+      .subscribe((success) => {
       if (!success) {
         this.alertMe = !this.alertMe
         this._snackbar.open('Couldn\'t add notification', 'Sorry', {

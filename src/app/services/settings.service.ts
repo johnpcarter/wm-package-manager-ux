@@ -30,6 +30,7 @@ export class SettingsService {
       .pipe(map( (responseData: any) => {
 
         if (responseData && responseData.userType) {
+          GLOBALS.cacheAccessToken(responseData.accessToken)
           return responseData.userType
         } else {
           return null
@@ -116,9 +117,15 @@ export class SettingsService {
     const headers = GLOBALS.headers()
 
     return this._http.get(url, { headers }).pipe(catchError(error => {
+      GLOBALS.clearUser()
       return of(false)
     })).pipe(map( (responseData: any) => {
-      return responseData.userID
+      if (responseData.userID) {
+        return responseData.userID
+      } else {
+        GLOBALS.clearUser()
+        return false
+      }
     }))
   }
 

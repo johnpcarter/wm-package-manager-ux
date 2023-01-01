@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core'
 import { ActivatedRoute, Router } from '@angular/router'
 
+import { Subscription } from 'rxjs'
+
 import { faCog, faUser, faUserSlash, faTools, faListAlt, faLifeRing, faCheck, faBrain } from '@fortawesome/free-solid-svg-icons'
 
 import { MatSnackBar } from '@angular/material/snack-bar'
@@ -11,11 +13,10 @@ import { Registry } from './models/Registry'
 import { SettingsService } from './services/settings.service'
 import { RegistriesService } from './services/registries.service'
 import { NotificationsService } from './services/notifications-service'
-import { Subscription } from 'rxjs'
+
+import { PackagesServices } from './services/packages.service'
 
 import { GLOBALS } from './globals'
-
-import { LoginComponent } from './components/login.component'
 
 @Component({
   selector: 'app-root',
@@ -24,8 +25,6 @@ import { LoginComponent } from './components/login.component'
 export class AppComponent implements OnInit {
 
   public title: string = 'webMethods package Manager'
-  public subTitle: string = 'Disconnected'
-
   public isConnectionPanelOpen: boolean = false
 
   public faCog = faCog
@@ -41,9 +40,15 @@ export class AppComponent implements OnInit {
   private _sub: Subscription = null
 
   // tslint:disable-next-line:variable-name max-line-length
-  constructor(private _inboundRouter: ActivatedRoute, private _router: Router, private _snackBar: MatSnackBar, private _dialog: MatDialog,
+  constructor(private _inboundRouter: ActivatedRoute, private _router: Router, private _snackBar: MatSnackBar, private _dialog: MatDialog,  private _packagesServices: PackagesServices,
   // tslint:disable-next-line:variable-name max-line-length
               private _notificationsService: NotificationsService, private _settingsService: SettingsService, private _registriesService: RegistriesService) {
+
+    console.log('loc ' + window.location.href)
+
+    if (window.location.href.indexOf('registries') !== -1) {
+      GLOBALS.onRegistriesPage = true
+    }
 
     _settingsService.currentUser().subscribe((user) => {
       if (user) {
@@ -68,6 +73,14 @@ export class AppComponent implements OnInit {
     }
   }
 
+  public menuTitle(): string {
+    if (this.isConnected()) {
+      return GLOBALS.user
+    } else {
+      return 'Anonymous'
+    }
+  }
+
   public isConnected(): boolean {
     return GLOBALS.user != null
   }
@@ -83,8 +96,8 @@ export class AppComponent implements OnInit {
   public disconnect(): void {
 
     this._settingsService.disconnect().subscribe((success) => {
+
       if (success) {
-        this.subTitle = 'Disconnected'
         GLOBALS.clearUser()
         this._snackBar.open('You have been disconnected successfully', 'Ok', {
           duration: 2000,
@@ -103,8 +116,11 @@ export class AppComponent implements OnInit {
     this.isConnectionPanelOpen = false
 
     if (result) {
-      this.subTitle = GLOBALS.user
-      this._router.navigate(['/packages'])
+      if (GLOBALS.onRegistriesPage) {
+        this._router.navigate(['/registries'])
+      } else {
+        this._router.navigate(['/packages'])
+      }
     }
   }
 
@@ -116,7 +132,12 @@ export class AppComponent implements OnInit {
   }
 
   public showRegistries(): void {
+    GLOBALS.onRegistriesPage = true
     this._router.navigate(['/registries'])
+  }
+
+  public onRegistriesPage(): boolean {
+    return GLOBALS.onRegistriesPage
   }
 
   public currentRegistry(): Registry {
@@ -125,6 +146,15 @@ export class AppComponent implements OnInit {
     }
 
     return GLOBALS.registry
+  }
+
+  public search(value: string): void {
+
+    this._packagesServices.searchPackages(value)
+  }
+
+  public clear(): void {
+    this._packagesServices.searchPackages(null)
   }
 
   public isDefaultRegistry(): boolean {

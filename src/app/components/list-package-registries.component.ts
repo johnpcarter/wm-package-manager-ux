@@ -60,9 +60,11 @@ export class ListPackagesRegistriesComponent implements OnInit {
 
   public toggleListType(): void {
 
-    if (this.isPackageList) {
+    if (!this.isPackageList) {
+      this.isPackageList = true
       this.loadPackages()
     } else {
+      this.isPackageList = false
       this.loadRegistries()
     }
   }
@@ -70,25 +72,20 @@ export class ListPackagesRegistriesComponent implements OnInit {
   private loadPackages(): void {
 
     this.items = []
-    this.label = 'Registered packages'
+    this.label = 'Available packages'
 
     if (this.packages) {
-
       this.packages.forEach((p) => {
         this.items.push(p.packageName)
       })
-
     } else {
-
-      this._packagesService.packages(null, GLOBALS.registry.name).subscribe((r) => {
-
+      this._packagesService.fetchPackages(null, GLOBALS.registry.name).subscribe((p) => {
         this.packages = []
+        p.forEach((pk) => {
 
-        r.forEach((p) => {
-
-          if (this.omitList.indexOf(p.packageName) === -1) {
-            this.packages.push(p)
-            this.items.push(p.packageName)
+          if (this.omitList.indexOf(pk.packageName) === -1) {
+            this.packages.push(pk)
+            this.items.push(pk.packageName)
           }
         })
       })

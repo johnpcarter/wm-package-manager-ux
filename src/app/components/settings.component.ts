@@ -77,12 +77,12 @@ export class SettingsComponent implements OnInit {
 
   public ngOnInit(): void {
 
-    this.form.valueChanges.subscribe((ctrl) => {
+    /*this.form.valueChanges.subscribe((ctrl) => {
       if (this.emailAddressCtrl.dirty) {
         this.defaultEmailDidChange()
         this.emailAddressCtrl.markAsPristine()
       }
-    })
+    })*/
   }
 
   public defaultEmailDidChange(): void {
@@ -97,13 +97,18 @@ export class SettingsComponent implements OnInit {
     })
   }
 
-  public editDefaultRow(element: any): void {
+  public editRow(element: any): void {
     element.isEditable = true
     this.gitUrlCtrl.setValue(element.source, {emitEvent: true})
     this.gitUserCtrl.setValue(element.user, {emitEvent: true})
     this.gitTokenCtrl.setValue(null, {emitEvent: true})
 
-    this.credentials[(this.credentials.length - 1)].isEditable = false // make last row non-editable
+    this.credentials.forEach((c) => {
+
+      if (c !== element) {
+        c.isEditable = false
+      }
+    })
   }
 
   public isEditableGitRowValid(): boolean {
@@ -136,6 +141,14 @@ export class SettingsComponent implements OnInit {
         })
       }
     })
+  }
+
+  public cancelEdit(element: Credentials): void {
+    element.isEditable = false
+
+    if (element.token == null) {
+      this.removeCredentialsRow(element)
+    }
   }
 
   public addCredentialsRow(): void {
@@ -175,6 +188,10 @@ export class SettingsComponent implements OnInit {
         }
       })
     }
+  }
+
+  public saveEmail(): void {
+    this.defaultEmailDidChange()
   }
 
   public showToken(c: Credentials): string {
@@ -226,7 +243,7 @@ export class SettingsComponent implements OnInit {
 
   public removeNotification(element: NewPackageNotification): void {
 
-    this._notificationService.removeNotification(element.name, element.isPackage, GLOBALS.registry.name).subscribe((success) => {
+    this._notificationService.removeNotification(element.name, element.isPackage, element.registry).subscribe((success) => {
       if (success) {
         let found = -1
         for (let i = 0; i < this.notifications.length; i++) {
@@ -247,11 +264,11 @@ export class SettingsComponent implements OnInit {
     })
   }
 
-  public notificationType(n: NewPackageNotification): any {
+  public notificationType(n: NewPackageNotification): string {
     if (n.isPackage) {
-      return faCube
+      return 'dlt-icon-package lg-icon'
     } else {
-      return this.faGlobeAfrica
+      return 'dlt-icon-globe lg-icon'
     }
   }
 
@@ -282,9 +299,9 @@ export class SettingsComponent implements OnInit {
     this._settings.developerCredentials().subscribe((r) => {
 
       this.addDefaultIfNotPresent(r)
-      const editableCredentials = new Credentials()
+      /*const editableCredentials = new Credentials()
       editableCredentials.isEditable = true
-      r.push(editableCredentials)
+      r.push(editableCredentials)*/
 
       this.credentials = r
     })

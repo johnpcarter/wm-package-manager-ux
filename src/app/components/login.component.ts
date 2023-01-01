@@ -102,8 +102,15 @@ export class LoginComponent implements OnInit {
     }
   }
 
-  public onNoClick(): void {
+  public onClickOutside(): void {
     this.loginModalClose.emit(false)
+  }
+
+  public onReturnKey(): void {
+
+    if (!this.form.invalid) {
+      this.connect()
+    }
   }
 
   public isLoginDisabled(): boolean {

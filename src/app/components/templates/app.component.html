@@ -1,9 +1,9 @@
 <div class="header-wrap">
   <header class="container col-12 no-margin no-padding main-head">
     <a class="brand" href="/">
-      <div style="display: inline-flex">
+      <div style="display: inline-flex;">
         <img src="assets/_images/sag-primary-logo-dark-rgb.png" height="32px" style="margin-top: 10px"/>
-        <div style="width: 150px; font-size: small; border-left: white 1px solid; margin-left: 10px; padding: 10px">webMethods Package Manager</div>
+        <div style="width: 150px; font-size: small; border-left: white 1px solid; margin-left: 10px; padding: 10px;">webMethods Package Manager</div>
       </div>
     </a>
     <div class="wrapper" style="margin-left:auto; margin-right:12px;">
@@ -13,12 +13,12 @@
     <div class="dlt-dropdown">
       <button class="dlt-button dlt-button-icon button-icon-md" style="margin-left: 20px; margin-right: 20px"><i class="dlt-icon-settings"></i></button>
       <div class="dlt-overflow-menu" style="min-width: 150px; height: auto; margin-right: 0px">
-        <legend class="dlt-overlay-menu-group-label">{{subTitle}}</legend>
+        <legend class="dlt-overlay-menu-group-label" style="text-align: center">{{menuTitle()}}</legend>
         <div class="solid-line"></div>
         <a *ngIf="!isOnRegistryPage()" (click)="showRegistries()"><fa-icon [icon]="faListAlt"></fa-icon> Registries </a>
         <div *ngIf="!isOnRegistryPage()" class="solid-line"></div>
         <a *ngIf="isConnected()">
-          <span style="color: gray" (click)="disconnect()"><fa-icon [icon]="faUserSlash"></fa-icon> Disconnect</span>
+          <span (click)="disconnect()"><fa-icon [icon]="faUserSlash"></fa-icon> Disconnect</span>
         </a>
         <a *ngIf="!isConnected()">
           <span (click)="showConnectDialog()"><fa-icon [icon]="faUser"></fa-icon> Connect</span>
@@ -29,7 +29,6 @@
         </a>
         <div *ngIf="isConnected()" class="solid-line"></div>
         <a href="/WxPackageManager/about.html#about"><fa-icon [icon]="faLifeRing"></fa-icon> About</a>
-        <a *ngIf="isAdministrator()" href="/WxPackageManager/help.html"><fa-icon [icon]="faBrain"></fa-icon> Help</a>
       </div>
     </div>
   </header>

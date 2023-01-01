@@ -18,12 +18,21 @@ header.main-head {
   padding: 0 24px;
   width: 100%;
 }
-
+:root{
+  font-size: 16px;
+}
 body {
 	margin: 0px;
 	padding-top: 0px;
-	font-family: "Roboto", "Helvetical", sans-serif;
+  font-family: "Roboto", "Helvetica", Arial, sans-serif;
 	overflow: hidden;
+  color: #333;
+}
+.bordered {
+  outline: 2px solid lightgray;
+  background-color: #f7f7f7;
+  border-radius: 2px;
+  width: 300px;
 }
 .navbar {
   display: flex;
@@ -351,7 +360,19 @@ mat-card {
 .hilight-item:hover {
   background-color: #d5e2f6;
 }
-
+.modal {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: center;
+  padding: var(--dlt-spacing-4-x,2rem);
+  position: absolute;
+  transform: translate(0);
+  transition-delay: var(--dlt-time-delay-short,.05s);
+  transition: var(--dlt-time-transition-default,.3s) cubic-bezier(.165,.84,.44,1);
+  width: 100%;
+  z-index: calc(var(--dlt-z-index-modal, 99999) + 2);
+}
 .red-on-hover {
     color: #eeeeee;
 }
@@ -363,6 +384,11 @@ mat-card {
 }
 .submit-on-hover:hover {
   color: red;
+}
+.opaque-button {
+  background-color: transparent;
+  color: black;
+  border: 0px;
 }
 .green-on-hover {
   color: #eeeeee;

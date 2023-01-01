@@ -1,34 +1,26 @@
-<div>
-  <span class="page-description">Select your registry</span>
-  <div class="table-rounded-border">
-    <mat-list>
-      <mat-list-item *ngFor="let r of registries()" class="hilight-item" style="border-bottom: #0c5593 1px solid">
-        <div style="width: 30px">
-          <fa-icon *ngIf="r.default else selectDefault" [icon]="faCheckCircle" style="color: #d5e2f6"></fa-icon>
-          <ng-template #selectDefault>
-            <fa-icon [icon]="faCheckCircle" class="show-on-hover" (click)="setDefaultForRegistry(r)"></fa-icon>
-          </ng-template>
+<div style="width: 300px; min-height: 800px; margin-left: auto; margin-right: auto; text-align: center">
+  <h2 id="product_profile" style="text-align: center">Select your registry</h2>
+  <div class="dlt-panel__lg dlt-panel__no-shadow bordered">
+    <ul class="dlt-list" style="background-color: transparent" role="listbox" aria-labelledby="product_profile" data-allow-selection>
+      <li class="dlt-list-item" role="option" *ngFor="let r of registries()" style="width: 300px">
+        <span *ngIf="isPrivate(r)" class="dlt-list-item__icon dlt-icon-lock" (click)="showPackagesInRegistry(r)"></span>
+        <span *ngIf="!isPrivate(r)" class="dlt-list-item__icon dlt-icon-globe" (click)="showPackagesInRegistry(r)"></span>
+        <span class="dlt-list-item__text" (click)="showPackagesInRegistry(r)">{{r.name}}</span>
+        <div *ngIf="r.default">
+          <span class="dlt-list-item__icon dlt-icon-check dlt-icon-sm" style="margin-left: 20px; margin-right: 20px" (click)="showPackagesInRegistry(r)"></span>
         </div>
-        <fa-icon *ngIf="isPrivate(r)" [icon]="faBuilding"></fa-icon>
-        <fa-icon *ngIf="!isPrivate(r)" [icon]="faGlobeAfrica"></fa-icon>
-        <span style="margin-left: 20px" (click)="showPackagesInRegistry(r.name)"> {{r.name}}</span>
-        <div style="flex-grow: 1;">
-          <div style="display: inline-flex; float: right;">
-            <button *ngIf="isAdministrator() && r.name != 'default'" mat-button class="red-on-hover" (click)="removeRegistry(r)" style="min-width: 0px">
-              <fa-icon [icon]="faTrashAlt" ></fa-icon>
-            </button>
+        <div *ngIf="!r.default && isAdministrator()" [ngClass]="classForIsDefaultAvailable(r)" class="dlt-dropdown">
+          <button class="dlt-button dlt-button-icon button-icon-md" style="margin-left: 20px; margin-right: 20px"><i class="dlt-icon-more-menu"></i></button>
+          <div class="dlt-overflow-menu" style="min-width: 150px; height: auto; margin-right: 0px">
+            <a [ngClass]="classForIsDefaultAvailable(r)" (click)="setDefaultForRegistry(r)" ><i class="dlt-icon-check menu-icons"></i>Make default</a>
+            <a class="disabled" (click)="editRegistry(r)"><i class="dlt-icon-edit menu-icons"></i>Edit</a>
+            <div class="solid-line"></div>
+            <a [ngClass]="classForIsDefaultAvailable(r)" (click)="removeRegistry(r)" ><i class="dlt-icon-delete menu-icons"></i>Delete</a>
           </div>
         </div>
-      </mat-list-item>
-      <mat-list-item *ngIf="isAdministrator()" class="hilight-item" style="border-bottom: #0c5593 1px solid">
-        <div style="width: 30px"></div>
-        <div style="width: 30px">
-          <fa-icon [icon]="faPlusSquare"></fa-icon>
-        </div>
-        <span *ngIf="isAdministrator()" mat-button  (click)="addRegistry()">
-           Add registry
-        </span>
-      </mat-list-item>
-    </mat-list>
+      </li>
+    </ul>
   </div>
+  <button *ngIf="isAdministrator()" class="dlt-button dlt-button-primary" style="margin-top: 30px" (click)="addRegistry()"><i class="dlt-icon-plus-circle dlt-icon-lg"></i>Add registry</button>
 </div>
+<app-add-registry *ngIf="addRegistryClicked" (onCompleted)="addRegistryCompleted($event)"></app-add-registry>

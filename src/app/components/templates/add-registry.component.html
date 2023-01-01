@@ -1,40 +1,70 @@
-<mat-card>
-  <div style="float: right; margin-top: -30px; margin-right: -30px"><fa-icon class="icon" [icon]="faTimes" size="1x" (click)="onNoClick()"></fa-icon></div>
-  <mat-card-title><h3>Add Registry</h3></mat-card-title>
-  <form [formGroup]="form">
-  <mat-card-content style="display: flex; flex-direction: column">
-      <mat-form-field>
-        <mat-label matLabel>registry name</mat-label>
-        <input matInput type="text" placeholder="No spaces or special characters" formControlName="name" required>
-      </mat-form-field>
-      <mat-form-field>
-        <mat-label>description</mat-label>
-        <textarea matInput placeholder="Optional description for your registry" formControlName="description"></textarea>
-      </mat-form-field>
-      <mat-form-field>
-        <mat-label>Type</mat-label>
-        <mat-select formControlName="type" required>
-          <mat-option value="private">Private</mat-option>
-          <mat-option value="public">Public</mat-option>
-        </mat-select>
-      </mat-form-field>
-    <mat-form-field>
-      <mat-label>Trust</mat-label>
-      <mat-select formControlName="trustLevel" required>
-        <mat-option value="0">None - Wild west, anyone can upload</mat-option>
-        <mat-option value="1">Moderate - Some packages verified</mat-option>
-        <mat-option value="2">Total - All packages verified</mat-option>
-      </mat-select>
-    </mat-form-field>
-    <mat-checkbox formControlName="isDefault" (click)="toggleIsDefault()">
-      <span style="color: lightgray">Make default registry</span>
-    </mat-checkbox>
-    <button mat-raised-button (click)="submit()" color="accent" [disabled]="!form.valid" style="margin-top: 50px"><fa-icon [icon]="faBook"></fa-icon> Add</button>
-    <p *ngIf="failed" style="font-size: small; color: red">Failed to add registry, sorry!</p>
-  </mat-card-content>
-  <mat-card-actions>
-  </mat-card-actions>
-  </form>
-</mat-card>
+<section id="form_modal" role="dialog" tabindex="1" ria-modal="true">
+  <div class="dlt-modal-window__container" style="opacity: 100%">
+    <div class="dlt-modal-window__header">
+      <button data-modal-close aria-label="close" class="dlt-button dlt-button-icon dlt-modal-window__close dlt-icon-sm" (click)="close()">
+        <i class="dlt-icon-close dlt-icon"></i>
+      </button>
+      <h3 id="modal-header-readonly" class="dlt-modal-window__title">
+        Add Registry
+      </h3>
+    </div>
+    <div class="dlt-modal-window__content" id="modal-content-readonly">
+
+      <form [formGroup]="form">
+        <fieldset>
+          <legend>Info</legend>
+          <div class="dlt-form-item lg-input">
+            <label class="dlt-form-label" for="registryName">Name</label>
+            <div class="dlt-form-group">
+              <input id="registryName" class="dlt-text-input" type="text" placeholder="No spaces or special characters" formControlName="name" required>
+              <button class="clear-icon" type="button"><i class="dlt-icon-close"></i></button>
+            </div>
+          </div>
+          <div class="dlt-form-item lg-input">
+            <label class="dlt-form-label" for="description">Description</label>
+            <div class="dlt-form-group">
+              <textarea id="description" class="dlt-text-input" placeholder="Optional description for your registry" formControlName="description"></textarea>
+              <button class="clear-icon" type="button"><i class="dlt-icon-close"></i></button>
+            </div>
+            <div class="dlt-form-item lg-input">
+              <div class="dlt-checkbox">
+                <div class="dlt-form-group">
+                  <input type="checkbox" id="isDefault" formControlName="isDefault" (click)="toggleIsDefault()">
+                  <label for="isDefault">Make default</label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend>Security</legend>
+          <div class="dlt-form-item lg-input">
+            <label class="dlt-form-label" for="rType">Type</label>
+            <div class="dlt-form-group">
+              <select id="rType" class="dlt-single-select" formControlName="type" required>
+                <option value="private">Private</option>
+                <option value="public">Public</option>
+              </select>
+            </div>
+          </div>
+          <div class="dlt-form-item lg-input">
+            <label class="dlt-form-label" for="rTrust">Trust</label>
+            <div class="dlt-form-group">
+              <select id="rTrust" class="dlt-single-select" formControlName="trustLevel" required>
+                <option value="0">None - Wild west, anyone can upload</option>
+                <option value="1">Moderate - Some packages verified</option>
+                <option value="2">Total - All packages verified</option>
+              </select>
+            </div>
+          </div>
+        </fieldset>
+
+        <button class="dlt-button dlt-button-primary" (click)="submit()" [disabled]="!form.valid" style="margin-top: 50px"><i class="dlt-icon-plus-circle dlt-icon-lg"></i> Add</button>
+          <p *ngIf="failed" style="font-size: small; color: red">Failed to add registry, sorry!</p>
+      </form>
+    </div>
+  </div>
+  <div class="dlt-modal-window__backdrop" data-modal-close></div>
+</section>
 
 
