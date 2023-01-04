@@ -22,6 +22,9 @@ export class Package {
   public alertEmail: string
   public isVisible: boolean
   public users: string[] = []
+  public upVotes: number = 0
+  public downVotes: number = 0
+  public rating: number = 0
 }
 
 export class TagSummary {

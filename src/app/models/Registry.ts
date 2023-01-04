@@ -8,6 +8,7 @@ export class Registry {
 
   public name: string = 'undefined'
   public description: string | undefined
+  public legal: string = ''
   public type: RegistryType = RegistryType.public
   public owner: string | undefined
   public searchTags: string[] | undefined

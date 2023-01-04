@@ -28,6 +28,17 @@ body {
 	overflow: hidden;
   color: #333;
 }
+.fit-screen {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
 .bordered {
   outline: 2px solid lightgray;
   background-color: #f7f7f7;
@@ -481,6 +492,3 @@ form.input {
   width: 50% !important;
   margin: 2px 0 20px 20px;
 }
-
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

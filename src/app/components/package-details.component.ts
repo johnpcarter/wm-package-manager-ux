@@ -3,12 +3,9 @@ import {Component, OnInit} from '@angular/core'
 import { MatSnackBar } from '@angular/material/snack-bar'
 import { MatDialog } from '@angular/material/dialog'
 
-import { faTimes, faUniversalAccess, faTags, faObjectGroup, faInfoCircle, faCheckCircle, faEraser, faKey, faBinoculars, faStar,
-  faLongArrowAltDown, faTools, faClock, faUsers, faLockOpen, faPlusCircle, faMinusCircle, faRocket, faBell, faBellSlash, faArrowCircleDown,
-  faFolder, faGlobeAfrica, faEye, faEyeSlash, faEllipsisV, faUnlock } from '@fortawesome/free-solid-svg-icons'
-
-import { faGitAlt, faGithub } from '@fortawesome/free-brands-svg-icons'
-
+import { faBell, faBellSlash, faEye, faEyeSlash, faInfoCircle, faClock, faLongArrowAltDown, faLongArrowAltUp, faStar, faBinoculars,
+  faFolder, faUsers, faRocket, faEraser, faKey } from '@fortawesome/free-solid-svg-icons'
+import { faGit, faGitAlt } from '@fortawesome/free-brands-svg-icons'
 import { MarkdownService } from 'ngx-markdown'
 
 import { Package, PackageStat, TagSummary } from '../models/Package'
@@ -33,35 +30,23 @@ import {ActivatedRoute, Params, Router} from '@angular/router'
 })
 export class PackageDetailsComponent implements OnInit {
 
-  public faTimes = faTimes
-  public faUniversalAccess = faUniversalAccess
-  public faTags = faTags
-  public faGitAlt = faGitAlt
-  public faObjectGroup = faObjectGroup
-  public faCheckCircle = faCheckCircle
-  public faEraser = faEraser
-  public faKey = faKey
-  public faGithub = faGithub
-  public faBinoculars = faBinoculars
-  public faStar = faStar
-  public faLongArrowAltDown = faLongArrowAltDown
-  public faInfoCircle = faInfoCircle
-  public faClock = faClock
-  public faUsers = faUsers
-  public faLockOpen = faLockOpen
-  public faMinusCircle = faMinusCircle
-  public faPlusCircle = faPlusCircle
-  public faRocket = faRocket
-  public faBell = faBell
   public faBellSlash = faBellSlash
-  public faArrowCircleDown = faArrowCircleDown
-  public faFolder = faFolder
-  public faGlobeAfrica = faGlobeAfrica
-  public faTools = faTools
+  public faBell = faBell
   public faEye = faEye
+  public faClock = faClock
   public faEyeSlash = faEyeSlash
-  public faEllipsisV = faEllipsisV
-  public faUnlock = faUnlock
+  public faInfoCircle = faInfoCircle
+  public faGit = faGit
+  public faGitAlt = faGitAlt
+  public faLongArrowAltDown = faLongArrowAltDown
+  public faLongArrowAltUp = faLongArrowAltUp
+  public faStar = faStar
+  public faBinoculars = faBinoculars
+  public faFolder = faFolder
+  public faUsers = faUsers
+  public faEraser = faEraser
+  public faRocket = faRocket
+  public faKey = faKey
 
   public packageName: string
   public package: Package
@@ -425,7 +410,7 @@ export class PackageDetailsComponent implements OnInit {
 
       dialogRef.afterClosed().subscribe(result => {
 
-        if (result.registry) {
+        if (result && result.registry) {
           this._packagesServices.migratePackage(this.package.packageName, result.registry, GLOBALS.registry.name).subscribe((success) => {
             if (success) {
               this._router.navigate(['/packages'])
@@ -536,6 +521,44 @@ export class PackageDetailsComponent implements OnInit {
 
   public isConnected(): boolean {
     return GLOBALS.user !== null
+  }
+
+  public upVote(): void {
+    if (this.isConnected()) {
+      this._packagesServices.upVote(this.packageName, GLOBALS.registry.name).subscribe((success) => {
+        if (success) {
+          this.package.upVotes += 1
+        } else {
+          this._snackbar.open('You can only vote once, either thumbs up or thumbs down', 'Sorry', {
+            duration: 2000,
+          })
+        }
+      })
+    } else {
+      this._snackbar.open('To vote, you need to login', 'Ok', {
+        duration: 2000,
+      })
+    }
+  }
+
+  public downVote(): void {
+    if (this.isConnected()) {
+      if (this.isConnected()) {
+        this._packagesServices.downVote(this.packageName, GLOBALS.registry.name).subscribe((success) => {
+          if (success) {
+            this.package.downVotes += 1
+          } else {
+            this._snackbar.open('You can only vote once, either thumbs up or thumbs down', 'Sorry', {
+              duration: 2000,
+            })
+          }
+        })
+      }
+    } else {
+      this._snackbar.open('To vote, you need to login', 'Ok', {
+        duration: 2000,
+      })
+    }
   }
 
   public isAvailable(): boolean {

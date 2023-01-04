@@ -6,7 +6,6 @@ import { MatTable } from '@angular/material/table'
 
 import { faKey, faPlusSquare } from '@fortawesome/free-solid-svg-icons'
 
-import { Registry } from '../models/Registry'
 import { Package } from '../models/Package'
 
 import { PackagesServices } from '../services/packages.service'
@@ -22,9 +21,8 @@ export class PackagesComponent implements OnInit {
   public faKey = faKey
   public faPlusSquare = faPlusSquare
 
-  public displayedColumns: string[] = ['auth', 'name', 'category', 'description', 'registered', 'downloads']
+  public displayedColumns: string[] = ['auth', 'name', 'category', 'description', 'registered', 'downloads', 'votes']
 
-  public registry: Registry | undefined
   public filter: string = null
   public packages: Package[] = []
 
@@ -60,7 +58,9 @@ export class PackagesComponent implements OnInit {
 
   public load(registry: string, packageName: string): void {
     this._packagesServices.fetchPackages(null, registry, null).subscribe((p) => {
-      if (p.length === 1 && p[0] == null) {
+      if (!p) {
+        this.packages = []
+      } else if (p.length === 1 && p[0] == null) {
         this._router.navigate(['/registries'])
       } else {
         this.packages = p
@@ -78,11 +78,11 @@ export class PackagesComponent implements OnInit {
   }
 
   public registryDescription(): string {
-    if (this.registry) {
-      return this.registry.description
-    } else {
-      return ''
-    }
+      return GLOBALS.registry.description || ''
+  }
+
+  public registryLegal(): string {
+    return GLOBALS.registry.legal || ''
   }
 
   public showPackageDetails(p: Package): boolean  {

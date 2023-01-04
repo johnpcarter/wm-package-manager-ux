@@ -1,42 +1,43 @@
-<div class="header-wrap">
-  <header class="container col-12 no-margin no-padding main-head">
-    <a class="brand" href="/">
-      <div style="display: inline-flex;">
-        <img src="assets/_images/sag-primary-logo-dark-rgb.png" height="32px" style="margin-top: 10px"/>
-        <div style="width: 150px; font-size: small; border-left: white 1px solid; margin-left: 10px; padding: 10px;">webMethods Package Manager</div>
+<div>
+  <div class="header-wrap">
+    <header class="no-margin no-padding main-head">
+      <a class="brand" href="/">
+        <div style="display: inline-flex;">
+          <img src="assets/_images/sag-primary-logo-dark-rgb.png" height="32px" style="margin-top: 10px"/>
+          <div style="width: 150px; font-size: small; border-left: white 1px solid; margin-left: 10px; padding: 10px;">webMethods Package Manager</div>
+        </div>
+      </a>
+      <div class="wrapper" style="margin-left:auto; margin-right:12px;">
+        {{pageTitle()}}
       </div>
-    </a>
-    <div class="wrapper" style="margin-left:auto; margin-right:12px;">
-      {{pageTitle()}}
-    </div>
 
-    <div class="dlt-dropdown">
-      <button class="dlt-button dlt-button-icon button-icon-md" style="margin-left: 20px; margin-right: 20px"><i class="dlt-icon-settings"></i></button>
-      <div class="dlt-overflow-menu" style="min-width: 150px; height: auto; margin-right: 0px">
-        <legend class="dlt-overlay-menu-group-label" style="text-align: center">{{menuTitle()}}</legend>
-        <div class="solid-line"></div>
-        <a *ngIf="!isOnRegistryPage()" (click)="showRegistries()"><fa-icon [icon]="faListAlt"></fa-icon> Registries </a>
-        <div *ngIf="!isOnRegistryPage()" class="solid-line"></div>
-        <a *ngIf="isConnected()">
-          <span (click)="disconnect()"><fa-icon [icon]="faUserSlash"></fa-icon> Disconnect</span>
-        </a>
-        <a *ngIf="!isConnected()">
-          <span (click)="showConnectDialog()"><fa-icon [icon]="faUser"></fa-icon> Connect</span>
-        </a>
-        <div class="solid-line"></div>
-        <a *ngIf="isConnected()">
-          <span (click)="showSettingsPanel()"><fa-icon [icon]="faTools"></fa-icon> Settings</span>
-        </a>
-        <div *ngIf="isConnected()" class="solid-line"></div>
-        <a href="/WxPackageManager/about.html#about"><fa-icon [icon]="faLifeRing"></fa-icon> About</a>
+      <div class="dlt-dropdown">
+        <button class="dlt-button dlt-button-icon button-icon-md" style="margin-left: 20px; margin-right: 20px"><i class="dlt-icon-settings"></i></button>
+        <div class="dlt-overflow-menu" style="min-width: 150px; height: auto; margin-right: 0px">
+          <legend class="dlt-overlay-menu-group-label" style="text-align: center">{{menuTitle()}}</legend>
+          <div class="solid-line"></div>
+          <a *ngIf="!isOnRegistryPage()" (click)="showRegistries()"><fa-icon [icon]="faListAlt"></fa-icon> Registries </a>
+          <div *ngIf="!isOnRegistryPage()" class="solid-line"></div>
+          <a *ngIf="isConnected()">
+            <span (click)="disconnect()"><fa-icon [icon]="faUserSlash"></fa-icon> Disconnect</span>
+          </a>
+          <a *ngIf="!isConnected()">
+            <span (click)="showConnectDialog()"><fa-icon [icon]="faUser"></fa-icon> Connect</span>
+          </a>
+          <div class="solid-line"></div>
+          <a *ngIf="isConnected()">
+            <span (click)="showSettingsPanel()"><fa-icon [icon]="faTools"></fa-icon> Settings</span>
+          </a>
+          <div *ngIf="isConnected()" class="solid-line"></div>
+          <a href="/WxPackageManager/about.html#about"><fa-icon [icon]="faLifeRing"></fa-icon> About</a>
+        </div>
       </div>
-    </div>
-  </header>
+    </header>
+  </div>
+  <div class="fit-screen" style="top: 64px; left: 20px; right: 20px; bottom: 20px;">
+    <router-outlet #outlet="outlet"></router-outlet>
+  </div>
 </div>
-
-<div class="page-wrapper">
-  <router-outlet #outlet="outlet"></router-outlet>
-</div>
-<div *ngIf="isConnectionPanelOpen">
-  <app-login-page (loginModalClose)="onConnectionDialogClose($event)"></app-login-page>
-</div>
+  <div *ngIf="isConnectionPanelOpen">
+    <app-login-page (loginModalClose)="onConnectionDialogClose($event)"></app-login-page>
+  </div>

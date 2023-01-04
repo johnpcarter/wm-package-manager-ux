@@ -191,6 +191,11 @@ export class PackagesServices {
         return of({success: false})
       }))
       .pipe(map( (responseData: any) => {
+
+        if (!this._allPackages) {
+          this._allPackages = []
+        }
+
         this._allPackages.push(pckg)
         this.packagesSource.next(this._allPackages)
         return responseData.success
@@ -227,6 +232,44 @@ export class PackagesServices {
     const headers = GLOBALS.headers()
 
     return this._http.put(url, '', { headers })
+      .pipe(catchError(error => {
+        return of({success: false})
+      }))
+      .pipe(map( (responseData: any) => {
+        return responseData.success
+      }))
+  }
+
+  public upVote(packageName: string, registry?: string): Observable<boolean> {
+
+    let url: string = environment.BASE_API + PackagesServices.PACKAGE + '/' + encodeURIComponent(packageName) + '/vote'
+
+    if (registry) {
+      url += '?registry=' + encodeURIComponent(registry)
+    }
+
+    const headers = GLOBALS.headers()
+
+    return this._http.post(url, {},{ headers })
+      .pipe(catchError(error => {
+        return of({success: false})
+      }))
+      .pipe(map( (responseData: any) => {
+        return responseData.success
+      }))
+  }
+
+  public downVote(packageName: string, registry?: string): Observable<boolean> {
+
+    let url: string = environment.BASE_API + PackagesServices.PACKAGE + '/' + encodeURIComponent(packageName) + '/vote'
+
+    if (registry) {
+      url += '?registry=' + encodeURIComponent(registry)
+    }
+
+    const headers = GLOBALS.headers()
+
+    return this._http.delete(url,{ headers })
       .pipe(catchError(error => {
         return of({success: false})
       }))

@@ -1,22 +1,22 @@
-import { Component, OnInit } from '@angular/core'
-import { ActivatedRoute, Router } from '@angular/router'
+import {Component, OnInit} from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
 
-import { Subscription } from 'rxjs'
+import {Subscription} from 'rxjs';
 
-import { faCog, faUser, faUserSlash, faTools, faListAlt, faLifeRing, faCheck, faBrain } from '@fortawesome/free-solid-svg-icons'
+import {faBrain, faCheck, faCog, faLifeRing, faListAlt, faTools, faUser, faUserSlash} from '@fortawesome/free-solid-svg-icons';
 
-import { MatSnackBar } from '@angular/material/snack-bar'
-import { MatDialog } from '@angular/material/dialog'
+import {MatSnackBar} from '@angular/material/snack-bar';
+import {MatDialog} from '@angular/material/dialog';
 
-import { Registry } from './models/Registry'
+import {Registry, RegistryType} from './models/Registry';
 
-import { SettingsService } from './services/settings.service'
-import { RegistriesService } from './services/registries.service'
-import { NotificationsService } from './services/notifications-service'
+import {SettingsService} from './services/settings.service';
+import {RegistriesService} from './services/registries.service';
+import {NotificationsService} from './services/notifications-service';
 
-import { PackagesServices } from './services/packages.service'
+import {PackagesServices} from './services/packages.service';
 
-import { GLOBALS } from './globals'
+import {GLOBALS} from './globals';
 
 @Component({
   selector: 'app-root',
@@ -56,9 +56,16 @@ export class AppComponent implements OnInit {
       }
     })
 
-    _registriesService.getRegistry().subscribe((r) => {
-      GLOBALS.registry = r
-    })
+    if (!GLOBALS.registry) {
+      this._inboundRouter.queryParams
+        .subscribe(params => {
+
+          _registriesService.getRegistry(params['registry']).subscribe((r) => {
+            if (r) {
+              GLOBALS.registry = r
+            }})
+        })
+    }
   }
 
   public ngOnInit(): void {
@@ -102,7 +109,10 @@ export class AppComponent implements OnInit {
         this._snackBar.open('You have been disconnected successfully', 'Ok', {
           duration: 2000,
         })
-        this._router.navigate(['/registries'])
+
+        if (GLOBALS.registry.type === RegistryType.private) {
+          this._router.navigate(['/registries'])
+        }
       }
     })
   }
@@ -118,8 +128,6 @@ export class AppComponent implements OnInit {
     if (result) {
       if (GLOBALS.onRegistriesPage) {
         this._router.navigate(['/registries'])
-      } else {
-        this._router.navigate(['/packages'])
       }
     }
   }

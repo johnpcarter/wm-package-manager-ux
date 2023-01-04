@@ -1,22 +1,30 @@
-<div style="padding: 20px">
-  <nav aria-label="breadcrumb" style="margin-left: 15px;">
+<div style="margin-top: 20px; margin-right: 20px">
+  <div *ngIf="package" style="float:right; line-height: 30px;">
+    <span style="font-size: small; color: lightgray">votes </span>
+    <span style="font-size: small; color: green;">{{package.upVotes-package.downVotes}}</span><span style="font-size: small">(</span>
+    <i class="dlt-icon-thumbs-up" style="color: green; font-size: small" (click)="upVote()"> +{{package.upVotes}} /</i>
+    <i class="dlt-icon-thumbs-down" style="margin-left: 10px; color: red; font-size: small" (click)="downVote()"> -{{package.downVotes}}</i>
+    <span style="font-size: small">)</span>
+  </div>
+  <nav aria-label="breadcrumb">
     <ol class="dlt-breadcrumbs lg-breadcrumb">
       <li><a href="" (click)="goBack()" class="dlt-links">Packages</a></li>
       <li aria-current="page">{{packageName}}</li>
     </ol>
   </nav>
+</div>
+<div class="fit-screen" style="top: 60px">
   <ng-template *ngIf="package == null; else loaded">
     Loading....
   </ng-template>
   <ng-template #loaded>
-    <div style="display: flex; flex-direction: row; justify-content: space-between; width: 100%; height: 100%; padding: 20px">
-      <div style="width: 80%; padding: 20px">
-        <h2 style="color: gray; height: 30px; margin-top: 10px">README.md</h2>
+    <div style="display: flex; flex-direction: row; align-items: stretch; justify-content: space-between; width: 100%; padding: 20px; overflow-y: auto">
+      <div style="width: 60%; padding: 20px; padding-top: 0px; overflow-y: auto">
+        <h1 style="color: gray; line-height: 62px; vertical-align: middle">README.md</h1>
         <hr style="width: 100%"/>
-
         <markdown [data]="markdown" (load)="onLoad($event)" (error)="onError($event)"></markdown>
       </div>
-      <div style="display: flex; flex-direction: column;justify-content: flex-start; padding: 10px">
+      <div style="display: flex; flex-direction: column; align-items: stretch; justify-content: flex-start; padding: 10px; overflow-y: auto">
         <div>
           <h4 style="color: gray;">Home Page</h4>
           <i class="dlt-icon-home dlt-icon" style="padding-right: 10px;"></i><a href="{{package.homePage}}"> xxxx{{package.homePage}}</a>
@@ -57,7 +65,7 @@
         <div style="padding-top: 30px">
           <h4 style="color: gray">Info</h4>
           <fa-icon matListIcon class="icon" [icon]="faInfoCircle" style="padding-right: 10px"></fa-icon>{{authType()}}<span style="color: gray"> package registered by </span>{{package.owner}}
-          <div style="display: inline-flex; justify-content: space-between; align-items: flex-start">
+          <div style="display: inline-flex; justify-content: space-between; align-items: flex-start; margin-top: 10px">
             <div>
               <div style="display: inline-flex; width: 100%; justify-content: flex-start">
                 <div style="display: flex; flex-direction: column; width: 150px">
@@ -80,9 +88,11 @@
         <!-- GIT -->
         <div style="padding-top: 30px">
           <h4 style="color: gray">Repository</h4>
-          <fa-icon matListIcon class="icon" [icon]="faGitAlt" style="margin-right: 10px"></fa-icon><fa-icon *ngIf="package.sourceIsPrivate" [icon]="faKey" style="color: lightgray"></fa-icon>
-          {{package.sourceUrl}} <a target="git" href="{{package.sourceUrl}}"><fa-icon [icon]="faGithub"></fa-icon></a>
-          <div style="width: 100%">
+          <a target="git" href="{{package.sourceUrl}}">
+            <fa-icon matListIcon class="icon" [icon]="faGitAlt" style="margin-right: 10px"></fa-icon><fa-icon *ngIf="package.sourceIsPrivate" [icon]="faKey" style="color: lightgray"></fa-icon>
+            {{package.sourceUrl}}
+          </a>
+          <div style="width: 100%; margin-top: 10px">
             <p *ngIf="package.sourcePath">
               <fa-icon [icon]="faFolder" style="color: lightgray"></fa-icon> {{package.sourcePath}}
             </p>
@@ -147,12 +157,12 @@
               </div>
               <ng-template #alt>
                 <ul class="dlt-tags">
-                <li class="dlt-tags__item" *ngIf="isAccessible()">
-                  everybody <i *ngIf="this.package.sourceIsPrivate && isAdministrator()" class="dlt-icon-key dlt-icon small" style="margin-right: -5px;padding-left: 5px; padding-right: 5px" (click)="syncDeployKey('everybody')"></i>
-                </li>
-                <li class="dlt-tags__item" *ngIf="!isAccessible()" selected>
-                  everybody <i *ngIf="isAdministrator()" class="dlt-icon-add-user dlt-icon small" style="margin-right: -5px; padding-left: 5px;padding-right: 5px" (click)="setUser('everybody')"></i>
-                </li>
+                  <li class="dlt-tags__item" *ngIf="isAccessible()">
+                    everybody <i *ngIf="this.package.sourceIsPrivate && isAdministrator()" class="dlt-icon-key dlt-icon small" style="margin-right: -5px;padding-left: 5px; padding-right: 5px" (click)="syncDeployKey('everybody')"></i>
+                  </li>
+                  <li class="dlt-tags__item" *ngIf="!isAccessible()" selected>
+                    everybody <i *ngIf="isAdministrator()" class="dlt-icon-add-user dlt-icon small" style="margin-right: -5px; padding-left: 5px;padding-right: 5px" (click)="setUser('everybody')"></i>
+                  </li>
                 </ul>
               </ng-template>
             </div>
