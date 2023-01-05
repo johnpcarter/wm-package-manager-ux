@@ -1,22 +1,21 @@
-import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
+import {Component, OnInit} from '@angular/core'
+import {ActivatedRoute, Router} from '@angular/router'
+import {Subscription} from 'rxjs'
 
-import {Subscription} from 'rxjs';
+import {faBrain, faCheck, faCog, faLifeRing, faListAlt, faTools, faUser, faUserSlash} from '@fortawesome/free-solid-svg-icons'
 
-import {faBrain, faCheck, faCog, faLifeRing, faListAlt, faTools, faUser, faUserSlash} from '@fortawesome/free-solid-svg-icons';
+import {MatSnackBar} from '@angular/material/snack-bar'
+import {MatDialog} from '@angular/material/dialog'
 
-import {MatSnackBar} from '@angular/material/snack-bar';
-import {MatDialog} from '@angular/material/dialog';
+import {Registry, RegistryType} from './models/Registry'
 
-import {Registry, RegistryType} from './models/Registry';
+import {SettingsService} from './services/settings.service'
+import {RegistriesService} from './services/registries.service'
+import {NotificationsService} from './services/notifications-service'
 
-import {SettingsService} from './services/settings.service';
-import {RegistriesService} from './services/registries.service';
-import {NotificationsService} from './services/notifications-service';
+import {PackagesServices} from './services/packages.service'
 
-import {PackagesServices} from './services/packages.service';
-
-import {GLOBALS} from './globals';
+import {GLOBALS} from './globals'
 
 @Component({
   selector: 'app-root',
@@ -73,10 +72,12 @@ export class AppComponent implements OnInit {
 
   public pageTitle(): string {
 
-    if (!this.currentRegistry().default && !this.isOnRegistryPage()) {
+    if (this.isOnRegistryPage()) {
+      return 'registries'
+    } else if (!this.currentRegistry().name) {
       return this.currentRegistry().name
     } else {
-      return 'registries'
+      return ''
     }
   }
 
@@ -111,7 +112,8 @@ export class AppComponent implements OnInit {
         })
 
         if (GLOBALS.registry.type === RegistryType.private) {
-          this._router.navigate(['/registries'])
+          GLOBALS.onRegistriesPage = true
+          this._router.navigate(['/registries'], {skipLocationChange: true})
         }
       }
     })
@@ -124,24 +126,18 @@ export class AppComponent implements OnInit {
 
   public onConnectionDialogClose(result): void {
     this.isConnectionPanelOpen = false
-
-    if (result) {
-      if (GLOBALS.onRegistriesPage) {
-        this._router.navigate(['/registries'])
-      }
-    }
   }
 
   public showSettingsPanel(): void {
 
     if (this.isConnected()) {
-      this._router.navigate(['/settings'])
+      this._router.navigate(['/settings'], {skipLocationChange: true})
     }
   }
 
   public showRegistries(): void {
     GLOBALS.onRegistriesPage = true
-    this._router.navigate(['/registries'])
+    this._router.navigate(['/registries'], {skipLocationChange: true})
   }
 
   public onRegistriesPage(): boolean {
