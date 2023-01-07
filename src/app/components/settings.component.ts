@@ -17,8 +17,7 @@ import { AccessToken } from '../models/AccessToken'
 import { ListPackagesRegistriesComponent } from './list-package-registries.component'
 
 import { GLOBALS } from '../globals'
-import {TagInfoComponent} from './tag-info.component';
-import {CreateAccessTokenComponent} from './create-access-token.component';
+import { CreateAccessTokenComponent } from './create-access-token.component'
 
 @Component({
   selector: 'app-settings',
@@ -85,13 +84,6 @@ export class SettingsComponent implements OnInit {
   }
 
   public ngOnInit(): void {
-
-    /*this.form.valueChanges.subscribe((ctrl) => {
-      if (this.emailAddressCtrl.dirty) {
-        this.defaultEmailDidChange()
-        this.emailAddressCtrl.markAsPristine()
-      }
-    })*/
   }
 
   public defaultEmailDidChange(): void {

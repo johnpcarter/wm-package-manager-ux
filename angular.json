@@ -34,7 +34,6 @@
               "./node_modules/@softwareag/dlt-tokens/web/css/dlt-tokens.css",
               "./node_modules/@softwareag/dlt-fonts/roboto.css",
               "./node_modules/@softwareag/dlt-icons/Font/css/dlt-icons-font.css",
-              "./node_modules/@softwareag/dlt-tokens/web/css/dlt-tokens.css",
               "src/styles.css"
             ],
             "scripts": [
