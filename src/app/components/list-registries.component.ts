@@ -33,7 +33,7 @@ export class ListRegistriesComponent implements OnInit {
       this.registries = []
 
       r.forEach((rp) => {
-        if (rp.name !== this.omitRegistry) {
+        if ((this.omitRegistry !== '' && rp.name !== this.omitRegistry) || (this.omitRegistry === '' && !rp.default)) {
           this.registries.push(rp)
         }
       })

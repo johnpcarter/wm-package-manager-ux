@@ -25,9 +25,11 @@ export class GLOBALS {
       GLOBALS.userType = user === 'Administrator' ? 'administrator' : 'other'
     }
 
-    notificationsService.defaultEmail().subscribe((s) => {
-      this.settings = s
-    })
+    if (notificationsService !== null) {
+      notificationsService.defaultEmail().subscribe((s) => {
+        this.settings = s
+      })
+    }
   }
 
   public static clearUser(): void {

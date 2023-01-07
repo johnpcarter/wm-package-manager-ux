@@ -398,7 +398,7 @@ mat-card {
 }
 .opaque-button {
   background-color: transparent;
-  color: black;
+  color: lightgray;
   border: 0px;
 }
 .green-on-hover {

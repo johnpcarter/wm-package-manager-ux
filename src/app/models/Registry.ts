@@ -6,7 +6,7 @@ export enum RegistryType {
 
 export class Registry {
 
-  public name: string = 'undefined'
+  public name: string | undefined
   public description: string | undefined
   public legal: string = ''
   public type: RegistryType = RegistryType.public

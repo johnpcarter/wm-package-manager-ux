@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
-import { Observable, of } from 'rxjs'
+import {flatMap, mergeMap, Observable, of, switchMap, take} from 'rxjs';
 import { map, catchError } from 'rxjs/operators'
 
 import { GLOBALS } from '../globals'
 import { Credentials } from '../models/Credentials'
 
 import { environment } from '../../environments/environment'
+import {AccessToken} from '../models/AccessToken';
 
 @Injectable()
 export class SettingsService {
@@ -21,7 +22,7 @@ export class SettingsService {
     const url: string = environment.LOGIN_CONNECT
 
     const headers = GLOBALS.headers()
-    const data = {user: user, password: passswrd}
+    const data = {username: user, password: passswrd}
 
     return this._http.post(url, data, { headers })
       .pipe(catchError(error => {
@@ -29,9 +30,9 @@ export class SettingsService {
       }))
       .pipe(map( (responseData: any) => {
 
-        if (responseData && responseData.userType) {
-          GLOBALS.cacheAccessToken(responseData.accessToken)
-          return responseData.userType
+        if (responseData && responseData.username !== 'Default') {
+          // GLOBALS.cacheAccessToken(responseData.accessToken)
+          return responseData.metadata.userType
         } else {
           return null
         }
@@ -77,11 +78,13 @@ export class SettingsService {
 
   public disconnect(): Observable<boolean> {
 
-    if (GLOBALS.getAccessToken()) {
-      return this.disconnectViaEmpower()
-    } else {
-      return this.disconnectLocal()
-    }
+    return this.disconnectViaEmpower().pipe(mergeMap(success => {
+      if (success) {
+        return of(true)
+      } else {
+        return this.disconnectLocal()
+      }
+    }))
   }
 
   private disconnectLocal(): Observable<boolean> {
@@ -93,7 +96,11 @@ export class SettingsService {
     return this._http.post(url, '', { headers }).pipe(catchError(error => {
       return of(false)
     })).pipe(map( (responseData: any) => {
-      return responseData || true
+      if (typeof responseData === 'boolean') {
+        return responseData
+      } else {
+        return true
+      }
     }))
   }
 
@@ -106,7 +113,64 @@ export class SettingsService {
     return this._http.get(url, { headers }).pipe(catchError(error => {
       return of(false)
     })).pipe(map( (responseData: any) => {
-      return responseData || true
+      if (typeof responseData === 'boolean') {
+        return responseData
+      } else {
+        return true
+      }
+    }))
+  }
+
+  public getAccessTokens(): Observable<AccessToken[]> {
+
+    const url: string = environment.TOKENS
+
+    const headers = GLOBALS.headers()
+
+    return this._http.get(url, { headers })
+      .pipe(catchError(error => {
+        return of(null)
+      }))
+      .pipe(map( (responseData: any) => {
+
+        if (responseData) {
+          return responseData.tokens
+        } else {
+          return []
+        }
+      }))
+  }
+
+  public createAccessToken(label: string, numOfDays?: number): Observable<AccessToken> {
+
+    let url: string = environment.TOKEN + label
+
+    if (numOfDays) {
+      url += '?numDays=' + numOfDays
+    }
+
+    const headers = GLOBALS.headers()
+
+    return this._http.get(url, { headers }).pipe(catchError(error => {
+      return of(null)
+    })).pipe(map( (responseData: any) => {
+      if (responseData != null) {
+        return new AccessToken(label, responseData.accessToken, numOfDays)
+      } else {
+        return null
+      }
+    }))
+  }
+
+  public deleteAccessToken(label: string): Observable<boolean> {
+
+    const url: string = environment.TOKEN + label
+    const headers = GLOBALS.headers()
+
+    return this._http.delete(url, { headers }).pipe(catchError(error => {
+      return of(false)
+    })).pipe(map( (responseData: any) => {
+      return responseData.success
     }))
   }
 
@@ -152,7 +216,7 @@ export class SettingsService {
         return of(false)
       }))
       .pipe(map( (responseData: any) => {
-        return responseData
+        return responseData.success
       }))
   }
 

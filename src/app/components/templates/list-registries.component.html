@@ -12,13 +12,14 @@
       <label class="dlt-form-label" for="select-input-6">{{ref}} ?</label>
       <div class="dlt-form-group">
         <select id="select-input-6" class="dlt-single-select" [(ngModel)]="registry">
+          <option>None</option>
           <option *ngFor="let r of registries" [value]="r.name">{{r.name}}</option>
         </select>
       </div>
     </div>
   </div>
   <div class="dlt-modal-window__footer" style="justify-self: flex-end">
-    <button class="dlt-button dlt-button-primary" data-modal-prime-focus (click)="confirm()"><i class="dlt-icon-play"></i>
+    <button class="dlt-button dlt-button-primary" data-modal-prime-focus (click)="confirm()" [disabled]="!registry"><i class="dlt-icon-play"></i>
       Confirm
     </button>
   </div>

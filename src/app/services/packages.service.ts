@@ -233,10 +233,10 @@ export class PackagesServices {
 
     return this._http.put(url, '', { headers })
       .pipe(catchError(error => {
-        return of({success: false})
+        return of(false)
       }))
       .pipe(map( (responseData: any) => {
-        return responseData.success
+        return typeof responseData === 'boolean' ? responseData : true
       }))
   }
 

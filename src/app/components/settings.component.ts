@@ -12,10 +12,13 @@ import { Credentials } from '../models/Credentials'
 import { NewPackageNotification } from '../models/new-package-notification'
 import { SettingsService } from '../services/settings.service'
 import { NotificationsService } from '../services/notifications-service'
+import { AccessToken } from '../models/AccessToken'
 
 import { ListPackagesRegistriesComponent } from './list-package-registries.component'
 
 import { GLOBALS } from '../globals'
+import {TagInfoComponent} from './tag-info.component';
+import {CreateAccessTokenComponent} from './create-access-token.component';
 
 @Component({
   selector: 'app-settings',
@@ -33,6 +36,8 @@ export class SettingsComponent implements OnInit {
 
   public currentUser: string = ''
   public credentials: Credentials[] = []
+  public accessTokens: AccessToken[] = []
+
   public form: UntypedFormGroup
   public gitUrlCtrl: UntypedFormControl
   public gitUserCtrl: UntypedFormControl
@@ -42,9 +47,13 @@ export class SettingsComponent implements OnInit {
   public notifications: NewPackageNotification[] = []
 
   displayedColumnsForCredentials: string[] = ['source', 'user', 'token', 'remove']
+  displayedColumnsForTokens: string[] = ['label', 'created', 'expires', 'token', 'remove']
 
   @ViewChild('credentialsTable', {read: MatTable})
-  public table: MatTable<Credentials>
+  public credentialsTable: MatTable<Credentials>
+
+  @ViewChild('tokensTable', {read: MatTable})
+  public tokensTable: MatTable<AccessToken>
 
   // tslint:disable-next-line:variable-name max-line-length
   public constructor(private _router: Router, private _formBuilder: UntypedFormBuilder, private _dialog: MatDialog, private _snackBar: MatSnackBar,
@@ -128,13 +137,6 @@ export class SettingsComponent implements OnInit {
         this.gitUrlCtrl.setValue(null, {emitEvent: false})
         this.gitUserCtrl.setValue(null, {emitEvent: false})
         this.gitTokenCtrl.setValue(null, {emitEvent: false})
-
-        if (element.source === '*') {
-          // tslint:disable-next-line:max-line-length
-          this.credentials[(this.credentials.length - 1)].isEditable = true // now we have finished editing default row, make last row editable
-        } else {
-          this.addCredentialsRow()
-        }
       } else {
         this._snackBar.open('owah, failed to add credentials', 'Sorry', {
           duration: 2000,
@@ -157,7 +159,7 @@ export class SettingsComponent implements OnInit {
     p.isEditable = true
 
     this.credentials.push(p)
-    this.table.renderRows()
+    this.credentialsTable.renderRows()
   }
 
   public removeCredentialsRow(element: Credentials): void {
@@ -177,7 +179,7 @@ export class SettingsComponent implements OnInit {
       this.form.removeControl('value:' + found)
 
       this.credentials.splice(found, 1)
-      this.table.renderRows()
+      this.credentialsTable.renderRows()
 
       this._settings.removeDeveloperCredentials(element.source, element.user).subscribe((success) => {
 
@@ -188,6 +190,49 @@ export class SettingsComponent implements OnInit {
         }
       })
     }
+  }
+
+  public createAccessToken(): void {
+
+    const dialogRef = this._dialog.open(CreateAccessTokenComponent, {
+      width: '60%',
+      height: '300px',
+    })
+
+    dialogRef.afterClosed().subscribe(result => {
+
+      if (result) {
+
+        const label: string = result.label
+        const numOfDays: number = result.numOfDays
+
+        this._settings.createAccessToken(label, numOfDays).subscribe((token) => {
+
+          if (token) {
+            this.accessTokens.push(token)
+            this.tokensTable.renderRows()
+          } else {
+            this._snackBar.open('ach, could not create the access token', 'Sorry', {
+              duration: 2000,
+            })
+          }
+        })
+      }
+    })
+  }
+
+  public removeAccessToken(token: AccessToken): void {
+
+    this._settings.deleteAccessToken(token.label).subscribe((success) => {
+
+      if (success) {
+        this.loadAccessTokens()
+      } else {
+        this._snackBar.open('ach, could not remove the access token', 'Sorry', {
+          duration: 2000,
+        })
+      }
+    })
   }
 
   public saveEmail(): void {
@@ -296,14 +341,13 @@ export class SettingsComponent implements OnInit {
 
   private load(): void {
 
+    this.loadAccessTokens()
+
     this._settings.developerCredentials().subscribe((r) => {
 
-      this.addDefaultIfNotPresent(r)
-      /*const editableCredentials = new Credentials()
-      editableCredentials.isEditable = true
-      r.push(editableCredentials)*/
-
+      r = this.addDefaultIfNotPresent(r)
       this.credentials = r
+      this.credentialsTable.renderRows()
     })
 
     this._notificationService.defaultEmail().subscribe((s) => {
@@ -315,14 +359,33 @@ export class SettingsComponent implements OnInit {
     })
   }
 
+  private loadAccessTokens(): void {
+    this._settings.getAccessTokens().subscribe((t) => {
+
+      if (t != null) {
+        this.accessTokens = t
+      } else {
+        this.accessTokens = []
+      }
+
+      if (this.tokensTable) {
+        this.tokensTable.renderRows()
+      }
+    })
+  }
+
   private addDefaultIfNotPresent(creds: Credentials[]): Credentials[] {
 
     let found = false
 
-    for (const c of creds) {
-      if (c.source === '*') {
-        found = true
-        break
+    if (creds === undefined || creds === null) {
+      creds = []
+    } else {
+      for (const c of creds) {
+        if (c.source === '*') {
+          found = true
+          break
+        }
       }
     }
 
@@ -333,5 +396,9 @@ export class SettingsComponent implements OnInit {
     }
 
     return creds
+  }
+
+  public isAdministrator(): boolean {
+    return GLOBALS.isAdministrator()
   }
 }

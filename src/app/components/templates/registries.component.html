@@ -1,11 +1,11 @@
-<div style="width: 300px; min-height: 800px; margin-left: auto; margin-right: auto; text-align: center">
+<div style="width: 300px; min-height: 800px; margin-top: 30px; margin-left: auto; margin-right: auto; text-align: center">
   <h2 id="product_profile" style="text-align: center">Select your registry</h2>
   <div class="dlt-panel__lg dlt-panel__no-shadow bordered">
     <ul class="dlt-list" style="background-color: transparent" role="listbox" aria-labelledby="product_profile" data-allow-selection>
       <li class="dlt-list-item" role="option" *ngFor="let r of registries()" style="width: 300px">
         <span *ngIf="isPrivate(r)" class="dlt-list-item__icon dlt-icon-lock" (click)="showPackagesInRegistry(r)"></span>
         <span *ngIf="!isPrivate(r)" class="dlt-list-item__icon dlt-icon-globe" (click)="showPackagesInRegistry(r)"></span>
-        <span class="dlt-list-item__text" (click)="showPackagesInRegistry(r)">{{r.name}}</span>
+        <div class="dlt-list-item__text" style="width: 200px" (click)="showPackagesInRegistry(r)">{{r.name}}</div>
         <div *ngIf="r.default">
           <span class="dlt-list-item__icon dlt-icon-check dlt-icon-sm" style="margin-left: 20px; margin-right: 20px" (click)="showPackagesInRegistry(r)"></span>
         </div>

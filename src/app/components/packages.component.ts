@@ -61,7 +61,8 @@ export class PackagesComponent implements OnInit {
       if (!p) {
         this.packages = []
       } else if (p.length === 1 && p[0] == null) {
-        this._router.navigate(['/registries'])
+        GLOBALS.onRegistriesPage = true
+        this._router.navigate(['/registries'], {skipLocationChange: true})
       } else {
         this.packages = p
       }

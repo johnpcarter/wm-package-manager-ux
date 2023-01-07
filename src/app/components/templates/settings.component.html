@@ -1,104 +1,172 @@
-<div>
+<div style="padding: 20px">
   <h1>Hello {{currentUser}}</h1>
   <form [formGroup]="form">
-    <fieldset>
-      <legend>Git credentials</legend>
+    <fieldset style="margin-top: 20px">
+      <legend>Access tokens</legend>
       <div class="dlt-form-item">
-        <div style="padding-right: 30px; padding-left: 20px">
-          <p>Assign personal access tokens for any private git repositories here. These credentials are only available
-            to your account and are encrypted on storage. Your credentials are never exposed and are used only used to
-            create deployment keys when adding users so that wpm users can download packages from private git repositories
-            without requiring git credentials. They will have read only access and the token can be easily revoked by
-            un-assigning the user from the package.
-        </p>
-      </div>
+        <div style="padding-right: 30px;">
+          <p>Generate long term access tokens to replace credentials when using the wpm command line tool.
+          </p>
+        </div>
         <div class="dlt-table-wrapper" style="width: 100%">
-          <table id="credentialsTable" #credentialsTable mat-table class="dlt-data-table-container dlt-data-table density-medium" [dataSource]="credentials" style="width:100%">
+          <table id="accessTokensTable" #tokensTable mat-table class="dlt-data-table-container dlt-data-table density-medium" [dataSource]="accessTokens" style="width:100%">
 
-        <ng-container matColumnDef="remove">
-          <th mat-header-cell *matHeaderCellDef class="dlt-table-header" style="width:30px">  </th>
-          <td mat-cell *matCellDef="let element">
-            <div *ngIf="element.isEditable; else remove" style="display: inline-flex; width: 50px">
-              <button class="dlt-icon-save opaque-button red-on-hover" (click)="saveChanges(element)" [disabled]="!isEditableGitRowValid()"></button>
-              <button class="dlt-icon-close opaque-button red-on-hover" (click)="cancelEdit(element)"></button>
-            </div>
-            <ng-template #remove>
-              <div style="display: inline-flex; width: 50px">
-                <button class="dlt-icon-edit opaque-button red-on-hover" (click)="editRow(element)"></button>
-                <button *ngIf="element.source != '*'" class="dlt-icon-delete opaque-button show-on-hover" (click)="removeCredentialsRow(element)"></button>
-              </div>
-            </ng-template>
-          </td>
-        </ng-container>
-
-        <ng-container matColumnDef="source">
-          <th mat-header-cell *matHeaderCellDef class="dlt-table-header" style="min-width:300px"> Source </th>
-          <td mat-cell *matCellDef="let element">
-            <ng-container *ngIf="element.source === '*' || !element.isEditable; else editableSource">
-              <p style="padding: 10px">{{element.source}}</p>
+            <ng-container matColumnDef="remove">
+              <th mat-header-cell *matHeaderCellDef class="dlt-table-header" style="width:30px">  </th>
+              <td mat-cell *matCellDef="let element">
+                  <div style="display: inline-flex; width: 50px">
+                    <button class="dlt-icon-delete opaque-button red-on-hover" (click)="removeAccessToken(element)"></button>
+                  </div>
+              </td>
             </ng-container>
-            <ng-template #editableSource>
-              <input type="text" placeholder="The GIT URL to the repository to which you have been added as a collaborator" formControlName="gitUrlCtrl" style="width: 80%; line-height: 24px; border: none; background-color: lavenderblush" required>
-            </ng-template>
-          </td>
-        </ng-container>
 
-        <ng-container matColumnDef="user">
-          <th mat-header-cell *matHeaderCellDef class="dlt-table-header" style="max-width:100px"> User </th>
-          <td mat-cell *matCellDef="let element">
-            <ng-container *ngIf="element.isEditable; else readonlyUser">
-              <input type="text" placeholder="Your git user id" formControlName="gitUserCtrl" style="width: 80%; line-height: 24px; border: none; background-color: lavenderblush" required>
+            <ng-container matColumnDef="label">
+              <th mat-header-cell *matHeaderCellDef class="dlt-table-header" style="min-width:300px"> Label </th>
+              <td mat-cell *matCellDef="let element">
+                  {{element.label}}
+              </td>
             </ng-container>
-            <ng-template #readonlyUser>
-             <p>{{element.user}}</p>
-            </ng-template>
-          </td>
-        </ng-container>
 
-        <ng-container matColumnDef="token">
-          <th mat-header-cell *matHeaderCellDef class="dlt-table-header" style="min-width: 200px"> Token </th>
-          <td mat-cell *matCellDef="let element">
-            <ng-container *ngIf="element.isEditable; else readonlyToken">
-            <input type="password" placeholder="Generate a Personal Access Token via github -> Your settings -> Developer Settings" formControlName="gitTokenCtrl" style="width: 80%; line-height: 24px; border: none; background-color: lavenderblush" required>
+            <ng-container matColumnDef="created">
+              <th mat-header-cell *matHeaderCellDef class="dlt-table-header" style="min-width:300px"> Created </th>
+              <td mat-cell *matCellDef="let element">
+                {{element.createdOn}}
+              </td>
             </ng-container>
-            <ng-template #readonlyToken>
-              {{showToken(element)}}
-            </ng-template>
-          </td>
-        </ng-container>
 
-        <tr mat-header-row *matHeaderRowDef="displayedColumnsForCredentials"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumnsForCredentials;"></tr>
+            <ng-container matColumnDef="expires">
+              <th mat-header-cell *matHeaderCellDef class="dlt-table-header" style="min-width:300px"> Expires </th>
+              <td mat-cell *matCellDef="let element">
+                {{element.expiresOn ||'never'}}
+              </td>
+            </ng-container>
 
-      </table>
+            <ng-container matColumnDef="token">
+              <th mat-header-cell *matHeaderCellDef class="dlt-table-header" style="min-width:300px"> Token </th>
+              <td mat-cell *matCellDef="let element">
+                <div *ngIf="element.token; else stars" class="dlt-input-group">
+                  <div class="dlt-form-item">
+                    <div class="dlt-form-group">
+                      <input id="token" type="password" class="dlt-text-input" disabled="true" [value]="element.token">
+                    </div>
+                  </div>
+                  <button id="copy" class="dlt-button dlt-button-primary" onClick="navigator.clipboard.writeText(document.querySelector('#token').value)" style="height: 32px"><i class="dlt-icon-copy"></i></button>
+                </div>
+                <ng-template #stars>
+                  **************
+                </ng-template>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumnsForTokens"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumnsForTokens;"></tr>
+
+          </table>
         </div>
       </div>
       <div style="float: right; padding-right: 45px">
-        <button class="dlt-icon-plus opaque-button red-on-hover" (click)="addCredentialsRow()"></button>
+        <button class="dlt-button dlt-button-secondary" style="width: 80px; margin-top: 5px;" (click)="createAccessToken()"><i class="dlt-icon-plus-circle dlt-icon" style="margin-right: 5px"></i> Create </button>
+      </div>
+    </fieldset>
+
+    <fieldset *ngIf="isAdministrator()">
+      <legend>Git credentials</legend>
+      <div class="dlt-form-item">
+        <div style="padding-right: 30px;">
+          <p>Assign personal access tokens for any git servers that are referenced by private packages in any of your
+            registries. This is so that the registry can create deploy keys as required when you want to give access
+            to specific users. These credentials are encrypted and never exposed outside of the application.
+          </p>
+        </div>
+        <div class="dlt-table-wrapper" style="width: 100%">
+          <table id="credentialsTable" #credentialsTable mat-table class="dlt-data-table-container dlt-data-table density-medium" [dataSource]="credentials" style="width:100%">
+
+            <ng-container matColumnDef="remove">
+              <th mat-header-cell *matHeaderCellDef class="dlt-table-header" style="width:30px">  </th>
+              <td mat-cell *matCellDef="let element">
+                <div *ngIf="element.isEditable; else remove" style="display: inline-flex; width: 50px">
+                  <button class="dlt-icon-save opaque-button red-on-hover" (click)="saveChanges(element)" [disabled]="!isEditableGitRowValid()"></button>
+                  <button class="dlt-icon-close opaque-button red-on-hover" (click)="cancelEdit(element)"></button>
+                </div>
+                <ng-template #remove>
+                  <div style="display: inline-flex; width: 50px">
+                    <button class="dlt-icon-edit opaque-button red-on-hover" (click)="editRow(element)"></button>
+                    <button *ngIf="element.source != '*'" class="dlt-icon-delete opaque-button show-on-hover" (click)="removeCredentialsRow(element)"></button>
+                  </div>
+                </ng-template>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="source">
+              <th mat-header-cell *matHeaderCellDef class="dlt-table-header" style="min-width:300px"> Source </th>
+              <td mat-cell *matCellDef="let element">
+                <ng-container *ngIf="element.source === '*' || !element.isEditable; else editableSource">
+                  <p style="padding: 10px">{{element.source}}</p>
+                </ng-container>
+                <ng-template #editableSource>
+                  <input type="text" placeholder="The GIT URL to the repository to which you have been added as a collaborator" formControlName="gitUrlCtrl" style="width: 80%; line-height: 24px; border: none; background-color: lavenderblush" required>
+                </ng-template>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="user">
+              <th mat-header-cell *matHeaderCellDef class="dlt-table-header" style="max-width:100px"> User </th>
+              <td mat-cell *matCellDef="let element">
+                <ng-container *ngIf="element.isEditable; else readonlyUser">
+                  <input type="text" placeholder="Your git user id" formControlName="gitUserCtrl" style="width: 80%; line-height: 24px; border: none; background-color: lavenderblush" required>
+                </ng-container>
+                <ng-template #readonlyUser>
+                  <p>{{element.user}}</p>
+                </ng-template>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="token">
+              <th mat-header-cell *matHeaderCellDef class="dlt-table-header" style="min-width: 200px"> Token </th>
+              <td mat-cell *matCellDef="let element">
+                <ng-container *ngIf="element.isEditable; else readonlyToken">
+                  <input type="password" placeholder="Generate a Personal Access Token via github -> Your settings -> Developer Settings" formControlName="gitTokenCtrl" style="width: 80%; line-height: 24px; border: none; background-color: lavenderblush" required>
+                </ng-container>
+                <ng-template #readonlyToken>
+                  {{showToken(element)}}
+                </ng-template>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumnsForCredentials"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumnsForCredentials;"></tr>
+
+          </table>
+        </div>
+      </div>
+      <div style="float: right; padding-right: 45px">
+        <button class="dlt-button dlt-button-secondary" style="width: 80px; margin-top: 5px;" (click)="addCredentialsRow()"><i class="dlt-icon-plus-circle dlt-icon" style="margin-right: 5px"></i> Add </button>
       </div>
     </fieldset>
 
     <fieldset>
       <legend>Your notifications</legend>
       <div class="dlt-form-item">
-        <div style="padding-right: 30px; padding-left: 20px">
+        <div style="padding-right: 30px;">
           <p>
             You can choose to receive an email if new packages are added to a registry. Or you can choose to receive emails
             only when a specific package is updated, i.e. a new release (tag) is flagged as trusted. You can subscribe to package notifications from the package details page.
             Alternatively you can add and remove from the list below.
           </p>
         </div>
-        <label class="dlt-form-label" for="email">Email for notifications</label>
-        <div class="dlt-form-group">
-          <input id="email" class="dlt-text-input" type="text" placeholder="joe@somewhere.com" formControlName="emailAddressCtrl" required>
-          <button class="dlt-icon-save opaque-button red-on-hover" (click)="saveEmail()"></button>
+        <div class="dlt-form-item" style="margin-top: 10px; margin-bottom: 10px; margin-right: 50px">
+          <label class="dlt-form-label" for="email">Email for notifications</label>
+          <div class="dlt-form-group">
+            <input id="email" class="dlt-text-input" type="text" placeholder="joe@somewhere.com" formControlName="emailAddressCtrl" required>
+            <button class="dlt-icon-save opaque-button red-on-hover" (click)="saveEmail()"></button>
+          </div>
         </div>
       </div>
-      <div class="dlt-form-item">
-        <label class="dlt-form-label" for="notifications">email alerts for registry updates and new packages</label>
-        <div id="notifications" class="dlt-form-group">
+      <div class="dlt-form-item" style="margin-top: 20px">
+        <label class="dlt-form-label" for="notifications">Email alerts for registry updates and new packages</label>
+        <div id="notifications" class="dlt-form-group" style="margin-top: 10px">
           <ul class="dlt-tags" data-allow-delete>
-            <li *ngFor="let n of notifications" class="dlt-tags__item" selectable="false" selected>{{u}}
+            <li *ngFor="let n of notifications" class="dlt-tags__item" selectable="false" selected>
               <i *ngIf="n.isPackage" class="dlt-icon-package"></i>
               <i *ngIf="!n.isPackage" class="dlt-icon-packages"></i> {{n.name}}
               <i class="dlt-icon-delete show-on-hover" style="margin-left: 10px" (click)="removeNotification(n)"></i>

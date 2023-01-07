@@ -6,6 +6,8 @@ import { faBook, faTimes } from '@fortawesome/free-solid-svg-icons'
 import { RegistriesService } from '../services/registries.service'
 import { Registry, RegistryType } from '../models/Registry'
 
+import * as $ from 'jquery'
+
 @Component({
   selector: 'app-add-registry',
   templateUrl: './templates/add-registry.component.html'
@@ -46,6 +48,9 @@ export class AddRegistryComponent implements OnInit {
   }
 
   ngOnInit(): void {
+
+    $('rType').chosen({ disable_search_threshold: 10, allow_single_deselect: false })
+    $('.dlt-single-select').chosen({ disable_search_threshold: 10, allow_single_deselect: false })
   }
 
   public toggleIsDefault(): void {

@@ -7,9 +7,11 @@ export const environment = {
   EMPOWER_AVAILABLE: 'http://localhost:5555/rad/wx.packages.manager:sag/ping',
   EMPOWER_CONNECT: 'http://localhost:5555/rad/wx.packages.manager:sag/authenticate',
   EMPOWER_DISCONNECT: 'http://localhost:5555/rad/wx.packages.manager:sag/disconnect',
-  LOGIN_CONNECT: 'http://localhost:5555/rad/wx.packages:manager/access/authenticate',
+  LOGIN_CONNECT: 'http://localhost:5555/invoke/wm.server/login',
   LOGIN_DISCONNECT: 'http://localhost:5555/invoke/wm.server/logout',
   LOGIN_SESSION: 'http://localhost:5555/rad/wx.packages:manager/access/session',
+  TOKENS: 'http://localhost:5555/rad/wx.packages:manager/access/tokens',
+  TOKEN: 'http://localhost:5555/rad/wx.packages:manager/access/token/',
   BASE_API: 'http://localhost:5555/rad/wx.packages:manager/'
 }
 

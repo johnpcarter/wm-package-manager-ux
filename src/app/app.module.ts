@@ -49,6 +49,7 @@ import { ListRegistriesComponent } from './components/list-registries.component'
 import { NotificationsService } from './services/notifications-service'
 import { ListPackagesRegistriesComponent } from './components/list-package-registries.component'
 import { ManageUsersComponent } from './components/manage-users.component'
+import {CreateAccessTokenComponent} from './components/create-access-token.component'
 
 
 const routes: Routes = [
@@ -72,6 +73,7 @@ const routes: Routes = [
     AddRegistryComponent,
     AddPackageComponent,
     AddUserComponent,
+    CreateAccessTokenComponent,
     ManageUsersComponent,
     RemoveConfirmationComponent,
     ListRegistriesComponent,

@@ -77,7 +77,7 @@ export class LoginComponent implements OnInit {
         this.connecting = false
 
         if (success) {
-          GLOBALS.setUser(this.userCtrl.value, this.notificationsService, 'empower')
+          GLOBALS.setUser(this.userCtrl.value, null, 'empower')
           this.loginModalClose.emit(true)
         } else {
           GLOBALS.clearUser()
@@ -91,7 +91,7 @@ export class LoginComponent implements OnInit {
         this.connecting = false
 
         if (userType) {
-          GLOBALS.setUser(this.userCtrl.value, this.notificationsService, userType)
+          GLOBALS.setUser(this.userCtrl.value, null, userType)
           this.loginModalClose.emit(true)
         } else {
           GLOBALS.clearUser()
@@ -102,15 +102,8 @@ export class LoginComponent implements OnInit {
     }
   }
 
-  public onClickOutside(): void {
+  public cancel(): void {
     this.loginModalClose.emit(false)
-  }
-
-  public onReturnKey(): void {
-
-    if (!this.form.invalid) {
-      this.connect()
-    }
   }
 
   public isLoginDisabled(): boolean {
@@ -126,5 +119,16 @@ export class LoginComponent implements OnInit {
     }
 
     return style
+  }
+
+  public styleForConnectButton(): {} {
+    if (this.connecting) {
+      return {'background-color': 'white', 'border': '2px solid #0f4c7b'}
+    }
+    else if (this.form.valid) {
+      return {}
+    } else {
+      return {opacity: 0.5}
+    }
   }
 }

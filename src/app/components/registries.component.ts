@@ -54,7 +54,7 @@ export class RegistriesComponent implements OnInit {
     GLOBALS.registry = registry
     this._router.navigate([''], {
       queryParams: { registry: registry.name },
-      queryParamsHandling: 'merge' })
+      queryParamsHandling: 'merge', skipLocationChange: true })
   }
 
   public isPrivate(r: Registry): boolean {

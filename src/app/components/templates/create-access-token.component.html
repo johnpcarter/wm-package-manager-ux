@@ -1,0 +1,29 @@
+<div class="modal">
+  <div class="dlt-modal-window__header">
+    <button data-modal-close aria-label="close" class="dlt-button dlt-button-icon dlt-modal-window__close dlt-icon-sm" (click)="onNoClick()">
+      <i class="dlt-icon-close dlt-icon"></i>
+    </button>
+    <h3 id="modal-header-readonly" class="dlt-modal-window__title">
+      Create access token
+    </h3>
+  </div>
+  <div class="dlt-modal-window__content" id="modal-content-readonly">
+    <fieldset>
+      <div class="dlt-form-item lg-input">
+        <label class="dlt-form-label" for="label">Label</label>
+        <div class="dlt-form-group">
+          <input id="label" type="text" class="dlt-text-input" placeholder="label to identify token later" [(ngModel)]="label" required>
+        </div>
+      </div>
+      <div class="dlt-form-item lg-input">
+        <label class="dlt-form-label" for="days">Duration</label>
+        <div class="dlt-form-group">
+          <input id="days" type="text" class="dlt-text-input" placeholder="Number of days before token expires" [(ngModel)]="numOfDays">
+        </div>
+      </div>
+    </fieldset>
+    <div class="dlt-modal-window__footer" style="justify-self: flex-end">
+      <button class="dlt-button dlt-button-primary" style=" margin-top: 5px; float: right" (click)="confirm()" [disabled]="!label"><i class="dlt-icon-key dlt-icon"></i> Create </button>
+    </div>
+  </div>
+</div>
