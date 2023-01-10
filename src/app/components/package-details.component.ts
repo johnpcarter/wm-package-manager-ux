@@ -282,8 +282,8 @@ export class PackageDetailsComponent implements OnInit {
   public first20Users(): string[] {
 
     if (this.users) {
-      if (this.users.length > 20) {
-        return this.users.slice(0, 20)
+      if (this.users.length > 10) {
+        return this.users.slice(0, 10)
       } else {
         return this.users
       }
@@ -293,8 +293,8 @@ export class PackageDetailsComponent implements OnInit {
   }
 
   public remainderUsers(): number {
-    if (this.users.length > 20) {
-      return this.users.length - 20
+    if (this.users.length > 10) {
+      return this.users.length - 10
     } else {
       return 0
     }
@@ -305,7 +305,7 @@ export class PackageDetailsComponent implements OnInit {
     if (this.isAdministrator()) {
       const dialogRef = this._dialog.open(ManageUsersComponent, {
         width: '350px',
-        height: '80%',
+        height: '700px',
         data: {
           package: this.package,
           users: this.users
@@ -323,7 +323,7 @@ export class PackageDetailsComponent implements OnInit {
     if (this.isAdministrator()) {
       const dialogRef = this._dialog.open(AddUserComponent, {
         width: '50%',
-        height: '180px',
+        height: '210px',
         data: {
           package: this.package,
           users: this.users
@@ -332,7 +332,7 @@ export class PackageDetailsComponent implements OnInit {
 
       dialogRef.afterClosed().subscribe(result => {
 
-        if (result.ok) {
+        if (result && result.ok) {
           this._removeUser('everybody')
           this.saveUsers()
         }

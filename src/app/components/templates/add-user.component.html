@@ -8,9 +8,13 @@
     </h3>
   </div>
   <div class="dlt-modal-window__content" id="modal-content-readonly">
-     <input type="text" class="dlt-text-input" placeholder="user id" [(ngModel)]="ref">
-  </div>
-  <div class="dlt-modal-window__footer" style="justify-self: flex-end">
-    <button class="dlt-button dlt-button-primary" data-modal-prime-focus (click)="add()"><i class="dlt-icon-add-user"></i> Add</button>
+    <div class="dlt-form-item lg-input">
+      <div class="dlt-form-group">
+        <input id="user" type="text" class="dlt-text-input" placeholder="email address or user ref" [(ngModel)]="ref">
+      </div>
+    </div>
+    <div class="dlt-modal-window__footer" style="justify-self: flex-end">
+      <button class="dlt-button dlt-button-primary" data-modal-prime-focus (click)="add()" [disabled]="!ref"><i class="dlt-icon-add-user"></i> Add</button>
+    </div>
   </div>
 </div>

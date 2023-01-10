@@ -22,7 +22,6 @@ export class ListPackagesRegistriesComponent implements OnInit {
   public selectedItem: string = null
   public isPackageList: boolean = false
 
-  public label: string = ''
   public items: string[] = []
   public registries: Registry[]
   public packages: Package[]
@@ -72,7 +71,7 @@ export class ListPackagesRegistriesComponent implements OnInit {
   private loadPackages(): void {
 
     this.items = []
-    this.label = 'Available packages'
+    this.selectedItem = null
 
     if (this.packages) {
       this.packages.forEach((p) => {
@@ -95,7 +94,7 @@ export class ListPackagesRegistriesComponent implements OnInit {
   private loadRegistries(): void {
 
     this.items = []
-    this.label = 'Available registries'
+    this.selectedItem = null
 
     if (this.registries) {
 

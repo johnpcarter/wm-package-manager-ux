@@ -21,9 +21,13 @@ export class PackagesComponent implements OnInit {
   public faKey = faKey
   public faPlusSquare = faPlusSquare
 
-  public displayedColumns: string[] = ['auth', 'name', 'category', 'description', 'registered', 'downloads', 'votes']
+  public displayedColumnsDefault: string[] = ['auth', 'name', 'category', 'description', 'registered', 'downloads', 'votes']
+  public displayedColumnsExclCategory: string[] = ['auth', 'name', 'description', 'registered', 'downloads', 'votes']
 
   public filter: string = null
+  public categories: string[] = []
+  public currentCategory: string = null
+  public currentFilter: string = null
   public packages: Package[] = []
 
   public searchTerm: string | undefined
@@ -57,7 +61,12 @@ export class PackagesComponent implements OnInit {
   }
 
   public load(registry: string, packageName: string): void {
-    this._packagesServices.fetchPackages(null, registry, null).subscribe((p) => {
+
+    this._packagesServices.categories(registry).subscribe((c) => {
+      this.categories = c
+    })
+
+    this._packagesServices.fetchPackages(null, registry, this.currentCategory).subscribe((p) => {
       if (!p) {
         this.packages = []
       } else if (p.length === 1 && p[0] == null) {
@@ -69,13 +78,36 @@ export class PackagesComponent implements OnInit {
     })
   }
 
+  public displayedColumns(): string[] {
+    if (this.currentCategory) {
+      return this.displayedColumnsExclCategory
+    } else {
+      return this.displayedColumnsDefault
+    }
+  }
+  public isSelectedCategory(category: string): any {
+
+    if (this.currentCategory === category) {
+      return {'background-color': 'lightblue', 'color': 'white'}
+    } else {
+      return {}
+    }
+  }
+
+  public setCategory(category: string): void {
+    this.currentCategory = category
+    this._packagesServices.searchPackages(this.currentFilter, this.currentCategory)
+  }
+
   public search(value: string): void {
 
-    this._packagesServices.searchPackages(value)
+    this.currentFilter = value
+    this._packagesServices.searchPackages(value, this.currentCategory)
   }
 
   public clear(): void {
-    this._packagesServices.searchPackages(null)
+    this.currentFilter = null
+    this._packagesServices.searchPackages(null, this.currentCategory, true)
   }
 
   public registryDescription(): string {

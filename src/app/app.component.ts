@@ -49,22 +49,17 @@ export class AppComponent implements OnInit {
       GLOBALS.onRegistriesPage = true
     }
 
-    _settingsService.currentUser().subscribe((user) => {
-      if (user) {
-        GLOBALS.setUser(user, _notificationsService)
+    this._inboundRouter.queryParams.subscribe(params => {
+
+      if (!GLOBALS.registry.name) {
+        _registriesService.getRegistry(params['registry']).subscribe((r) => {
+          if (r) {
+            GLOBALS.registry = r
+          }})
       }
     })
 
-    if (!GLOBALS.registry) {
-      this._inboundRouter.queryParams
-        .subscribe(params => {
-
-          _registriesService.getRegistry(params['registry']).subscribe((r) => {
-            if (r) {
-              GLOBALS.registry = r
-            }})
-        })
-    }
+    this.checkForConnectedUser()
   }
 
   public ngOnInit(): void {
@@ -126,6 +121,10 @@ export class AppComponent implements OnInit {
 
   public onConnectionDialogClose(result): void {
     this.isConnectionPanelOpen = false
+
+    if (result) {
+      this.checkForConnectedUser()
+    }
   }
 
   public showSettingsPanel(): void {
@@ -168,5 +167,16 @@ export class AppComponent implements OnInit {
     } else {
       return false
     }
+  }
+
+  private checkForConnectedUser(): void {
+
+    this._settingsService.currentUser().subscribe((user) => {
+      if (user) {
+        GLOBALS.setUser(user, this._notificationsService)
+      } else {
+        GLOBALS.clearUser()
+      }
+    })
   }
 }

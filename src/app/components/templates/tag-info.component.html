@@ -107,9 +107,9 @@
         <div>
           <div class="dlt-input-group">
             <label style="text-align: left; margin-top: -15px; font-size: small">Download command</label>
-            <div class="dlt-form-item">
+            <div class="dlt-form-item" style="padding-top: 0px">
               <div class="dlt-form-group">
-                <input id="source" type="text" class="dlt-text-input" style="min-width: 350px" disabled="true" [value]="'wpm install' + (!isDefaultRegistry ? ' ' :  ' -r ' + registryName + ' ') + (package.private ? '-a <access-token>' : '') + ' -t ' + tagName + ' ' + package.packageName">
+                <input id="source" type="text" class="dlt-text-input" style="min-width: 400px" disabled="true" [value]="'wpm install' + (isDefaultRegistry ? ' ' :  ' -r ' + registryName + ' ') + (package.private ? '-a <access-token>' : '') + ' -t ' + tagName + ' ' + package.packageName">
               </div>
             </div>
             <button id="copy" class="dlt-button dlt-button-primary" onClick="navigator.clipboard.writeText(document.querySelector('#source').value)" style="height: 32px"><i class="dlt-icon-copy"></i></button>

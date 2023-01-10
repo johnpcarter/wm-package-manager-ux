@@ -87,13 +87,15 @@ a {
 a:visited {
 	color: initial;
 }
-.dlt-modal-window__container{
-    position: absolute;
-    top: 25%;
-    left: 25%;
-    margin-top: -50px;
-    margin-left: -50px;
-}​
+.dlt-modal-window__container {
+  position: absolute;
+  top: 10%;
+  left: 25%;
+}
+.dlt-form-item {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
 .placeholder {
   color: gray;
   font-size: 13px;

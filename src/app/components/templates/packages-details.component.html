@@ -27,7 +27,7 @@
       <div style="display: flex; flex-direction: column; align-items: stretch; justify-content: flex-start; padding: 10px; overflow-y: auto">
         <div>
           <h4 style="color: gray;">Home Page</h4>
-          <i class="dlt-icon-home dlt-icon" style="padding-right: 10px;"></i><a href="{{package.homePage}}"> xxxx{{package.homePage}}</a>
+          <i class="dlt-icon-home dlt-icon" style="padding-right: 10px;"></i><a href="{{package.homePage}}"> {{package.homePage}}</a>
           <div *ngIf="isConnected()" style="float: right; display: flex; flex-direction: column; margin-top: -10px">
             <div  style="display: inline-flex; padding: 10px">
               <fa-icon matListIcon class="icon" [icon]="iconForNotifications()" [style]="colorForNoticationsButton()" style="margin-right: 15px"></fa-icon>
@@ -64,7 +64,7 @@
         <!-- INFO -->
         <div style="padding-top: 30px">
           <h4 style="color: gray">Info</h4>
-          <fa-icon matListIcon class="icon" [icon]="faInfoCircle" style="padding-right: 10px"></fa-icon>{{authType()}}<span style="color: gray"> package registered by </span>{{package.owner}}
+          <fa-icon matListIcon class="icon" [icon]="faInfoCircle" style="padding-right: 10px"></fa-icon>{{authType()}}<span style="color: gray"> {{package.category}} package registered by </span>{{package.owner}}
           <div style="display: inline-flex; justify-content: space-between; align-items: flex-start; margin-top: 10px">
             <div>
               <div style="display: inline-flex; width: 100%; justify-content: flex-start">
@@ -119,7 +119,7 @@
           <h4 style="color: gray">Versions</h4>
           <div style="width: 100%; display: flex; flex-direction: row">
             <i class="dlt-icon-versions dlt-icon" style="padding-right: 10px;"></i>
-            <ul class="dlt-tags" data-allow-delete *ngIf="haveAvailableTags(); else notags">
+            <ul class="dlt-tags" data-allow-delete style="display: inline-block" *ngIf="haveAvailableTags(); else notags">
               <li class="dlt-tags__item" *ngFor="let tag of this.package.trustedTags" (click)="showTagInfo(tag.tag, tag.when, tag.by, tag.signature)" style="background-color: lightblue" selected>{{tag.tag}}
                 <i class="dlt-icon-check sm"></i>
               </li>
@@ -140,7 +140,7 @@
             <fa-icon matListIcon class="icon" [icon]="faUsers" style="padding-right: 10px;"></fa-icon>
             <div style="width: 100%">
               <div *ngIf="this.package.private; else alt" style="display: inline-flex; width: 80%; height: 50px; justify-content: flex-start">
-                <ul class="dlt-tags" data-allow-delete>
+                <ul class="dlt-tags" data-allow-delete style="display: inline-block">
                   <li class="dlt-tags__item" *ngFor="let u of first20Users()" selectable="false" selected>{{u}}
                     <div *ngIf="isAdministrator()" class="dlt-dropdown">
                       <button class="dlt-button dlt-button-icon button-icon-md"><i class="dlt-icon-more-menu dlt-icon-sm" style="color: darkgray; margin-right: 0px"></i></button>
@@ -151,12 +151,12 @@
                     </div>
                   </li>
                   <p *ngIf="!users || users.length == 0" style="color: red; font-size: small; font-style: italic">Invisible package alert</p>
-                  <li class="dlt-tags__item" *ngIf="remainderUsers() > 0" color="accent" selected>+ {{remainderUsers()}} users <i *ngIf="isAdministrator()" class="dlt-icon-more-menu dlt-icon small" style="margin-right: -5px; margin-bottom: 5px" (click)="manageUsers()"></i></li>
+                  <li class="dlt-tags__item" *ngIf="remainderUsers() > 0" selected style="background-color: lightblue"  (click)="manageUsers()">+ {{remainderUsers()}} users </li>
                   <button class="dlt-tags__item" style="background-color: #7a15f5; color: white; border: 0px" *ngIf="isAdministrator()" (click)="addUser()">Add user <i *ngIf="isAdministrator()" class="dlt-icon-plus-circle dlt-icon small" style="margin-right: -5px; padding-left: 5px; padding-right: 5px"></i></button>
                 </ul>
               </div>
               <ng-template #alt>
-                <ul class="dlt-tags">
+                <ul class="dlt-tags" style="display: inline-block">
                   <li class="dlt-tags__item" *ngIf="isAccessible()">
                     everybody <i *ngIf="this.package.sourceIsPrivate && isAdministrator()" class="dlt-icon-key dlt-icon small" style="margin-right: -5px;padding-left: 5px; padding-right: 5px" (click)="syncDeployKey('everybody')"></i>
                   </li>

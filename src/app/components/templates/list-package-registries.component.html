@@ -24,15 +24,16 @@
       </fieldset>
     </div>
     <div class="dlt-form-item lg-input">
-      <label class="dlt-form-label" for="select-input-6">{{label}}</label>
-      <div class="dlt-form-group">
-        <select id="select-input-6" class="dlt-single-select" [(ngModel)]="selectedItem">
+      <label class="dlt-form-label">Notify on</label>
+      <div class="dlt-form-group select-arrow-icon">
+        <select id="select-input" class="dlt-select-input" [(ngModel)]="selectedItem">
+          <option [value]="null">Please select</option>
           <option *ngFor="let i of items" [value]="i">{{i}}</option>
         </select>
       </div>
     </div>
     <div class="dlt-modal-window__footer" style="justify-self: flex-end">
-      <button class="dlt-button dlt-button-primary" data-modal-prime-focus (click)="confirm()"><i class="dlt-icon-play"></i>
+      <button class="dlt-button dlt-button-primary" data-modal-prime-focus (click)="confirm()" [disabled]="!selectedItem"><i class="dlt-icon-play"></i>
         Confirm
       </button>
     </div>

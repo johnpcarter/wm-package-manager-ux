@@ -24,6 +24,9 @@ export class ManageUsersComponent implements OnInit {
 
   public user: string
 
+  public syncAll: boolean = false
+  public syncUser: string = null
+
   // tslint:disable-next-line:variable-name
   private _registry: string
   // tslint:disable-next-line:variable-name
@@ -57,6 +60,40 @@ export class ManageUsersComponent implements OnInit {
     } else {
       return str
     }
+  }
+
+  public syncAllUsers(): void {
+
+    this.syncAll = true
+
+    this.users.forEach((u) => {
+      this.syncDeployKey(u)
+    })
+  }
+
+  public syncDeployKey(user: string): void {
+
+    this.syncUser = user
+
+    this._packagesServices.syncUser(this.package.packageName, user, GLOBALS.registry.name).subscribe((success) => {
+
+      if (this.syncAll && this.syncUser === this.users[this.users.length - 1]) {
+        this.syncAll = false
+      }
+
+      this.syncUser = null
+
+      if (success) {
+        this.package.sourceHasTokenForEverybody = true
+        this._snackbar.open('deploy token synced with git repository', 'Hoorah', {
+          duration: 2000,
+        })
+      } else {
+        this._snackbar.open('Sync failed, probably already done!', 'Sorry', {
+          duration: 2000,
+        })
+      }
+    })
   }
 
   public addUser(): void {

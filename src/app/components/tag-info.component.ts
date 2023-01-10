@@ -144,13 +144,21 @@ export class TagInfoComponent implements OnInit {
 
   public downloadPackage(): void {
 
+    let url: string = environment.BASE_API + 'package/' + this.package.packageName
+
     // tslint:disable-next-line:max-line-length
     if (this.tagName) {
-      window.open(environment.BASE_API + 'package/' + this.package.packageName + '/' + this.tagName
-        + '/download?registry=' + encodeURIComponent(GLOBALS.registry.name) + '&ignoreVerification=true&ignoreSignatureMatch=true')
+      url += '/' + this.tagName
     } else {
-      window.open(environment.BASE_API + 'package/' + this.package.packageName + '/main/download' +
-        '?registry=' + encodeURIComponent(GLOBALS.registry.name) + '&ignoreVerification=true&ignoreSignatureMatch=true')
+      url = '/main'
     }
+
+    url += '/download?ignoreVerification=true&ignoreSignatureMatch=true'
+
+    if (!GLOBALS.registry.default) {
+      url += '&registry=' + encodeURIComponent(GLOBALS.registry.name)
+    }
+
+    window.open(url)
   }
 }

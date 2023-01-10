@@ -22,7 +22,7 @@
         <div class="dlt-form-item lg-input">
           <label class="dlt-form-label" for="description">Description</label>
           <div class="dlt-form-group">
-            <textarea id="description" class="dlt-text-input" placeholder="Optional description for your registry" formControlName="description"></textarea>
+            <textarea id="description" rows="2" cols="80" class="dlt-textarea" placeholder="Optional description for your package" formControlName="description"></textarea>
             <button class="clear-icon" type="button"><i class="dlt-icon-close"></i></button>
           </div>
         </div>
@@ -35,8 +35,8 @@
         </div>
         <div class="dlt-form-item lg-input">
           <label class="dlt-form-label" for="rType">Category</label>
-          <div class="dlt-form-group">
-            <select id="rType" class="dlt-single-select" formControlName="category" required>
+          <div class="dlt-form-group select-arrow-icon">
+            <select id="rType" class="dlt-select-input" formControlName="category" required>
               <option value="utility">Utility</option>
               <option value="webapp">Web app</option>
               <option value="connector">Connector</option>
@@ -84,7 +84,7 @@
         <div *ngIf="registry.type == 'private' && requiresAuthenticationCtrl.value == true; else notapplicable" class="dlt-form-item lg-input">
           <label class="dlt-form-label" for="private">Permissions</label>
           <div class="dlt-form-group">
-            <select id="private" class="dlt-single-select" formControlName="private" required>
+            <select id="private" class="dlt-select-input" formControlName="private" required>
               <option value=false>Everybody</option>
               <option value=true>Specific users only ({{user()}})</option>
             </select>

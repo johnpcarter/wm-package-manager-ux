@@ -16,22 +16,21 @@
           <div class="dlt-form-item lg-input">
             <label class="dlt-form-label" for="registryName">Name</label>
             <div class="dlt-form-group">
-              <input id="registryName" class="dlt-text-input" type="text" placeholder="No spaces or special characters" formControlName="name" required>
+              <input id="registryName" class="dlt-text-input dlt-text-input" type="text" placeholder="No spaces or special characters" formControlName="name" required>
               <button class="clear-icon" type="button"><i class="dlt-icon-close"></i></button>
             </div>
           </div>
           <div class="dlt-form-item lg-input">
             <label class="dlt-form-label" for="description">Description</label>
             <div class="dlt-form-group">
-              <textarea id="description" class="dlt-text-input" placeholder="Optional description for your registry" formControlName="description"></textarea>
+              <textarea id="description" rows="3" cols="90" class="dlt-textarea" placeholder="Optional description for your registry" formControlName="description"></textarea>
               <button class="clear-icon" type="button"><i class="dlt-icon-close"></i></button>
             </div>
             <div class="dlt-form-item lg-input">
               <div class="dlt-checkbox">
-                <div class="dlt-form-group">
-                  <input type="checkbox" id="isDefault" formControlName="isDefault" (click)="toggleIsDefault()">
-                  <label for="isDefault">Make default</label>
-                </div>
+                <input id="isDefault" type="checkbox" class="check-all-checkbox" formControlName="isDefault" (click)="toggleIsDefault()">
+                <label for="isDefault">Make default
+                </label>
               </div>
             </div>
           </div>
@@ -41,7 +40,7 @@
           <div class="dlt-form-item lg-input">
             <label class="dlt-form-label" for="rType">Type</label>
             <div class="dlt-form-group">
-              <select id="rType" class="dlt-single-select" formControlName="type" required>
+              <select id="rType" class="dlt-select-input" formControlName="type" required>
                 <option value="private">Private</option>
                 <option value="public">Public</option>
               </select>
@@ -49,8 +48,8 @@
           </div>
           <div class="dlt-form-item lg-input">
             <label class="dlt-form-label" for="rTrust">Trust</label>
-            <div class="dlt-form-group">
-              <select id="rTrust" class="dlt-single-select" formControlName="trustLevel" required>
+            <div class="dlt-form-group select-arrow-icon">
+              <select id="rTrust" class="dlt-select-input" formControlName="trustLevel" required>
                 <option value="0">None - Wild west, anyone can upload</option>
                 <option value="1">Moderate - Some packages verified</option>
                 <option value="2">Total - All packages verified</option>

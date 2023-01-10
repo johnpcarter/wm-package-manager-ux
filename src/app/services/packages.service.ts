@@ -26,25 +26,48 @@ export class PackagesServices {
   private _fetching: boolean = false
   // tslint:disable-next-line:variable-name
   private _allPackagesFilter: string = null
+  // tslint:disable-next-line:variable-name
+  private _currentCategory: string = null
 
   // tslint:disable-next-line:variable-name
   constructor(private _http: HttpClient) {
   }
 
-  public searchPackages(value: string): void {
+  public categories(registry?: string): Observable<string[]> {
 
-    if (!this._fetching) {
+    let url: string = environment.BASE_API + PackagesServices.PACKAGE + '/categories'
+
+    if (registry && registry !== undefined) {
+      url += '?registry=' + encodeURIComponent(registry)
+    }
+
+    const headers = GLOBALS.headers()
+
+    return this._http.get(url, { headers })
+      .pipe(catchError(error => {
+        this._fetching = false
+        return of({categories: []})
+      }))
+      .pipe(map( (responseData: any) => {
+        return responseData.categories
+      }))
+  }
+
+  public searchPackages(value: string, category?: string, reset?: boolean): void {
+
+    if (reset || !this._fetching) {
       // if we have more results than 50, mayhap we have applicable candidates in DB, so fetch from backing-store
-      if (this._allPackages.length === 50) {
-        this.fetchPackages(value, GLOBALS.registry.name).subscribe((p) => {
+      if (reset || !this._allPackages || this._allPackages.length === 50 || category !== this._currentCategory) {
+        this._currentCategory = category
+        this.fetchPackages(value, GLOBALS.registry.name, category).subscribe((p) => {
           this.packagesSource.next(p)
 
           console.log('all packages now filtered by ' + this._allPackagesFilter)
         })
       } else if (value) {
         // filter in memory results
-        this.packagesSource.next(this._allPackages.filter((val) => val.packageName.toLowerCase().includes(value.toLowerCase())
-          || val.description.toLowerCase().includes(value.toLowerCase())))
+        this.packagesSource.next(this._allPackages.filter((val) =>
+          val.packageName.toLowerCase().includes(value.toLowerCase()))) // || val.description.toLowerCase().includes(value.toLowerCase())))
       } else {
         this.packagesSource.next(this._allPackages)
       }
@@ -58,15 +81,15 @@ export class PackagesServices {
     let url: string = environment.BASE_API + PackagesServices.PACKAGES
 
     if (filter) {
-      url += '/' + encodeURIComponent(filter)
+      url += '/' + encodeURIComponent('%' + filter + '%')
     }
 
-    if (registry) {
+    if (registry && registry !== undefined) {
       url += '?registry=' + encodeURIComponent(registry)
     }
 
     if (category) {
-      if (registry) {
+      if (registry && registry !== undefined) {
         url += '&category=' + encodeURIComponent(category)
       } else {
         url += '?category=' + encodeURIComponent(category)
@@ -98,7 +121,7 @@ export class PackagesServices {
 
     let url: string = environment.BASE_API + PackagesServices.PACKAGE + '/' + encodeURIComponent(packageName)
 
-    if (registry) {
+    if (registry && registry !== undefined) {
       url += '?registry=' + encodeURIComponent(registry)
     }
 
@@ -120,7 +143,7 @@ export class PackagesServices {
 
     let url: string = environment.BASE_API + PackagesServices.PACKAGE + '/' + encodeURIComponent(packageName) + '/git'
 
-    if (registry) {
+    if (registry && registry !== undefined) {
       url += '?registry=' + encodeURIComponent(registry)
     }
 
@@ -142,7 +165,7 @@ export class PackagesServices {
 
     let url: string = environment.BASE_API + PackagesServices.PACKAGE + '/' + encodeURIComponent(packageName) + '/history'
 
-    if (registry) {
+    if (registry && registry !== undefined) {
       url += '?registry=' + encodeURIComponent(registry)
     }
 
@@ -161,7 +184,7 @@ export class PackagesServices {
 
     let url: string = environment.BASE_API + PackagesServices.PACKAGE + '/' + encodeURIComponent(packageName) + '/users'
 
-    if (registry) {
+    if (registry && registry !== undefined) {
       url += '?registry=' + encodeURIComponent(registry)
     }
 
@@ -182,7 +205,7 @@ export class PackagesServices {
     const headers = GLOBALS.headers()
     const body: string = JSON.stringify(pckg)
 
-    if (registry) {
+    if (registry && registry !== undefined) {
       url += '?registry=' + encodeURIComponent(registry)
     }
 
@@ -206,7 +229,7 @@ export class PackagesServices {
 
     let url: string = environment.BASE_API + PackagesServices.PACKAGE + '/' + encodeURIComponent(packageName) + '/visibility/' + isVisible
 
-    if (registry) {
+    if (registry && registry !== undefined) {
       url += '?registry=' + encodeURIComponent(registry)
     }
 
@@ -225,7 +248,7 @@ export class PackagesServices {
 
     let url: string = environment.BASE_API + PackagesServices.PACKAGE + '/' + encodeURIComponent(packageName) + '/move/' + toRegistry
 
-    if (registry) {
+    if (registry && registry !== undefined) {
       url += '?registry=' + encodeURIComponent(registry)
     }
 
@@ -244,7 +267,7 @@ export class PackagesServices {
 
     let url: string = environment.BASE_API + PackagesServices.PACKAGE + '/' + encodeURIComponent(packageName) + '/vote'
 
-    if (registry) {
+    if (registry && registry !== undefined) {
       url += '?registry=' + encodeURIComponent(registry)
     }
 
@@ -263,7 +286,7 @@ export class PackagesServices {
 
     let url: string = environment.BASE_API + PackagesServices.PACKAGE + '/' + encodeURIComponent(packageName) + '/vote'
 
-    if (registry) {
+    if (registry && registry !== undefined) {
       url += '?registry=' + encodeURIComponent(registry)
     }
 
@@ -282,7 +305,7 @@ export class PackagesServices {
 
     let url: string = environment.BASE_API + PackagesServices.PACKAGE + '/' + encodeURIComponent(packageName)
 
-    if (registry) {
+    if (registry && registry !== undefined) {
       url += '?registry=' + encodeURIComponent(registry)
     }
 
@@ -302,7 +325,7 @@ export class PackagesServices {
     let url: string = environment.BASE_API + PackagesServices.PACKAGE + '/' + encodeURIComponent(packageName)
       + '/tag/' + encodeURIComponent(tag)
 
-    if (registry) {
+    if (registry && registry !== undefined) {
       url += '?registry=' + encodeURIComponent(registry)
     }
 
@@ -325,7 +348,7 @@ export class PackagesServices {
       url += '/' + + encodeURIComponent(tag)
     }
 
-    if (registry) {
+    if (registry && registry !== undefined) {
       url += '?registry=' + encodeURIComponent(registry)
     }
 
@@ -348,7 +371,7 @@ export class PackagesServices {
       url += '/' + + encodeURIComponent(tag)
     }
 
-    if (registry) {
+    if (registry && registry !== undefined) {
       url += '?registry=' + encodeURIComponent(registry)
     }
 
@@ -368,7 +391,7 @@ export class PackagesServices {
     let url: string = environment.BASE_API + PackagesServices.PACKAGE + '/' + encodeURIComponent(packageName)
                       + '/tag/' + encodeURIComponent(tag)
 
-    if (registry) {
+    if (registry && registry !== undefined) {
       url += '?registry=' + encodeURIComponent(registry)
     }
 
@@ -394,7 +417,7 @@ export class PackagesServices {
     let url: string = environment.BASE_API + PackagesServices.PACKAGE + '/' + encodeURIComponent(packageName)
       + '/tag/' + encodeURIComponent(tag)
 
-    if (registry) {
+    if (registry && registry !== undefined) {
       url += '?registry=' + encodeURIComponent(registry)
     }
 
@@ -414,7 +437,7 @@ export class PackagesServices {
     let url: string = environment.BASE_API + PackagesServices.PACKAGE + '/' + encodeURIComponent(packageName)
       + '/user/' + user
 
-    if (registry) {
+    if (registry && registry !== undefined) {
       url += '?registry=' + encodeURIComponent(registry)
     }
 
@@ -434,7 +457,7 @@ export class PackagesServices {
     let url: string = environment.BASE_API + PackagesServices.PACKAGE + '/' + encodeURIComponent(packageName)
       + '/users'
 
-    if (registry) {
+    if (registry && registry !== undefined) {
       url += '?registry=' + encodeURIComponent(registry)
     }
 

@@ -1,16 +1,18 @@
 import { Injectable } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
-import {flatMap, mergeMap, Observable, of, switchMap, take} from 'rxjs';
+import { mergeMap, Observable, of, Subscriber } from 'rxjs'
 import { map, catchError } from 'rxjs/operators'
 
 import { GLOBALS } from '../globals'
 import { Credentials } from '../models/Credentials'
 
 import { environment } from '../../environments/environment'
-import {AccessToken} from '../models/AccessToken';
+import {AccessToken} from '../models/AccessToken'
 
 @Injectable()
 export class SettingsService {
+
+  public static FIVE_MINS: number = 300000
 
   // tslint:disable-next-line:variable-name
   constructor(private _http: HttpClient) {
@@ -176,21 +178,36 @@ export class SettingsService {
 
   public currentUser(): Observable<string> {
 
+    return new Observable((observer) => {
+
+      this._currentUser(observer)
+    })
+  }
+
+  private _currentUser(observer: Subscriber<string>, refreshInterval?: number): void {
+
     const url: string = environment.LOGIN_SESSION
 
     const headers = GLOBALS.headers()
 
-    return this._http.get(url, { headers }).pipe(catchError(error => {
-      GLOBALS.clearUser()
-      return of(false)
-    })).pipe(map( (responseData: any) => {
+    if (!refreshInterval) {
+      refreshInterval = SettingsService.FIVE_MINS
+    }
+
+    this._http.get(url, { headers }).pipe(catchError(error => {
+      return of({userID: null})
+    })).subscribe( (responseData: any) => {
       if (responseData.userID) {
-        return responseData.userID
+        observer.next(responseData.userID)
+
+        setTimeout(() => {
+          this._currentUser(observer, refreshInterval)
+        }, refreshInterval)
       } else {
-        GLOBALS.clearUser()
-        return false
+        observer.next(null)
+        observer.complete()
       }
-    }))
+    })
   }
 
   public developerCredentials(): Observable<Credentials[]> {

@@ -10,8 +10,8 @@
   <div class="dlt-modal-window__content" id="modal-content-readonly">
     <div class="dlt-form-item lg-input">
       <label class="dlt-form-label" for="select-input-6">{{ref}} ?</label>
-      <div class="dlt-form-group">
-        <select id="select-input-6" class="dlt-single-select" [(ngModel)]="registry">
+      <div class="dlt-form-group select-arrow-icon">
+        <select id="select-input-6" class="dlt-select-input" [(ngModel)]="registry">
           <option>None</option>
           <option *ngFor="let r of registries" [value]="r.name">{{r.name}}</option>
         </select>
