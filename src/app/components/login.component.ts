@@ -72,30 +72,30 @@ export class LoginComponent implements OnInit {
     this.submitted = true
 
     if (this.isEmpowerLoginCtrl.value) {
-      this.settingsService.connectViaEmpower(this.userCtrl.value, this.passwordCtrl.value).subscribe((success) => {
+      this.settingsService.connectViaEmpower(this.userCtrl.value, this.passwordCtrl.value).subscribe((response) => {
 
         this.connecting = false
 
-        if (success) {
-          GLOBALS.setUser(this.userCtrl.value, null, 'empower')
+        if (response) {
+          GLOBALS.setUser(response.userID, null, response.userType)
+          GLOBALS.cacheAccessToken(response.token)
+
           this.loginModalClose.emit(true)
         } else {
           GLOBALS.clearUser()
-          // this.passwordCtrl.setValue('', {emitEvent: false})
           this.failed = true
         }
       })
     } else {
-      this.settingsService.connect(this.userCtrl.value, this.passwordCtrl.value).subscribe((userType) => {
+      this.settingsService.connect(this.userCtrl.value, this.passwordCtrl.value).subscribe((response) => {
 
         this.connecting = false
 
-        if (userType) {
-          GLOBALS.setUser(this.userCtrl.value, null, userType)
+        if (response) {
+          GLOBALS.setUser(response.userID, null, response.userType)
           this.loginModalClose.emit(true)
         } else {
           GLOBALS.clearUser()
-          // this.passwordCtrl.setValue('', {emitEvent: false})
           this.failed = true
         }
       })

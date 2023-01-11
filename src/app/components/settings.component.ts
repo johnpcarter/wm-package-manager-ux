@@ -339,7 +339,10 @@ export class SettingsComponent implements OnInit {
 
       r = this.addDefaultIfNotPresent(r)
       this.credentials = r
-      this.credentialsTable.renderRows()
+
+      if (this.credentialsTable) {
+        this.credentialsTable.renderRows()
+      }
     })
 
     this._notificationService.defaultEmail().subscribe((s) => {

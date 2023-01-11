@@ -45,7 +45,7 @@
               <th mat-header-cell *matHeaderCellDef class="dlt-table-header" style="min-width:300px"> Token </th>
               <td mat-cell *matCellDef="let element">
                 <div *ngIf="element.token; else stars" class="dlt-input-group">
-                  <div class="dlt-form-item">
+                  <div class="dlt-form-item" style="padding-top: 0px">
                     <div class="dlt-form-group">
                       <input id="token" type="password" class="dlt-text-input" disabled="true" [value]="element.token">
                     </div>

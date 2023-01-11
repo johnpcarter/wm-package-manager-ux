@@ -71,7 +71,7 @@ export class GLOBALS {
       .append('Accept', 'application/json')
 
     if (GLOBALS.getAccessToken()) {
-      headers = headers.append('accessToken', GLOBALS.getAccessToken())
+      headers = headers.append('Authorization', 'Bearer ' + GLOBALS.getAccessToken())
     }
 
     return headers

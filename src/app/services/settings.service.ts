@@ -19,7 +19,7 @@ export class SettingsService {
 
   }
 
-  public connect(user: string, passswrd: string): Observable<string> {
+  public connect(user: string, passswrd: string): Observable<AccessToken> {
 
     const url: string = environment.LOGIN_CONNECT
 
@@ -33,8 +33,11 @@ export class SettingsService {
       .pipe(map( (responseData: any) => {
 
         if (responseData && responseData.username !== 'Default') {
-          // GLOBALS.cacheAccessToken(responseData.accessToken)
-          return responseData.metadata.userType
+          const obj = new AccessToken()
+          obj.userID = user
+          obj.userType = responseData.metadata.userType
+
+          return obj
         } else {
           return null
         }
@@ -56,7 +59,7 @@ export class SettingsService {
       }))
   }
 
-  public connectViaEmpower(username: string, passswrd: string): Observable<boolean> {
+  public connectViaEmpower(username: string, passswrd: string): Observable<AccessToken> {
 
     const url: string = environment.EMPOWER_CONNECT
 
@@ -70,10 +73,14 @@ export class SettingsService {
       .pipe(map( (responseData: any) => {
 
         if (responseData) {
-          GLOBALS.cacheAccessToken(responseData.accessToken)
-          return true
+
+          const obj = new AccessToken('login', responseData.accessToken)
+          obj.userID = username
+          obj.userType = 'empower'
+
+          return obj
         } else {
-          return false
+          return null
         }
       }))
   }
