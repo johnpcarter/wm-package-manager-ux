@@ -173,7 +173,9 @@ export class AppComponent implements OnInit {
 
     this._settingsService.currentUser().subscribe((user) => {
       if (user) {
-        GLOBALS.setUser(user, this._notificationsService)
+        if (GLOBALS.user !== user) {
+          GLOBALS.setUser(user, this._notificationsService)
+        }
       } else {
         GLOBALS.clearUser()
       }
