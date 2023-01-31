@@ -50,7 +50,7 @@ export class RegistriesComponent implements OnInit {
 
   public showPackagesInRegistry(registry: Registry): void {
 
-    GLOBALS.onRegistriesPage = false
+    GLOBALS.currentPage = 'packages'
     GLOBALS.registry = registry
     this._router.navigate([''], {
       queryParams: { registry: registry.name },

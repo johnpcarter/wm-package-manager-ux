@@ -7,7 +7,7 @@ import { faThumbsUp, faThumbsDown, faTimes, faClock, faUser, faEnvelope, faStamp
 import { faGitAlt } from '@fortawesome/free-brands-svg-icons'
 
 import { Tag } from '../models/Tag'
-import { Package } from '../models/Package'
+import {Package, TagSummary} from '../models/Package';
 
 import { PackagesServices } from '../services/packages.service'
 
@@ -36,10 +36,9 @@ export class TagInfoComponent implements OnInit {
   public faExclamationTriangle = faExclamationTriangle
 
   public package: Package
-  public tagName: string
-  public tagInfo: Tag
+  public tagInfo: TagSummary
+  public tagDetails: Tag
 
-  public trusted: string = null
   public haveGitInfo: boolean = false
   public hasAccessToken: boolean = false
   public registryName: string
@@ -54,20 +53,19 @@ export class TagInfoComponent implements OnInit {
 
     this._dialogRef = dialogRef
     this.package = data.package
-    this.tagName = data.tag
-    this.trusted = data.when
-    this.tagInfo = new Tag()
+    this.tagInfo = data.tag
 
-    if (this.tagName) {
-      this._packagesServices.getTag(this.package.packageName, this.tagName, GLOBALS.registry.name).subscribe((t) => {
+    this.tagDetails = new Tag()
 
-        this.tagInfo = t
+    if (this.tagInfo.tag) {
+      this._packagesServices.getTag(this.package.packageName, this.tagInfo.tag, GLOBALS.registry.name).subscribe((t) => {
+
+        this.tagDetails = t
         this.haveGitInfo = true
       })
     } else {
-      _packagesServices.getPackageManifest(this.package.packageName, this.tagName, GLOBALS.registry.name).subscribe((m) => {
-        this.tagName = 'main'
-        this.tagInfo.manifest = m
+      _packagesServices.getPackageManifest(this.package.packageName, this.tagInfo.tag, GLOBALS.registry.name).subscribe((m) => {
+        this.tagDetails.manifest = m
       })
     }
   }
@@ -82,16 +80,16 @@ export class TagInfoComponent implements OnInit {
   }
 
   public isSigned(): boolean {
-    if (this.tagInfo.verification) {
-      return this.tagInfo.verification.signature != null
+    if (this.tagDetails.verification) {
+      return this.tagDetails.verification.signature != null
     } else {
       return false
     }
   }
 
   public isVerified(): boolean {
-    if (this.tagInfo.verification) {
-      return this.tagInfo.verification.verified
+    if (this.tagDetails.verification) {
+      return this.tagDetails.verification.verified
     } else {
       return false
     }
@@ -104,10 +102,14 @@ export class TagInfoComponent implements OnInit {
   public trust(): void {
 
     // tslint:disable-next-line:max-line-length
-    this._packagesServices.trust(this.package.packageName, this.tagName, this.tagInfo.verification != null ? this.tagInfo.verification.signature : null, GLOBALS.registry.name).subscribe((ok) => {
+    this._packagesServices.trust(this.package.packageName, this.tagInfo.tag, this.tagDetails.verification != null ? this.tagDetails.verification.signature : null, GLOBALS.registry.name).subscribe((ok) => {
 
       if (ok) {
-        this.onNoClick({added: this.tagName})
+        this.tagInfo.when = 'today'
+        this.tagInfo.by = GLOBALS.user
+        this.tagInfo.trust = 'TRUSTED'
+
+        this.onNoClick({added: this.tagInfo.tag})
       } else {
         const s = this._snackBar.open('Update failed', 'Dismiss', {
           duration: 2000,
@@ -122,10 +124,13 @@ export class TagInfoComponent implements OnInit {
 
   public removeTrust(): void {
 
-    this._packagesServices.untrust(this.package.packageName, this.tagName, GLOBALS.registry.name).subscribe((ok) => {
+    this._packagesServices.untrust(this.package.packageName, this.tagInfo.tag, GLOBALS.registry.name).subscribe((ok) => {
 
       if (ok) {
-        this.onNoClick({removed: this.tagName})
+        this.tagInfo.by = null
+        this.tagInfo.when = null
+        this.tagInfo.trust = 'NOT_TRUSTED'
+        this.onNoClick({removed: this.tagInfo.tag})
       } else {
         const s = this._snackBar.open('Update failed', 'Dismiss', {
           duration: 2000,
@@ -147,8 +152,8 @@ export class TagInfoComponent implements OnInit {
     let url: string = environment.BASE_API + 'package/' + this.package.packageName
 
     // tslint:disable-next-line:max-line-length
-    if (this.tagName) {
-      url += '/' + this.tagName
+    if (this.tagInfo.tag) {
+      url += '/' + this.tagInfo.tag
     } else {
       url = '/main'
     }

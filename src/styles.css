@@ -3,21 +3,32 @@
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
 
 header.main-head {
+  --dlt-color-text-interactive-primary: var(--dlt-color-icon-interactive-secondary, $almost-black);
   text-align: left;
   height: 64px;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
   align-items: center;
+  -webkit-box-pack: left;
+  -ms-flex-pack: left;
   justify-content: left;
-  background-color: #ffffff;
-  border-bottom: 1px solid #cccccb;
-  color: #1776bf;
+  background-color: #fff;
+  border-bottom: 0px solid #cccccb;
+  color: var(--dlt-color-interactive-primary-default, #1776bf);
   border-radius: 0px;
   font-family: Roboto, Arial, sans-serif;
   font-size: 16px;
+  position: fixed;
   z-index: 999;
   padding: 0 24px;
   width: 100%;
+  -webkit-box-shadow: var(--dlt-elevation-md, 0px 2px 12px 2px rgba(0, 0, 0, 0.12));
+  box-shadow: var(--dlt-elevation-md, 0px 2px 12px 2px rgba(0, 0, 0, 0.12));
 }
+
 :root{
   font-size: 16px;
 }
@@ -26,7 +37,27 @@ body {
 	padding-top: 0px;
   font-family: "Roboto", "Helvetica", Arial, sans-serif;
 	overflow: hidden;
-  color: #333;
+  color: #011F3D;
+}
+h1 {
+  font-weight: lighter;
+  color: #36597d;
+}
+h2 {
+  font-weight: lighter;
+  color: #36597d;
+}
+h4 {
+  font-weight: lighter;
+  color: #36597d;
+}
+h5 {
+  color: #36597d;
+  font-size: 14px;
+  font-weight: lighter;
+}
+hr {
+  color: #6f7177
 }
 .fit-screen {
   position: absolute;
@@ -223,7 +254,7 @@ mat-card {
 .login-field {
   padding: 5px;
   height: 30px;
-  border: 1px solid lightgray;
+  border: 1px solid #36597D;
   border-radius: 0px;
   outline: none;
 }

@@ -4,7 +4,7 @@
       <i class="dlt-icon-close dlt-icon"></i>
     </button>
     <h3 id="modal-header-readonly" class="dlt-modal-window__title">
-      {{tagName}} for {{package.packageName}}
+      {{tagInfo.tag}} for {{package.packageName}}
     </h3>
   </div>
   <div class="dlt-modal-window__content" id="modal-content-readonly">
@@ -15,58 +15,60 @@
              href="javascript:void(0)" role="tab" aria-selected="true">Package Manifest</a>
         </li>
         <li role="presentation">
-          <a tabindex="1" id="tab-link-2" data-target=".tab-2" class="dlt-tab-link" href="javascript:void(0)"
-             role="tab">Git info</a>
+          <a tabindex="1" id="tab-link-2" data-target=".tab-2" class="dlt-tab-link" href="javascript:void(0)" role="tab">Git info</a>
+          <i *ngIf="tagInfo.trust === 'TRUSTED'" class="dlt-icon dlt-icon-check-circle dlt-icon-lg" style="color: green;"></i>
+          <i *ngIf="tagInfo.trust === 'NOT_TRUSTED'" class="dlt-icon dlt-icon-error dlt-icon-lg"></i>
+          <i  *ngIf="tagInfo.trust !== 'NOT_TRUSTED' && tagInfo.trust !== 'TRUSTED'" class="dlt-icon-warning dlt-icon dlt-icon-lg" aria-hidden="true"></i>
         </li>
       </ul>
       <div class="dlt-tab-panel dlt-tab-panel-open tab-1" role="tabpanel" aria-labelledby="tab-link-1"
            aria-hidden="false">
-        <div *ngIf="tagInfo" style="display: flex; flex-direction: row; justify-content: flex-start; padding: 20px">
+        <div *ngIf="tagDetails" style="display: flex; flex-direction: row; justify-content: flex-start; padding: 20px">
           <i class="dlt-icon-package dlt-icon-lg lg-icon-button" style="width: 60px; height: 60px;"></i>
           <div style="width: 100%">
             <p style="min-height: 50px">
-              <span *ngIf="tagInfo" style="color: gray;"> {{tagInfo.manifest.description || "No description"}}</span>
+              <span *ngIf="tagDetails" style="color: gray;"> {{tagDetails.manifest.description || "No description"}}</span>
             </p>
             <div style="display: flex; flex-direction: row">
               <div style="display: flex; flex-direction: column; min-width: 200px">
-                <p style="color: lightgray; font-size: small"> version</p>
-                <p style="font-weight: bold">{{tagInfo.manifest.version || '???'}}</p>
+                <h5> version</h5>
+                <p style="font-weight: bold">{{tagDetails.manifest.version || '???'}}</p>
               </div>
               <div style="display: flex; flex-direction: column; min-width: 250px; align-items: flex-start">
-                <p style="color: lightgray; font-size: small"> build</p>
-                <p style="text-align: center; font-weight: bold">{{tagInfo.manifest.build}}</p>
+                <h5> build</h5>
+                <p style="text-align: center; font-weight: bold">{{tagDetails.manifest.build}}</p>
               </div>
               <div style="display: flex; flex-direction: column; min-width: 200px; align-items: flex-start">
-                <p style="color: lightgray; font-size: small"> webMethods version</p>
-                <p style="text-align: center; font-weight: bold">{{tagInfo.manifest.targetWmVersion || tagInfo.manifest.sourceWmVersion}}</p>
+                <h5> webMethods version</h5>
+                <p style="text-align: center; font-weight: bold">{{tagDetails.manifest.targetWmVersion || tagDetails.manifest.sourceWmVersion}}</p>
               </div>
             </div>
             <div style="display: flex; flex-direction: column; min-width: 200px; align-items: flex-start; margin-top: 20px">
-              <p style="color: lightgray; font-size: small"> Dependencies</p>
-              <p *ngFor="let d of tagInfo.manifest.requires" style="text-align: center; font-weight: bold">{{d.package}} / {{d.version}}</p>
+              <h5>Dependencies</h5>
+              <p *ngFor="let d of tagDetails.manifest.requires" style="text-align: center; font-weight: bold">{{d.package}} / {{d.version}}</p>
             </div>
           </div>
           </div>
       </div>
       <div class="dlt-tab-panel tab-2" role="tabpanel" aria-labelledby="tab-link-2" aria-hidden="true">
-        <div *ngIf="tagInfo" style="display: flex; flex-direction: row; justify-content: flex-start; padding: 20px">
+        <div *ngIf="tagDetails" style="display: flex; flex-direction: row; justify-content: flex-start; padding: 20px">
           <fa-icon matListIcon class="icon" [icon]="faGitAlt" size="2x" style="width: 60px; height: 60px;"></fa-icon>
           <div style="width: 100%">
-            <p>
-              <span style="color: gray"> {{tagInfo.message}}</span>
+            <p style="height: 50px; vertical-align: top">
+               {{tagDetails.message}}
             </p>
             <div style="display: inline-flex; width: 100%; justify-content: flex-start">
-              <div *ngIf="tagInfo.committer" style="display: flex; flex-direction: column; min-width: 200px">
-                <p style="color: lightgray; font-size: small"><fa-icon [icon]="faUser"></fa-icon> By</p>
-                <p style="font-weight: bold">{{tagInfo.committer.name}}</p>
+              <div *ngIf="tagDetails.committer" style="display: flex; flex-direction: column; min-width: 200px">
+                <h5><fa-icon [icon]="faUser"></fa-icon> By</h5>
+                <p style="font-weight: bold">{{tagDetails.committer.name}}</p>
               </div>
-              <div *ngIf="tagInfo.committer"  style="display: flex; flex-direction: column; min-width: 250px; align-items: flex-start">
-                <p style="color: lightgray; font-size: small"><fa-icon [icon]="faEnvelope"></fa-icon> email</p>
-                <p style="text-align: center; font-weight: bold">{{tagInfo.committer.email}}</p>
+              <div *ngIf="tagDetails.committer" style="display: flex; flex-direction: column; min-width: 250px; align-items: flex-start">
+                <h5><fa-icon [icon]="faEnvelope"></fa-icon> email</h5>
+                <p style="text-align: center; font-weight: bold">{{tagDetails.committer.email}}</p>
               </div>
-              <div *ngIf="tagInfo.committer"  style="display: flex; flex-direction: column; min-width: 200px; align-items: flex-start">
-                <p style="color: lightgray; font-size: small"><fa-icon [icon]="faClock"></fa-icon> when</p>
-                <p style="text-align: center; font-weight: bold">{{tagInfo.committer.date}}</p>
+              <div *ngIf="tagDetails.committer" style="display: flex; flex-direction: column; min-width: 200px; align-items: flex-start">
+                <h5><fa-icon [icon]="faClock"></fa-icon> when</h5>
+                <p style="text-align: center; font-weight: bold">{{tagDetails.committer.date}}</p>
               </div>
             </div>
           </div>
@@ -76,27 +78,27 @@
           <div style="width: 100%">
             <div style="display: inline-flex; width: 100%; justify-content: flex-start">
               <div *ngIf="isSigned()" style="display: flex; flex-direction: column; min-width: 200px">
-                <p style="color: lightgray; font-size: small"><fa-icon [icon]="faUser"></fa-icon> signed</p>
+                <h5><fa-icon [icon]="faUser"></fa-icon> signed</h5>
                 <p style="font-weight: bold">{{isSigned() ? 'Yes' : 'No'}}</p>
               </div>
               <div *ngIf="isSigned()" style="display: flex; flex-direction: column; min-width: 250px; align-items: flex-start">
-                <p style="color: lightgray; font-size: small"><fa-icon [icon]="faCheckCircle"></fa-icon> verified</p>
+                <h5><fa-icon [icon]="faCheckCircle"></fa-icon> verified</h5>
                 <p style="text-align: center; font-weight: bold">{{isVerified() ? 'Valid' : 'failed' }}</p>
               </div>
               <div *ngIf="isSigned()" style="display: flex; flex-direction: column; min-width: 250px; align-items: flex-start">
-                <p style="color: lightgray; font-size: small"><fa-icon [icon]="faQuestionCircle"></fa-icon> reason</p>
-                <p style="text-align: center; font-weight: bold">{{tagInfo.verification.reason}}</p>
+                <h5><fa-icon [icon]="faQuestionCircle"></fa-icon> reason</h5>
+                <p style="text-align: center; font-weight: bold">{{tagDetails.verification.reason}}</p>
               </div>
             </div>
             <div>
-              <p style="color: lightgray; font-size: small"><fa-icon [icon]="faSignature"></fa-icon> code signature</p>
-              <textarea style="width: 100%; height: 100px; border: none; background-color: lightgoldenrodyellow" disabled="true">{{tagInfo.verification.signature == null ? 'none' : tagInfo.verification.signature}}</textarea>
+              <h5><fa-icon [icon]="faSignature"></fa-icon> code signature</h5>
+                <textarea style="width: 100%; height: 100px; border: none; background-color: lightgoldenrodyellow; z-index: -1" disabled="true">{{tagDetails.verification.signature == null ? 'none' : tagDetails.verification.signature}}</textarea>
             </div>
           </div>
         </div>
         <ng-template #not_signed>
           <div style="display: flex; flex-direction: row; justify-content: flex-start; padding: 20px">
-            <i class="dlt-icon-lg dlt-icon-warning" style="width: 60px; height: 60px;"></i>
+            <i class="dlt-icon dlt-icon-warning dlt-icon-lg" style="width: 40px; height: 60px;"></i>
             <p style="padding-right: 30px; font-style: italic; color: red">This tag has not been digitally signed, hence you should not trust it as the code could be updated after!</p>
           </div>
         </ng-template>
@@ -106,10 +108,10 @@
       <div style="display: flex; flex-direction: row; justify-content: space-between">
         <div>
           <div class="dlt-input-group">
-            <label style="text-align: left; margin-top: -15px; font-size: small">Download command</label>
+            <label style="text-align: left; margin-top: -15px; font-size: small">Download info</label>
             <div class="dlt-form-item" style="padding-top: 0px">
               <div class="dlt-form-group">
-                <input id="source" type="text" class="dlt-text-input" style="min-width: 400px" disabled="true" [value]="'wpm install' + (isDefaultRegistry ? ' ' :  ' -r ' + registryName + ' ') + (package.private ? '-a <access-token>' : '') + ' -t ' + tagName + ' ' + package.packageName">
+                <input id="source" type="text" class="dlt-text-input" style="min-width: 400px" disabled="true" [value]="'wpm install' + (isDefaultRegistry ? ' ' :  ' -r ' + registryName + ' ') + (package.private ? '-a <access-token>' : '') + ' -t ' + tagInfo.tag + ' ' + package.packageName">
               </div>
             </div>
             <button id="copy" class="dlt-button dlt-button-primary" onClick="navigator.clipboard.writeText(document.querySelector('#source').value)" style="height: 32px"><i class="dlt-icon-copy"></i></button>
@@ -117,8 +119,8 @@
           </div>
         </div>
         <div>
-          <button *ngIf="isAdministrator() && trusted" class="dlt-button dlt-button-primary" style=" margin-top: 5px; float: right" (click)="removeTrust()"> <fa-icon matListIcon class="icon" [icon]="faThumbsDown" size="1x"></fa-icon> {{isSigned() ? "Remove trust" : "Remove" }} </button>
-          <button *ngIf="isAdministrator() && !trusted" class="dlt-button dlt-button-primary" style=" margin-top: 5px; float: right" (click)="trust()"> <fa-icon matListIcon class="icon" [icon]="faThumbsUp" size="1x"></fa-icon> {{isSigned() ? "Trust" : "Accept" }} </button>
+          <button *ngIf="isAdministrator() && tagInfo.trust !== 'NOT_TRUSTED'" class="dlt-button dlt-button-primary" style=" margin-top: 5px; float: right" (click)="removeTrust()"> <fa-icon matListIcon class="icon" [icon]="faThumbsDown" size="1x"></fa-icon> {{isSigned() ? "Remove trust" : "Remove" }} </button>
+          <button *ngIf="isAdministrator() && tagInfo.trust === 'NOT_TRUSTED'" class="dlt-button dlt-button-primary" style=" margin-top: 5px; float: right" (click)="trust()"> <fa-icon matListIcon class="icon" [icon]="faThumbsUp" size="1x"></fa-icon> {{isSigned() ? "Trust" : "Accept" }} </button>
         </div>
     </div>
   </div>

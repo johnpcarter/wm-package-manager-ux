@@ -22,8 +22,7 @@ export class LoginComponent implements OnInit {
   public form: UntypedFormGroup
   public userCtrl: UntypedFormControl
   public passwordCtrl: UntypedFormControl
-  public isEmpowerLoginCtrl: UntypedFormControl
-  public loginType: string = 'Empower'
+  public isEmpowerLoginSelected: boolean = true
 
   public isEmpowerConnectionAvailable: boolean = false
   public connecting: boolean = false
@@ -40,7 +39,7 @@ export class LoginComponent implements OnInit {
 
     settingsService.isEmpowerAvailable().subscribe((available) => {
       this.isEmpowerConnectionAvailable = available
-      this.isEmpowerLoginCtrl.setValue(true, {emitEvent: false})
+      this.isEmpowerConnectionAvailable = available
     })
   }
 
@@ -48,10 +47,8 @@ export class LoginComponent implements OnInit {
 
     this.userCtrl = new UntypedFormControl('', Validators.required)
     this.passwordCtrl = new UntypedFormControl('', Validators.required)
-    this.isEmpowerLoginCtrl = new UntypedFormControl(false)
 
     this.form = this.formBuilder.group({
-      isEmpowerLoginCtrl: this.isEmpowerLoginCtrl,
       username: this.userCtrl,
       password: this.passwordCtrl
     })
@@ -71,7 +68,7 @@ export class LoginComponent implements OnInit {
     this.connecting = true
     this.submitted = true
 
-    if (this.isEmpowerLoginCtrl.value) {
+    if (this.isEmpowerLoginSelected) {
       this.settingsService.connectViaEmpower(this.userCtrl.value, this.passwordCtrl.value).subscribe((response) => {
 
         this.connecting = false
@@ -130,5 +127,13 @@ export class LoginComponent implements OnInit {
     } else {
       return {opacity: 0.5}
     }
+  }
+
+  public switchToLocalLogin(): void {
+    this.isEmpowerLoginSelected = false
+  }
+
+  public switchToEmpowerLogin(): void {
+    this.isEmpowerLoginSelected = true
   }
 }

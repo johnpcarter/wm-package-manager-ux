@@ -5,6 +5,7 @@ export class Tag {
   public committer: Committer = new Committer()
   public verification: Verification = new Verification()
   public manifest: Manifest = new Manifest()
+  public trust: string = 'NOT_TRUSTED'
 }
 
 export class Committer {

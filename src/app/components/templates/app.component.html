@@ -7,28 +7,33 @@
         </div>
       </a>
       <div class="wrapper" style="margin-left:auto; margin-right:12px;">
-        {{pageTitle()}}
+        <legend class="dlt-links" style="margin-right: 40px; margin-top: 10px">{{pageTitle()}}</legend>
       </div>
-
-      <div class="dlt-dropdown">
-        <button class="dlt-button dlt-button-icon button-icon-md" style="margin-left: 20px; margin-right: 20px"><i class="dlt-icon-settings"></i></button>
-        <div class="dlt-overflow-menu" style="min-width: 150px; height: auto; margin-right: 0px">
-          <legend class="dlt-overlay-menu-group-label" style="text-align: center">{{menuTitle()}}</legend>
+      <div class="dlt-tab-bar" style="width: 150px">
+        <ul role="tablist" class="dlt-tab-nav">
+          <li role="presentation">
+            <a href="#" class="dlt-tab-link dlt-tab-item dlt-tab-link-selected" [ngClass]="classForPackagesLink()" (click)="showPackages()" style="margin-right: 8px"><i class="dlt-icon-package dlt-icon-lg" style="padding: 8px"></i></a>
+            <a href="#" class="dlt-tab-link dlt-tab-item" [ngClass]="classForRegistriesLink()" (click)="showRegistries()"><i class="dlt-icon-packages dlt-icon-lg" style="padding: 8px"></i></a>
+          </li>
+        </ul>
+      </div>
+       <div class="dlt-dropdown">
+        <button class="dlt-button dlt-button-icon dlt-button-tertiary-dark" style="margin-left: 20px; margin-right: 20px">
+          <i class="dlt-icon-profile dlt-icon-lg"></i>
+        </button>
+        <div class="dlt-overflow-menu">
+          <legend class="dlt-overlay-menu-group-label">{{menuTitle()}}</legend>
           <div class="solid-line"></div>
-          <a *ngIf="!isOnRegistryPage()" (click)="showRegistries()"><fa-icon [icon]="faListAlt"></fa-icon> Registries </a>
-          <div *ngIf="!isOnRegistryPage()" class="solid-line"></div>
+          <a href="/WxPackageManager/about.html#about">Help</a>
           <a *ngIf="isConnected()">
-            <span (click)="disconnect()"><fa-icon [icon]="faUserSlash"></fa-icon> Disconnect</span>
+            <span (click)="showSettingsPanel()">Settings</span>
           </a>
           <a *ngIf="!isConnected()">
-            <span (click)="showConnectDialog()"><fa-icon [icon]="faUser"></fa-icon> Connect</span>
+            <span (click)="showConnectDialog()">Connect</span>
           </a>
-          <div class="solid-line"></div>
           <a *ngIf="isConnected()">
-            <span (click)="showSettingsPanel()"><fa-icon [icon]="faTools"></fa-icon> Settings</span>
+            <span (click)="disconnect()">Disconnect</span>
           </a>
-          <div *ngIf="isConnected()" class="solid-line"></div>
-          <a href="/WxPackageManager/about.html#about"><fa-icon [icon]="faLifeRing"></fa-icon> About</a>
         </div>
       </div>
     </header>

@@ -46,7 +46,7 @@ export class AppComponent implements OnInit {
     console.log('loc ' + window.location.href)
 
     if (window.location.href.indexOf('registries') !== -1) {
-      GLOBALS.onRegistriesPage = true
+      GLOBALS.currentPage = 'registries'
     }
 
     this._inboundRouter.queryParams.subscribe(params => {
@@ -67,9 +67,11 @@ export class AppComponent implements OnInit {
 
   public pageTitle(): string {
 
-    if (this.isOnRegistryPage()) {
-      return 'registries'
-    } else if (!this.currentRegistry().name) {
+    if (GLOBALS.currentPage === 'registries') {
+      return 'Registries'
+    } else if (GLOBALS.currentPage === 'settings') {
+      return 'Settings'
+    } else if (this.currentRegistry().name && this.currentRegistry().name !== 'default') {
       return this.currentRegistry().name
     } else {
       return ''
@@ -93,7 +95,7 @@ export class AppComponent implements OnInit {
   }
 
   public isOnRegistryPage(): boolean {
-    return window.location.pathname.endsWith('/registries')
+    return GLOBALS.currentPage === 'registries'
   }
 
   public disconnect(): void {
@@ -107,7 +109,7 @@ export class AppComponent implements OnInit {
         })
 
         if (GLOBALS.registry.type === RegistryType.private) {
-          GLOBALS.onRegistriesPage = true
+          GLOBALS.currentPage = 'registries'
           this._router.navigate(['/registries'], {skipLocationChange: true})
         }
       }
@@ -127,20 +129,48 @@ export class AppComponent implements OnInit {
     }
   }
 
+  public classForPackagesLink(): string {
+
+    if (!this.isOnRegistryPage()) {
+      return 'dlt-tab-item-selected'
+    } else {
+      return 'm'
+    }
+  }
+
+  public classForRegistriesLink(): string {
+
+    if (this.isOnRegistryPage()) {
+      return 'dlt-tab-item-selected'
+    } else {
+      return 'dlt-tab-item'
+    }
+  }
+
   public showSettingsPanel(): void {
 
     if (this.isConnected()) {
+      GLOBALS.currentPage = 'settings'
       this._router.navigate(['/settings'], {skipLocationChange: true})
     }
   }
 
-  public showRegistries(): void {
-    GLOBALS.onRegistriesPage = true
+  public showPackages(): boolean {
+    GLOBALS.currentPage = 'packages'
+    this._router.navigate(['/packages'], {skipLocationChange: true})
+
+    return false
+  }
+
+  public showRegistries(): boolean {
+    GLOBALS.currentPage = 'registries'
     this._router.navigate(['/registries'], {skipLocationChange: true})
+
+    return false
   }
 
   public onRegistriesPage(): boolean {
-    return GLOBALS.onRegistriesPage
+    return GLOBALS.currentPage === 'registries'
   }
 
   public currentRegistry(): Registry {

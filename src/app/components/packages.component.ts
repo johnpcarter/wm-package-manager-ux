@@ -70,7 +70,7 @@ export class PackagesComponent implements OnInit {
       if (!p) {
         this.packages = []
       } else if (p.length === 1 && p[0] == null) {
-        GLOBALS.onRegistriesPage = true
+        GLOBALS.currentPage = 'registries'
         this._router.navigate(['/registries'], {skipLocationChange: true})
       } else {
         this.packages = p
@@ -85,12 +85,13 @@ export class PackagesComponent implements OnInit {
       return this.displayedColumnsDefault
     }
   }
+
   public isSelectedCategory(category: string): any {
 
     if (this.currentCategory === category) {
-      return {'background-color': 'lightblue', 'color': 'white'}
+      return {'background-color': '#1C5569', 'color': 'white', 'margin-right': '8px'}
     } else {
-      return {}
+      return {'margin-right': '8px'}
     }
   }
 

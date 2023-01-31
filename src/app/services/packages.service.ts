@@ -6,10 +6,16 @@ import { catchError, map } from 'rxjs/operators'
 import { environment } from '../../environments/environment'
 import { GLOBALS } from '../globals'
 
-import { Package, PackageStat } from '../models/Package'
+import {Package, PackageStat, TagSummary} from '../models/Package';
 import { Tag } from '../models/Tag'
 import { GitInfo } from '../models/GitInfo'
 import { Manifest } from '../models/Manifest'
+
+export enum VoteResult {
+  success,
+  refused,
+  canceled
+}
 
 @Injectable()
 export class PackagesServices {
@@ -119,9 +125,9 @@ export class PackagesServices {
 
   public package(packageName: string, registry?: string): Observable<Package> {
 
-    let url: string = environment.BASE_API + PackagesServices.PACKAGE + '/' + encodeURIComponent(packageName)
+    let url: string = environment.BASE_API + PackagesServices.PACKAGE + '/' + encodeURIComponent(packageName) + '/info'
 
-    if (registry && registry !== undefined) {
+    if (registry) {
       url += '?registry=' + encodeURIComponent(registry)
     }
 
@@ -137,6 +143,28 @@ export class PackagesServices {
       error => {
         return []
       }))
+  }
+
+  public tags(packageName: string, registry?: string): Observable<TagSummary[]> {
+
+    let url: string = environment.BASE_API + PackagesServices.PACKAGE + '/' + encodeURIComponent(packageName) + '/tags'
+
+    if (registry) {
+      url += '?registry=' + encodeURIComponent(registry)
+    }
+
+    const headers = GLOBALS.headers()
+
+    return this._http.get(url, { headers })
+      .pipe(catchError(error => {
+        return of({})
+      }))
+      .pipe(map( (responseData: any) => {
+          return responseData.availableTags
+        },
+        error => {
+          return []
+        }))
   }
 
   public gitInfo(packageName: string, registry?: string): Observable<GitInfo> {
@@ -263,7 +291,7 @@ export class PackagesServices {
       }))
   }
 
-  public upVote(packageName: string, registry?: string): Observable<boolean> {
+  public upVote(packageName: string, registry?: string): Observable<VoteResult> {
 
     let url: string = environment.BASE_API + PackagesServices.PACKAGE + '/' + encodeURIComponent(packageName) + '/vote'
 
@@ -278,11 +306,20 @@ export class PackagesServices {
         return of({success: false})
       }))
       .pipe(map( (responseData: any) => {
-        return responseData.success
+
+        if (responseData.success) {
+          if (responseData.canceledVote) {
+            return VoteResult.canceled
+          } else {
+            return VoteResult.success
+          }
+        } else {
+          return VoteResult.refused
+        }
       }))
   }
 
-  public downVote(packageName: string, registry?: string): Observable<boolean> {
+  public downVote(packageName: string, registry?: string): Observable<VoteResult> {
 
     let url: string = environment.BASE_API + PackagesServices.PACKAGE + '/' + encodeURIComponent(packageName) + '/vote'
 
@@ -297,7 +334,15 @@ export class PackagesServices {
         return of({success: false})
       }))
       .pipe(map( (responseData: any) => {
-        return responseData.success
+        if (responseData.success) {
+          if (responseData.canceledVote) {
+            return VoteResult.canceled
+          } else {
+            return VoteResult.success
+          }
+        } else {
+          return VoteResult.refused
+        }
       }))
   }
 

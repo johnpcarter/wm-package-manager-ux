@@ -4,6 +4,12 @@ export enum RegistryType {
   private = 'private'
 }
 
+export enum TrustLevel {
+  wildwest,
+  verified_partially,
+  verified_only
+}
+
 export class Registry {
 
   public name: string | undefined
@@ -12,6 +18,6 @@ export class Registry {
   public type: RegistryType = RegistryType.public
   public owner: string | undefined
   public searchTags: string[] | undefined
-  public trustLevel: number | undefined
+  public trustLevel: TrustLevel | undefined
   public default: boolean = true
 }

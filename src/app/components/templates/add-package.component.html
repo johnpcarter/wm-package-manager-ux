@@ -95,7 +95,7 @@
           <p *ngIf="registry.type == 'private' && !requiresAuthenticationCtrl.value" style="color: gray; font-style: italic; height: 60px">Git repository is public, doesn't make any sense to secure it here</p>
         </ng-template>
       </fieldset>
-      <button class="dlt-button dlt-button-primary" (click)="submit()" [disabled]="!form.valid" style="margin-top: 50px"><i class="dlt-icon-plus-circle dlt-icon-lg"></i> Add</button>
+      <button class="dlt-button dlt-button-primary" (click)="submit()" [disabled]="!form.valid" style="float: right; margin-top: 20px"><i class="dlt-icon-plus-circle dlt-icon-lg"></i> Add</button>
       <p *ngIf="failed" style="font-size: small; color: red">Failed to add package, sorry!</p>
   </form>
     </div>

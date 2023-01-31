@@ -4,24 +4,29 @@
     <div class="dlt-modal-window__header">
     </div>
     <div class="dlt-modal-window__content">
-      <img src="assets/_images/sag-primary-logo-dark-rgb.png" style="width: 200px">
-      <h1>webMethods Package Manager</h1>
-      <h2>Login using your {{isEmpowerLoginCtrl.value == true ? 'Empower' : 'local'}} credentials</h2>
+      <img src="assets/_images/sag-primary-logo-dark-rgb.png" style="width: 200px; margin-bottom: 24px">
+      <h1 style="margin-bottom: 24px; font-size: 16px">webMethods Package Manager</h1>
+      <div *ngIf="isEmpowerConnectionAvailable" class="dlt-button-group" style="width: 100%; margin-bottom: 24px">
+         <button class="dlt-button-toggle" style="width: 50%; padding: 12px;" (click)="switchToLocalLogin()">Local</button>
+         <button class="dlt-button-toggle btn-selected" style="width: 50%; padding: 12px; margin-left: 0px;" (click)="switchToEmpowerLogin()">Empower</button>
+      </div>
+      <p style="margin-bottom: 8px">Login using your {{isEmpowerLoginSelected ? 'Empower' : 'local'}} credentials</p>
       <div style="height: 40px">
-        <div *ngIf="isEmpowerLoginCtrl.value === true">
-          <h3>Don't have an account? <a class="dlt-links" style=" font-size: small" href="https://empower.softwareag.com/register/" target="register">Sign up here</a></h3>
+        <div *ngIf="isEmpowerLoginSelected">
+          <legend>Don't have an account? <a class="dlt-links" style="font-size: small" href="https://empower.softwareag.com/register/" target="register">Sign up here</a></legend>
         </div>
       </div>
-      <div class="form-group" style="display: flex; flex-direction: column; padding: 20px">
-          <label style="color: gray; font-size: 14px">Username</label>
-          <input class="login-field" style="width: 100%" type="text" autofocus formControlName="username" [ngClass]="{ 'is-invalid': submitted && userCtrl.errors }" />
+      <div class="form-group" style="display: flex; flex-direction: column; margin-top: 40px; margin-bottom: 24px">
+          <label class="dlt-form-label">Username</label>
+          <input class="login-field dlt-text-input" style="width: 100%" type="text" autofocus formControlName="username" [ngClass]="{ 'is-invalid': submitted && userCtrl.errors }" />
           <div *ngIf="submitted && userCtrl.errors" class="invalid-feedback">
             <div *ngIf="userCtrl.errors.required">Username is required</div>
           </div>
         </div>
-        <div class="form-group" style="display: flex; flex-direction: column; padding: 20px; height: 90px">
-          <label style="color: gray; font-size: 14px">Password</label>
-          <input class="login-field" style="width: 100%" type="password" formControlName="password" [ngClass]="{ 'is-invalid': submitted && passwordCtrl.errors }" />
+        <div class="form-group" style="display: flex; flex-direction: column; height: 90px">
+          <label class="dlt-form-label">Password</label>
+          <input class="login-field dlt-text-input" style="width: 100%" type="password" formControlName="password" [ngClass]="{ 'is-invalid': submitted && passwordCtrl.errors }" />
+          <div style="align-self: flex-end; margin-top: 8px"><a *ngIf="isEmpowerLoginSelected" class="dlt-links" style="font-size: small;" href="https://myaccount.softwareag.com/am/XUI/?realm=/alpha#/service/SAG_DEFAULT_RESETPASSWORD" target="register">Forgot password</a></div>
           <div *ngIf="submitted && passwordCtrl.errors" class="invalid-feedback">
             <div *ngIf="passwordCtrl.errors.required">Password is required</div>
           </div>
@@ -33,32 +38,14 @@
         </div>
     </div>
     <div class="dlt-modal-window__footer">
-      <div style="float: left;">
-        <div *ngIf="isEmpowerConnectionAvailable" class="dlt-fieldset sm-switch">
-          <h4>Login type</h4>
-          <div class="dlt-switch-item">
-            <input value="empower" class="dlt-switch-input" id="empower-button" type="checkbox" formControlName="isEmpowerLoginCtrl" name="login" aria-label="login type">
-            <label class="dlt-switch-text" for="empower-button">
-              <span class="dlt-switch-appearance dlt-on-off"></span>
-              <span class="on">Empower</span>
-              <span class="off">local</span>
-            </label>
-          </div>
-        </div>
-      </div>
-      <button class="dlt-button dlt-button-primary" style="float: right; margin-left: 20px; margin-right: 20px; width: 120px; text-align: center" autofocus data-modal-prime-focus [disabled]="connecting" [ngStyle]="styleForConnectButton()" (click)="connect()">
-        <div *ngIf="connecting; else connectLabel" class="dlt-loader--circular dlt-loader--sm dlt-loader__text--right" aria-live="polite"
-             aria-busy='false' aria-label="Loading">
+      <button class="dlt-button dlt-button-primary" style="float: right; margin-left: 20px; padding-left: 12px; padding-right: 12px" autofocus data-modal-prime-focus [disabled]="connecting" [ngStyle]="styleForConnectButton()" (click)="connect()">
+        Login
+        <div *ngIf="connecting" class="dlt-loader--circular dlt-loader--sm dlt-loader__text--right" aria-live="polite"
+             aria-busy='false' aria-label="Connecting">
           <svg class="dlt-loader--circular-indeterminate">
             <circle class="spinner" cx="50%" cy="50%" r="50%" role="progressbar" />
           </svg>
-          <div class="dlt-loader__text" style="height: 30px; vertical-align: middle">
-            <p style="line-height: 30px; font-size: smaller">Connecting...</p>
-          </div>
         </div>
-        <ng-template #connectLabel>
-          <i class="dlt-icon-deploy dlt-icon-sm dlt-icon"></i> Connect
-        </ng-template>
       </button>
       <button class="dlt-button dlt-button-secondary" (click)="cancel()">
         Cancel

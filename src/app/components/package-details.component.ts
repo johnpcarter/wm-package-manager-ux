@@ -1,28 +1,43 @@
-import {Component, OnInit} from '@angular/core'
+import {Component, OnInit} from '@angular/core';
 
-import { MatSnackBar } from '@angular/material/snack-bar'
-import { MatDialog } from '@angular/material/dialog'
+import {MatSnackBar} from '@angular/material/snack-bar';
+import {MatDialog} from '@angular/material/dialog';
 
-import { faBell, faBellSlash, faEye, faEyeSlash, faInfoCircle, faClock, faLongArrowAltDown, faLongArrowAltUp, faStar, faBinoculars,
-  faFolder, faUsers, faRocket, faEraser, faKey } from '@fortawesome/free-solid-svg-icons'
-import { faGit, faGitAlt } from '@fortawesome/free-brands-svg-icons'
-import { MarkdownService } from 'ngx-markdown'
+import {
+  faBell,
+  faBellSlash,
+  faBinoculars,
+  faClock,
+  faEraser,
+  faEye,
+  faEyeSlash,
+  faFolder,
+  faInfoCircle,
+  faKey,
+  faLongArrowAltDown,
+  faLongArrowAltUp,
+  faRocket,
+  faStar,
+  faUsers
+} from '@fortawesome/free-solid-svg-icons';
+import {faGit, faGitAlt} from '@fortawesome/free-brands-svg-icons';
+import {MarkdownService} from 'ngx-markdown';
 
-import { Package, PackageStat, TagSummary } from '../models/Package'
-import { GitInfo } from '../models/GitInfo'
+import {Package, PackageStat, TagSummary} from '../models/Package';
+import {GitInfo} from '../models/GitInfo';
 
-import { PackagesServices } from '../services/packages.service'
-import { NotificationsService } from '../services/notifications-service'
+import {PackagesServices, VoteResult} from '../services/packages.service';
+import {NotificationsService} from '../services/notifications-service';
 
-import { TagInfoComponent } from './tag-info.component'
-import { AddUserComponent } from './add-user.component'
-import { RemoveConfirmationComponent } from './remove-confirmation.component'
+import {TagInfoComponent} from './tag-info.component';
+import {AddUserComponent} from './add-user.component';
+import {RemoveConfirmationComponent} from './remove-confirmation.component';
 
-import { ListRegistriesComponent } from './list-registries.component'
-import { ManageUsersComponent } from './manage-users.component'
+import {ListRegistriesComponent} from './list-registries.component';
+import {ManageUsersComponent} from './manage-users.component';
 
-import { GLOBALS } from '../globals'
-import {ActivatedRoute, Params, Router} from '@angular/router'
+import {GLOBALS} from '../globals';
+import {ActivatedRoute, Params, Router} from '@angular/router';
 
 @Component({
   selector: 'app-package-details',
@@ -52,7 +67,6 @@ export class PackageDetailsComponent implements OnInit {
   public package: Package
   public users: string[] = []
   public gitInfo: GitInfo
-  public availableTags: string[] = []
   public alertMe: boolean
 
   public markdown: string = ''
@@ -67,16 +81,24 @@ export class PackageDetailsComponent implements OnInit {
   public downloadsStats: PackageStat[] = []
   public maxDownloadValue: number = 0
 
+  public selectedVersion: string = null
+  public versions: TagSummary[] = []
+  public trust: string = null
+
   // tslint:disable-next-line:variable-name
   private _didLoad: boolean = false
 
-  // tslint:disable-next-line:variable-name max-line-length
+  // tslint:disable-next-line:variable-name
   constructor(private _router: Router, private route: ActivatedRoute, private mdService: MarkdownService, private _snackbar: MatSnackBar,
               // tslint:disable-next-line:variable-name max-line-length
               private _packagesServices: PackagesServices, private _notificationsService: NotificationsService, private _dialog: MatDialog) {
 
+      if (GLOBALS.registry.trustLevel === 0) {
+        this.versions = [new TagSummary('main')]
+      }
+
       this.route.params.subscribe((params: Params) => {
-        this.packageName = params['packageName']
+        this.packageName = (params as any).packageName
 
         this._packagesServices.package(this.packageName, GLOBALS.registry.name).subscribe((p) => {
 
@@ -91,19 +113,21 @@ export class PackageDetailsComponent implements OnInit {
               } else {
                 this.markdown = this.noReadmeAvailable
               }
-
-
             })
 
             this._packagesServices.gitInfo(this.package.packageName, GLOBALS.registry.name).subscribe((gitInfo) => {
               this.gitInfo = gitInfo
+            })
 
-              if (this.gitInfo.availableTags) {
-                this.gitInfo.availableTags.forEach((t) => {
-                  if (!this.isTrustedTag(t)) {
-                    this.availableTags.push(t)
-                  }
+            this._packagesServices.tags(this.package.packageName, GLOBALS.registry.name).subscribe((tags) => {
+
+              if (tags && tags.length > 0) {
+                tags.forEach(t => {
+                  this.versions.push(t)
                 })
+
+                this.selectedVersion = this.versions[this.versions.length - 1].tag
+                this.trust = this.versions[this.versions.length - 1].trust
               }
             })
           }
@@ -178,78 +202,85 @@ export class PackageDetailsComponent implements OnInit {
     }
   }
 
+  public isTrustedRegistry(): boolean {
+   return /*GLOBALS.registry.type === RegistryType.private ||*/ GLOBALS.registry.trustLevel > 0
+  }
 
   public isAdministrator(): boolean {
     return this._didLoad && GLOBALS.isAdministrator()
   }
 
-  public haveAvailableTags(): boolean {
-    return this.availableTags.length > 0
+  public selectVersion(): void {
+
+    let t: TagSummary = null
+
+    // tslint:disable-next-line:prefer-for-of
+    for (let i = 0; i < this.versions.length; i++) {
+      if (this.versions[i].tag === this.selectedVersion) {
+        t = this.versions[i]
+        break
+      }
+    }
+
+    if (t) {
+      this.trust = t.trust
+    }
+
+    this._packagesServices.getPackageReadme(this.packageName, this.selectedVersion, GLOBALS.registry.name).subscribe((readme) => {
+      if (readme) {
+        this.markdown = this.mdService.parse(readme)
+      }
+    })
   }
 
-  public showTagInfo(t: string, w?: string, bye?: string, s?: string): void {
+  public showTagInfo(): void {
 
-    const dialogRef = this._dialog.open(TagInfoComponent, {
-      width: '60%',
-      height: '650px',
-      data: {
-        package: this.package,
-        tag: t,
-        when: w,
-        by: bye,
-        signature: s
-      },
-    })
+    let t: TagSummary = null
 
-    dialogRef.afterClosed().subscribe(result => {
-
-      if (!result) {
-        return
+    for (let i = 0; i < this.versions.length; i++) {
+      if (this.versions[i].tag === this.selectedVersion) {
+        t = this.versions[i]
+        break
       }
+    }
 
-      if (result.added) {
-        const trustedTag = new TagSummary()
-        trustedTag.tag = t
-        trustedTag.by = GLOBALS.user
+    if (t) {
+      const dialogRef = this._dialog.open(TagInfoComponent, {
+        width: '60%',
+        height: '650px',
+        data: {
+          package: this.package,
+          tag: t
+        },
+      })
 
-        if (!this.package.trustedTags) {
-          this.package.trustedTags = []
+      dialogRef.afterClosed().subscribe(result => {
+
+        if (!result) {
+          return
         }
 
-        this.package.trustedTags.push(trustedTag)
+        if (result.added) {
+          this.trust = 'TRUSTED'
+          this.package.trustedTags.push(t)
+        } else if (result.removed) {
+          // removed
 
-        let found = -1
-        for (let i = 0; i < this.availableTags.length; i++) {
-          if (this.availableTags[i] === t) {
-            found = i
-            break
+          let found = -1
+          for (let i = 0; i < this.package.trustedTags.length; i++) {
+            if (this.package.trustedTags[i].tag === t.tag) {
+              found = i
+              break
+            }
+          }
+
+          if (found !== -1) {
+            this.trust = 'NOT_TRUSTED'
+            this.package.trustedTags.splice(found, 1)
           }
         }
-
-        if (found !== -1) {
-          this.availableTags.splice(found, 1)
-        }
-      } else if (result.removed) {
-        if (this.availableTags == null) {
-          this.availableTags = []
-        }
-
-        this.availableTags.push(t)
-
-        let found = -1
-        for (let i = 0; i < this.package.trustedTags.length; i++) {
-          if (this.package.trustedTags[i].tag === t) {
-            found = i
-            break
-          }
-        }
-
-        if (found !== -1) {
-          this.package.trustedTags.splice(found, 1)
-          this.package.trustedTags = [...this.package.trustedTags]
-        }
-      }
-    })
+      })
+    }
   }
 
   public unregisterPackage(): void {
@@ -525,9 +556,14 @@ export class PackageDetailsComponent implements OnInit {
 
   public upVote(): void {
     if (this.isConnected()) {
-      this._packagesServices.upVote(this.packageName, GLOBALS.registry.name).subscribe((success) => {
-        if (success) {
+      this._packagesServices.upVote(this.packageName, GLOBALS.registry.name).subscribe((result) => {
+        if (result === VoteResult.success) {
           this.package.upVotes += 1
+        } else if (result === VoteResult.canceled) {
+          this.package.downVotes -= 1
+          this._snackbar.open('Your previous down vote has been canceled', 'ok', {
+            duration: 2000,
+          })
         } else {
           this._snackbar.open('You can only vote once, either thumbs up or thumbs down', 'Sorry', {
             duration: 2000,
@@ -544,9 +580,14 @@ export class PackageDetailsComponent implements OnInit {
   public downVote(): void {
     if (this.isConnected()) {
       if (this.isConnected()) {
-        this._packagesServices.downVote(this.packageName, GLOBALS.registry.name).subscribe((success) => {
-          if (success) {
+        this._packagesServices.downVote(this.packageName, GLOBALS.registry.name).subscribe((result) => {
+          if (result === VoteResult.success) {
             this.package.downVotes += 1
+          } else if (result === VoteResult.canceled) {
+            this.package.upVotes -= 1
+            this._snackbar.open('Your previous up vote has been canceled', 'ok', {
+              duration: 2000,
+            })
           } else {
             this._snackbar.open('You can only vote once, either thumbs up or thumbs down', 'Sorry', {
               duration: 2000,
@@ -560,6 +601,26 @@ export class PackageDetailsComponent implements OnInit {
       })
     }
   }
+
+  public selectedVersionStyle(): any {
+
+    if (this.trust !== 'TRUSTED' && this.isTrustedRegistry()) {
+      return {'border-bottom': '3px solid red'}
+    } else {
+      return {}
+    }
+  }
+
+  public trustLabel(): string {
+
+    if (this.trust === 'NOT_TRUSTED') {
+      return 'Unverified'
+    } else if (this.trust === 'TRUSTED_WITH_VALIDATION_ERRORS') {
+      return 'Signed w/errors'
+    } else {
+      return 'No signature'
+    }
+ }
 
   public isAvailable(): boolean {
 

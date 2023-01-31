@@ -1,4 +1,3 @@
-
 export class Package {
   public packageName: string | undefined
   public registryName: string | undefined
@@ -32,6 +31,11 @@ export class TagSummary {
   public when: string | undefined
   public by: string | undefined
   public signature: string | undefined
+  public trust: string | undefined
+
+  constructor(tag?: string) {
+    this.tag = tag
+  }
 }
 
 export class PackageStat {

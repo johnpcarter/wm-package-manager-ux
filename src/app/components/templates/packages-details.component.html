@@ -1,52 +1,127 @@
-<div style="margin-top: 20px; margin-right: 20px">
-  <div *ngIf="package" style="float:right; line-height: 30px;">
-    <span style="font-size: small; color: lightgray">votes </span>
-    <span style="font-size: small; color: green;">{{package.upVotes-package.downVotes}}</span><span style="font-size: small">(</span>
-    <i class="dlt-icon-thumbs-up" style="color: green; font-size: small" (click)="upVote()"> +{{package.upVotes}} /</i>
-    <i class="dlt-icon-thumbs-down" style="margin-left: 10px; color: red; font-size: small" (click)="downVote()"> -{{package.downVotes}}</i>
-    <span style="font-size: small">)</span>
+<div style="margin-top: 20px;">
+  <div *ngIf="package" style="float: right; line-height: 30px; width: 200px;  z-index: 100">
+    <label style="font-weight: bold">Votes</label>
+    <div style="width: 180px; display: inline-flex">
+      <div style="background-color: #008f51; width: 90px; padding-left: 12px" (click)="upVote()"><i class="dlt-icon-thumbs-up dlt-icon" style="color: white;"> {{package.upVotes}}</i></div>
+      <div style="border: 1px solid #008f51; width: 90px; padding-left: 12px" (click)="downVote()"><i class="dlt-icon-thumbs-down dlt-icon" style="color: red;"> {{package.downVotes}}</i></div>
+    </div>
   </div>
   <nav aria-label="breadcrumb">
     <ol class="dlt-breadcrumbs lg-breadcrumb">
       <li><a href="" (click)="goBack()" class="dlt-links">Packages</a></li>
       <li aria-current="page">{{packageName}}</li>
+      <li>
     </ol>
   </nav>
 </div>
-<div class="fit-screen" style="top: 60px">
+<div class="fit-screen" style="top: 80px">
   <ng-template *ngIf="package == null; else loaded">
     Loading....
   </ng-template>
   <ng-template #loaded>
-    <div style="display: flex; flex-direction: row; align-items: stretch; justify-content: space-between; width: 100%; padding: 20px; overflow-y: auto">
-      <div style="width: 60%; padding: 20px; padding-top: 0px; overflow-y: auto">
-        <h1 style="color: gray; line-height: 62px; vertical-align: middle">README.md</h1>
+    <div style="display: flex; flex-direction: row; align-items: stretch; justify-content: space-between; width: 100%; padding-left: 20px; padding-right: 20px; overflow-y: auto">
+      <div style="flex-grow: 2; min-width: 600px; padding: 20px; padding-top: 0px; overflow-y: auto">
+        <div *ngIf="trust" style="float:right; display: inline-flex; margin-top: -12px; height: 125px">
+          <div class="dlt-form-item">
+            <label class="dlt-form-label" for="version">Version</label>
+            <div class="dlt-form-group select-arrow-icon" style="width: 90px">
+              <select id="version" class="dlt-select-input" [(ngModel)]="selectedVersion" [ngStyle]="selectedVersionStyle()" (change)="selectVersion()">
+                <option *ngFor="let i of versions" [value]="i.tag">
+                  {{i.tag}}
+                </option>
+              </select>
+              <i *ngIf="isTrustedRegistry() && trust === 'TRUSTED'" class="dlt-icon dlt-icon-success" style="margin-left: -40px; color: #712DD2" aria-hidden="true"></i>
+            </div>
+            <span *ngIf="isTrustedRegistry() && trust && trust !== 'TRUSTED' && selectedVersion !== 'main'" style="font-size: x-small; margin-top: 8px"><i class="dlt-icon dlt-icon-sm dlt-icon-error"></i> {{trustLabel()}}</span>
+          </div>
+          <div>
+            <button class="dlt-button dlt-button-primary" style="margin-top: 30px; margin-left: 8px" (click)="showTagInfo()"><i class="dlt-icon dlt-icon-download" style="padding: 8px; color: white"></i> </button>
+          </div>
+        </div>
+        <h1 style="line-height: 62px; vertical-align: middle">README.md</h1>
         <hr style="width: 100%"/>
         <markdown [data]="markdown" (load)="onLoad($event)" (error)="onError($event)"></markdown>
       </div>
-      <div style="display: flex; flex-direction: column; align-items: stretch; justify-content: flex-start; padding: 10px; overflow-y: auto">
+      <div style="min-width: 500px; flex-grow: 1; display: flex; flex-direction: column; align-items: stretch; justify-content: flex-start; padding: 10px; overflow-y: auto;">
         <div>
-          <h4 style="color: gray;">Home Page</h4>
-          <i class="dlt-icon-home dlt-icon" style="padding-right: 10px;"></i><a href="{{package.homePage}}"> {{package.homePage}}</a>
-          <div *ngIf="isConnected()" style="float: right; display: flex; flex-direction: column; margin-top: -10px">
-            <div  style="display: inline-flex; padding: 10px">
-              <fa-icon matListIcon class="icon" [icon]="iconForNotifications()" [style]="colorForNoticationsButton()" style="margin-right: 15px"></fa-icon>
-              <div class="dlt-switch-item">
-                <input class="dlt-switch-input" id="notify-button" type="checkbox" [(ngModel)]="alertMe" (change)="toggleNotifications()" aria-label="notify me">
-                <label class="dlt-switch-text" for="notify-button">
-                  <span class="dlt-switch-appearance dlt-on-off"></span>
-                  <span class="on"></span>
-                  <span class="off"></span>
-                </label>
+          <h4>Description</h4>
+          <div style="width: 100%; display: inline-flex; align-items: flex-end; justify-content: space-between">
+            <p style="width: 80%; height: 40px">{{package.description}} <i *ngIf="package.homePage" class="dlt-icon-home dlt-icon" style="padding-right: 10px;"><a href="{{package.homePage}}"> {{package.homePage}}</a></i>
+            </p>
+            <div *ngIf="isConnected()" style="display: flex; flex-direction: column;">
+              <div  style="display: inline-flex;">
+                <fa-icon matListIcon class="icon" [icon]="iconForNotifications()" [style]="colorForNoticationsButton()" style="margin-right: 15px"></fa-icon>
+                <div class="dlt-switch-item">
+                  <input class="dlt-switch-input" id="notify-button" type="checkbox" [(ngModel)]="alertMe" (change)="toggleNotifications()" aria-label="notify me">
+                  <label class="dlt-switch-text" for="notify-button">
+                    <span class="dlt-switch-appearance dlt-on-off"></span>
+                    <span class="on"></span>
+                    <span class="off"></span>
+                  </label>
+                </div>
               </div>
             </div>
           </div>
           <hr style="width: 100%"/>
         </div>
 
+        <!-- GIT -->
+        <div style="padding-top: 30px">
+          <h4>Repository</h4>
+          <a target="git" href="{{package.sourceUrl}}">
+            <fa-icon matListIcon class="icon" [icon]="faGitAlt" style="margin-right: 10px"></fa-icon><fa-icon *ngIf="package.sourceIsPrivate" [icon]="faKey" style="color: lightgray"></fa-icon>
+            {{package.sourceUrl}}
+          </a>
+          <div style="width: 100%; margin-top: 10px">
+            <p *ngIf="package.sourcePath">
+              <fa-icon [icon]="faFolder" style="color: lightgray"></fa-icon> {{package.sourcePath}}
+            </p>
+            <div *ngIf="gitInfo" style="display: inline-flex; justify-content: flex-start">
+              <div style="display: flex; flex-direction: column; width: 150px">
+                <h5><fa-icon [icon]="faClock"></fa-icon> Last updated</h5>
+                <p style="font-weight: bold">{{gitInfo.lastUpdated}}</p>
+              </div>
+              <div style="display: flex; flex-direction: column; width: 150px; align-items: flex-start">
+                <h5><fa-icon [icon]="faBinoculars"></fa-icon> watchers</h5>
+                <p style="background-color: green; min-width: 30px; border-radius: 4px; color: white; text-align: center"> {{gitInfo.watchers}} </p>
+              </div>
+              <div style="display: flex; flex-direction: column; width: 150px; align-items: flex-start">
+                <h5><fa-icon [icon]="faStar"></fa-icon> star gazers</h5>
+                <p style="background-color: pink; min-width: 30px; border-radius: 4px; color: white; text-align: center"> {{gitInfo.stargazers}} </p>
+              </div>
+            </div>
+          </div>
+          <hr/>
+        </div>
+
+        <!-- INFO -->
+        <div style="padding-top: 30px">
+          <h4>Info</h4>
+          <fa-icon matListIcon class="icon" [icon]="faInfoCircle" style="padding-right: 10px"></fa-icon>{{authType()}}<span style="color: gray"> {{package.category}} package registered by </span>{{package.owner}}
+          <div style="display: inline-flex; justify-content: space-between; align-items: flex-start; margin-top: 10px">
+            <div>
+              <div style="display: inline-flex; width: 100%; justify-content: flex-start">
+                <div style="display: flex; flex-direction: column; width: 150px">
+                  <h5><fa-icon [icon]="faClock"></fa-icon> Registered</h5>
+                  <p style="font-weight: bold">{{package.registeredDate}}</p>
+                </div>
+                <div style="display: flex; flex-direction: column; width: 150px; align-items: flex-start">
+                  <h5><fa-icon [icon]="faLongArrowAltDown"></fa-icon> Total downloads</h5>
+                  <p style="background-color: darkgray; color: white; min-width: 30px; border-radius: 4px; text-align: center; font-weight: bold">{{count(package.totalDownloads)}}</p>
+                </div>
+                <div style="display: flex; flex-direction: column; width: 150px; align-items: flex-start">
+                  <h5><fa-icon [icon]="faLongArrowAltDown"></fa-icon> Recent</h5>
+                  <p style="background-color: black; color: white; min-width: 30px; border-radius: 4px; text-align: center; font-weight: bold">{{count(package.recentDownloads)}}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <hr/>
+        </div>
+
         <!-- package stats -->
         <div *ngIf="downloadsStats.length > 0" style="padding-top: 30px">
-          <h4 style="color: gray">Package Statistics</h4>
+          <h4>Download Statistics</h4>
           <div style="min-height: 100px; display: inline-flex; justify-content: flex-start; align-items: flex-end; padding: 20px">
             <div *ngFor="let col of downloadsStats" style="display: flex; flex-direction: column; justify-content: flex-end; text-align: center;">
               <div style="display: inline-flex; justify-content: space-between; align-items: flex-end; border-bottom: 1px solid gray; margin-bottom: 10px; padding-right: 10px">
@@ -61,62 +136,9 @@
           <hr/>
         </div>
 
-        <!-- INFO -->
+        <!-- Versions
         <div style="padding-top: 30px">
-          <h4 style="color: gray">Info</h4>
-          <fa-icon matListIcon class="icon" [icon]="faInfoCircle" style="padding-right: 10px"></fa-icon>{{authType()}}<span style="color: gray"> {{package.category}} package registered by </span>{{package.owner}}
-          <div style="display: inline-flex; justify-content: space-between; align-items: flex-start; margin-top: 10px">
-            <div>
-              <div style="display: inline-flex; width: 100%; justify-content: flex-start">
-                <div style="display: flex; flex-direction: column; width: 150px">
-                  <p style="color: lightgray; font-size: small"><fa-icon [icon]="faClock"></fa-icon> Registered</p>
-                  <p style="font-weight: bold">{{package.registeredDate}}</p>
-                </div>
-                <div style="display: flex; flex-direction: column; width: 150px; align-items: flex-start">
-                  <p style="color: lightgray; font-size: small"><fa-icon [icon]="faLongArrowAltDown"></fa-icon> Total downloads</p>
-                  <p style="background-color: darkgray; color: white; min-width: 30px; border-radius: 4px; text-align: center; font-weight: bold">{{count(package.totalDownloads)}}</p>
-                </div>
-                <div style="display: flex; flex-direction: column; width: 150px; align-items: flex-start">
-                  <p style="color: lightgray; font-size: small"><fa-icon [icon]="faLongArrowAltDown"></fa-icon> Recent</p>
-                  <p style="background-color: black; color: white; min-width: 30px; border-radius: 4px; text-align: center; font-weight: bold">{{count(package.recentDownloads)}}</p>
-                </div>
-              </div>
-            </div>
-          </div>
-          <hr/>
-        </div>
-        <!-- GIT -->
-        <div style="padding-top: 30px">
-          <h4 style="color: gray">Repository</h4>
-          <a target="git" href="{{package.sourceUrl}}">
-            <fa-icon matListIcon class="icon" [icon]="faGitAlt" style="margin-right: 10px"></fa-icon><fa-icon *ngIf="package.sourceIsPrivate" [icon]="faKey" style="color: lightgray"></fa-icon>
-            {{package.sourceUrl}}
-          </a>
-          <div style="width: 100%; margin-top: 10px">
-            <p *ngIf="package.sourcePath">
-              <fa-icon [icon]="faFolder" style="color: lightgray"></fa-icon> {{package.sourcePath}}
-            </p>
-            <div *ngIf="gitInfo" style="display: inline-flex; justify-content: flex-start">
-              <div style="display: flex; flex-direction: column; width: 150px">
-                <p style="color: lightgray; font-size: small"><fa-icon [icon]="faClock"></fa-icon> Last updated</p>
-                <p style="font-weight: bold">{{gitInfo.lastUpdated}}</p>
-              </div>
-              <div style="display: flex; flex-direction: column; width: 150px; align-items: flex-start">
-                <p style="color: lightgray; font-size: small"><fa-icon [icon]="faBinoculars"></fa-icon> watchers</p>
-                <p style="background-color: green; min-width: 30px; border-radius: 4px; color: white; text-align: center"> {{gitInfo.watchers}} </p>
-              </div>
-              <div style="display: flex; flex-direction: column; width: 150px; align-items: flex-start">
-                <p style="color: lightgray; font-size: small"><fa-icon [icon]="faStar"></fa-icon> star gazers</p>
-                <p style="background-color: pink; min-width: 30px; border-radius: 4px; color: white; text-align: center"> {{gitInfo.stargazers}} </p>
-              </div>
-            </div>
-          </div>
-          <hr/>
-        </div>
-
-        <!-- Versions -->
-        <div style="padding-top: 30px">
-          <h4 style="color: gray">Versions</h4>
+          <h4>Versions</h4>
           <div style="width: 100%; display: flex; flex-direction: row">
             <i class="dlt-icon-versions dlt-icon" style="padding-right: 10px;"></i>
             <ul class="dlt-tags" data-allow-delete style="display: inline-block" *ngIf="haveAvailableTags(); else notags">
@@ -130,12 +152,12 @@
             </ng-template>
           </div>
           <hr/>
-        </div>
+        </div> -->
 
         <!-- USERS -->
 
         <div *ngIf="isAdministrator()" style="padding-top: 30px">
-          <h4 style="color: gray">Access</h4>
+          <h4>Access</h4>
           <div style="display: flex; flex-direction: row; justify-content: flex-start;">
             <fa-icon matListIcon class="icon" [icon]="faUsers" style="padding-right: 10px;"></fa-icon>
             <div style="width: 100%">
@@ -184,8 +206,8 @@
 
         <!-- Buttons -->
         <div *ngIf="isAdministrator()" style="align-self: flex-end; display: inline-flex; align-content: flex-end; margin-top: 30px">
-          <button class="dlt-button dlt-button-secondary" color="accent" style="margin-right: 20px" (click)="unregisterPackage()"> <fa-icon matListIcon class="icon" [icon]="faEraser" size="1x"></fa-icon> Remove</button>
-          <button class="dlt-button dlt-button-secondary" (click)="migratePackage()"> <fa-icon matListIcon class="icon" [icon]="faRocket" size="1x"></fa-icon> Migrate</button>
+          <button class="dlt-button dlt-button-secondary" color="accent" style="margin-right: 20px" (click)="unregisterPackage()"> <fa-icon matListIcon class="icon" [icon]="faEraser" size="1x" style="padding: 8px"></fa-icon> Remove</button>
+          <button class="dlt-button dlt-button-secondary" (click)="migratePackage()"> <fa-icon matListIcon class="icon" [icon]="faRocket" size="1x" style="padding: 8px"></fa-icon> Migrate</button>
         </div>
       </div>
     </div>
