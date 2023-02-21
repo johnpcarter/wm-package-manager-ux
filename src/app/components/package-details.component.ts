@@ -203,7 +203,7 @@ export class PackageDetailsComponent implements OnInit {
   }
 
   public isTrustedRegistry(): boolean {
-   return /*GLOBALS.registry.type === RegistryType.private ||*/ GLOBALS.registry.trustLevel > 0
+   return /*GLOBALS.registry.type === RegistryType.private ||*/ GLOBALS.registry.trustLevel > 0 && GLOBALS.registry.name !== 'softwareag'
   }
 
   public isAdministrator(): boolean {

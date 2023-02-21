@@ -24,7 +24,7 @@
         <div *ngIf="trust" style="float:right; display: inline-flex; margin-top: -12px; height: 125px">
           <div class="dlt-form-item">
             <label class="dlt-form-label" for="version">Version</label>
-            <div class="dlt-form-group select-arrow-icon" style="width: 90px">
+            <div class="dlt-form-group select-arrow-icon" style="width: 110px">
               <select id="version" class="dlt-select-input" [(ngModel)]="selectedVersion" [ngStyle]="selectedVersionStyle()" (change)="selectVersion()">
                 <option *ngFor="let i of versions" [value]="i.tag">
                   {{i.tag}}

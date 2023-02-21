@@ -1,7 +1,5 @@
 /* You can add global styles to this file, and also import other style files */
 
-@import "~@angular/material/prebuilt-themes/indigo-pink.css";
-
 header.main-head {
   --dlt-color-text-interactive-primary: var(--dlt-color-icon-interactive-secondary, $almost-black);
   text-align: left;
