@@ -63,7 +63,7 @@ export class PackagesComponent implements OnInit {
 
   }
 
-  public load(registry: string, packageName: string): void {
+  public load(registry: string, packageName?: string): void {
 
     this._packagesServices.categories(registry).subscribe((c) => {
       this.categories = c
@@ -139,6 +139,12 @@ export class PackagesComponent implements OnInit {
 
   public registryLegal(): string {
     return GLOBALS.registry.legal || ''
+  }
+
+  public gotoRegistry(r: string): boolean {
+
+    this.load(r)
+    return false
   }
 
   public showPackageDetails(p: Package): boolean  {

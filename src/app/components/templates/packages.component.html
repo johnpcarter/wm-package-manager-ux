@@ -71,7 +71,7 @@
           <tr mat-row *matRowDef="let row; columns: displayedColumns()"></tr>
         </table>
       </div>
-      <p style="padding: 20px; font-weight: lighter; color: darkslateblue">{{registryDescription()}} <a *ngIf="altRegistry" style="color: blue; font-style: oblique" href="/packages?registry={{altRegistry}}">{{altRegistry}}</a>{{end}}</p>
+      <p style="padding: 20px; font-weight: lighter; color: darkslateblue">{{registryDescription()}} <a *ngIf="altRegistry" style="color: blue; font-style: oblique" href="/packages?registry" (click)="gotoRegistry(altRegistry)">{{altRegistry}}</a>{{end}}</p>
     </div>
   </div>
   <footer class="dlt-footer" style="margin-top: auto; padding-left: 200px; padding-right: 200px">
