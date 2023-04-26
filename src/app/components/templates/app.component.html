@@ -1,5 +1,5 @@
 <div>
-  <div class="header-wrap">
+  <div *ngIf="!isOnLoginPage()" class="header-wrap">
     <header class="no-margin no-padding main-head">
       <a class="brand" href="/">
         <div style="display: inline-flex;">
@@ -43,5 +43,5 @@
   </div>
 </div>
   <div *ngIf="isConnectionPanelOpen">
-    <app-login-page (loginModalClose)="onConnectionDialogClose($event)"></app-login-page>
+    <app-login-modal (loginModalClose)="onConnectionDialogClose($event)"></app-login-modal>
   </div>

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core'
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core'
 import { ActivatedRoute, Router } from '@angular/router'
 import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms'
 
@@ -9,10 +9,13 @@ import { SettingsService } from '../services/settings.service'
 import { GLOBALS } from '../globals'
 
 @Component({
-  selector: 'app-login-page',
+  selector: 'app-login',
   templateUrl: './templates/login.component.html',
 })
 export class LoginComponent implements OnInit {
+
+  @Input()
+  public showCancelButton: boolean = true
 
   @Output()
   public loginModalClose: EventEmitter<boolean> = new EventEmitter()

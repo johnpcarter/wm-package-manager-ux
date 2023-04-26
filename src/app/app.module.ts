@@ -40,6 +40,8 @@ import { PackageDetailsComponent } from './components/package-details.component'
 import { TagInfoComponent } from './components/tag-info.component'
 import { SettingsService } from './services/settings.service'
 import { LoginComponent } from './components/login.component'
+import { LoginPageComponent } from './components/login-page.component'
+import { LoginModalComponent } from './components/login-modal.component'
 import { SettingsComponent } from './components/settings.component'
 import { AddRegistryComponent } from './components/add-registry.component'
 import { RemoveConfirmationComponent } from './components/remove-confirmation.component'
@@ -55,6 +57,8 @@ import {CreateAccessTokenComponent} from './components/create-access-token.compo
 const routes: Routes = [
   { path: '', component: PackagesComponent },
   { path: 'package/:packageName', component: PackageDetailsComponent },
+  { path: 'login/:registry', component: LoginPageComponent},
+  { path: 'login', component: LoginPageComponent},
   { path: 'settings', component: SettingsComponent },
   { path: 'registries', component: RegistriesComponent },
   { path: ':registry', component: PackagesComponent },
@@ -69,6 +73,8 @@ const routes: Routes = [
     PackageDetailsComponent,
     TagInfoComponent,
     LoginComponent,
+    LoginPageComponent,
+    LoginModalComponent,
     SettingsComponent,
     AddRegistryComponent,
     AddPackageComponent,

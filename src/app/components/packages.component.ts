@@ -30,6 +30,9 @@ export class PackagesComponent implements OnInit {
   public currentFilter: string = null
   public packages: Package[] = []
 
+  public altRegistry: string = undefined
+  public end: string = undefined
+
   public searchTerm: string | undefined
 
   public addPackageClicked: boolean = false
@@ -70,8 +73,12 @@ export class PackagesComponent implements OnInit {
       if (!p) {
         this.packages = []
       } else if (p.length === 1 && p[0] == null) {
-        GLOBALS.currentPage = 'registries'
-        this._router.navigate(['/registries'], {skipLocationChange: true})
+        GLOBALS.currentPage = 'login'
+        if (registry !== undefined) {
+          this._router.navigate(['/login', registry], {skipLocationChange: true})
+        } else {
+          this._router.navigate(['/login'], {skipLocationChange: true})
+        }
       } else {
         this.packages = p
       }
@@ -112,7 +119,22 @@ export class PackagesComponent implements OnInit {
   }
 
   public registryDescription(): string {
-      return GLOBALS.registry.description || ''
+      let d: string = GLOBALS.registry.description || ''
+
+      if (d.indexOf('%') !== -1) {
+        const start = d.indexOf('%')
+        let registry = d.substring(start + 1)
+        d = d.substring(0, start)
+
+        const end = registry.indexOf('%')
+        if (end !== -1) {
+          this.end = registry.substring(end + 1)
+          registry = registry.substring(0, end)
+          this.altRegistry = registry
+        }
+      }
+
+      return d
   }
 
   public registryLegal(): string {

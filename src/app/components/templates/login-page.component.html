@@ -1,0 +1,8 @@
+<div style="float: right">
+  <legend class="dlt-links" style="line-height: 40px; margin-right: 40px; color: ">
+    <a href="#" class="dlt-tab-link dlt-tab-item" ngClass="dlt-tab-item" (click)="showRegistries()">Registries<i class="dlt-icon-packages dlt-icon-lg" style="padding: 8px"></i></a>
+  </legend>
+</div>
+<div style="width: 50%; margin-left: auto; margin-right: auto; margin-top: 80px">
+  <app-login [showCancelButton]=false (loginModalClose)="onConnectionDialogClose($event)"></app-login>
+</div>

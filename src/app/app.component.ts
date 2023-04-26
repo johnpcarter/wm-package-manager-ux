@@ -1,21 +1,21 @@
-import {Component, OnInit} from '@angular/core'
-import {ActivatedRoute, Router} from '@angular/router'
-import {Subscription} from 'rxjs'
+import { Component, OnInit } from '@angular/core'
+import { ActivatedRoute, Router } from '@angular/router'
+import { Subscription } from 'rxjs'
 
-import {faBrain, faCheck, faCog, faLifeRing, faListAlt, faTools, faUser, faUserSlash} from '@fortawesome/free-solid-svg-icons'
+import { faBrain, faCheck, faCog, faLifeRing, faListAlt, faTools, faUser, faUserSlash} from '@fortawesome/free-solid-svg-icons'
 
-import {MatSnackBar} from '@angular/material/snack-bar'
-import {MatDialog} from '@angular/material/dialog'
+import { MatSnackBar } from '@angular/material/snack-bar'
+import { MatDialog } from '@angular/material/dialog'
 
-import {Registry, RegistryType} from './models/Registry'
+import { Registry, RegistryType } from './models/Registry'
 
-import {SettingsService} from './services/settings.service'
-import {RegistriesService} from './services/registries.service'
-import {NotificationsService} from './services/notifications-service'
+import { SettingsService } from './services/settings.service'
+import { RegistriesService } from './services/registries.service'
+import { NotificationsService } from './services/notifications-service'
 
-import {PackagesServices} from './services/packages.service'
+import { PackagesServices } from './services/packages.service'
 
-import {GLOBALS} from './globals'
+import { GLOBALS } from './globals'
 
 @Component({
   selector: 'app-root',
@@ -92,6 +92,10 @@ export class AppComponent implements OnInit {
 
   public isAdministrator(): boolean {
     return GLOBALS.isAdministrator()
+  }
+
+  public isOnLoginPage(): boolean {
+    return GLOBALS.currentPage === 'login'
   }
 
   public isOnRegistryPage(): boolean {
