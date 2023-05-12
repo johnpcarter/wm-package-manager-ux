@@ -3,7 +3,7 @@
     <div class="dlt-modal-window__header">
     </div>
     <div class="dlt-modal-window__content">
-      <app-login-page (loginModalClose)="onConnectionDialogClose($event)"></app-login-page>
+      <app-login [showCancelButton]=true (loginModalClose)="onConnectionDialogClose($event)"></app-login>
     </div>
   </div>
 </section>
