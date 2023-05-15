@@ -160,7 +160,7 @@ export class SettingsService {
 
     const headers = GLOBALS.headers()
 
-    return this._http.get(url, { headers }).pipe(catchError(error => {
+    return this._http.post(url, '', { headers }).pipe(catchError(error => {
       return of(null)
     })).pipe(map( (responseData: any) => {
       if (responseData != null) {
