@@ -59,12 +59,12 @@ export class SettingsService {
       }))
   }
 
-  public connectViaEmpower(username: string, passswrd: string): Observable<AccessToken> {
+  public connectViaEmpower(user: string, passswrd: string): Observable<AccessToken> {
 
     const url: string = environment.EMPOWER_CONNECT
 
     const headers = GLOBALS.headers()
-    const data = {user: username, password: passswrd}
+    const data = {username: user, password: passswrd}
 
     return this._http.post(url, data, { headers })
       .pipe(catchError(error => {
@@ -75,7 +75,7 @@ export class SettingsService {
         if (responseData) {
 
           const obj = new AccessToken('login', responseData.accessToken)
-          obj.userID = username
+          obj.userID = user
           obj.userType = 'empower'
 
           return obj
